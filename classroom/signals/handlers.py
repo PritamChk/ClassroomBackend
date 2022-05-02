@@ -1,4 +1,5 @@
 import os
+from classroom.tasks import send_email_after_mass_profile_creation
 
 import pandas as pd
 from classroom.models import (
@@ -58,7 +59,8 @@ def create_allowed_students(sender, instance: Classroom, **kwargs):
         for m in email_list
     ]
     try:
-        send_mass_mail(mails, fail_silently=True)
+        send_email_after_mass_profile_creation.delay(mails)
+        # send_mass_mail(mails, fail_silently=True)
     except BadHeaderError:
         print("Could not able to sen emails to students")
     os.remove(file_abs_path)
@@ -92,7 +94,8 @@ def create_allowed_teacher(sender, instance: Classroom, **kwargs):
         for m in email_list
     ]
     try:
-        send_mass_mail(mails, fail_silently=True)
+        send_email_after_mass_profile_creation.delay(mails)
+        # send_mass_mail(mails, fail_silently=True)
     except BadHeaderError:
         print("Could not able to sen emails to students")
     os.remove(file_abs_path)
@@ -145,16 +148,16 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, **kwargs):
             You Can Login using credentials
         """
         send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
-    else:
-        if not (instance.is_superuser and instance.is_staff):
-            subject = "Profile Creation Failed"
-            msg = f"""
-                You have not been assigned any class, but your account has been created.
-                So to create a profile contact ADMIN
+    # else:
+    #     if not (instance.is_superuser and instance.is_staff):
+    #         subject = "Profile Creation Failed"
+    #         msg = f"""
+    #             You have not been assigned any class, but your account has been created.
+    #             So to create a profile contact ADMIN
                 
-                contact mail id: {settings.EMAIL_HOST_USER}
-            """
-            send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+    #             contact mail id: {settings.EMAIL_HOST_USER}
+    #         """
+    #         send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
 
 
 @receiver(post_delete, sender=Student)
