@@ -53,6 +53,11 @@ ngrok http 8000
 docker run --rm -it -p 5000:80 -p 2525:25 rnwood/smtp4dev
 ```
 
+## Celery - Redis CMDs
+
+- pipenv run redis
+- celery -A core worker -l info -P eventlet
+- or pipenv run celery 
 ## HEROKU CMDS
 
 ---
