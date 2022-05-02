@@ -1,0 +1,11 @@
+*.pyc
+__pycache__
+/__pycache__
+tokens
+/static/
+/media/
+/**/teachers/
+/**/students/
+*.csv
+*xlsx
+.env
