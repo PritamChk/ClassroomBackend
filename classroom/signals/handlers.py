@@ -155,7 +155,7 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, **kwargs):
     #     msg = f"""
     #         You have not been assigned any class, but your account has been created.
     #         So to create a profile contact ADMIN
-            
+
     #         contact mail id: {settings.EMAIL_HOST_USER}
     #     """
     #     send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
