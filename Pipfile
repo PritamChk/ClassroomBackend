@@ -20,6 +20,7 @@ termcolor = "*"
 pandas = "*"
 openpyxl = "*"
 redis = "*"
+celery = "*"
 
 [dev-packages]
 black = "*"
