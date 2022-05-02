@@ -21,6 +21,7 @@ pandas = "*"
 openpyxl = "*"
 redis = "*"
 celery = "*"
+eventlet = "*"
 
 [dev-packages]
 black = "*"
