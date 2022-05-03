@@ -38,3 +38,5 @@ EMAIL_PORT = 2525
 EMAIL_HOST_USER = "classroom@lms.com"
 EMAIL_HOST_PASSWORD = ""
 DEFAULT_FROM_EMAIL = "classroom@lms.com"
+
+CELERY_BROKER_URL = "redis://localhost:6379/1"

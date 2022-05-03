@@ -23,3 +23,5 @@ EMAIL_HOST_USER = EMAIL_CREDS.get_mail_id()
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
 TIME_ZONE = "Asia/Kolkata"
+
+CELERY_BROKER_URL = os.environ['REDIS_URL'] 

@@ -188,4 +188,3 @@ AUTH_USER_MODEL = "accounts.BaseAccount"
 DOMAIN = "localhost:3000"  # TODO: change after frontend deployment
 SITE_NAME = "Classroom[LMS]"
 
-CELERY_BROKER_URL = "redis://localhost:6379/1"  # TODO:change in production if needed
