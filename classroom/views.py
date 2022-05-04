@@ -6,6 +6,9 @@ from .models import Student
 
 
 class StudentViewSet(RetrieveModelMixin, GenericViewSet):
+    """
+        Student End point will return student profile details along with classroom details
+    """
     my_tags = ["Student"]
 
     def get_queryset(self):
