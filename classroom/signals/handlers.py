@@ -147,21 +147,7 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created,**kwargs)
                 contact mail id: {settings.EMAIL_HOST_USER}
             """
             send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
-    #FIXME: 
-    # else:    
-    #     if (
-    #         AllowedTeacher.objects.filter(email=instance.email).exists()
-    #         and Teacher.objects.select_related("user").filter(user=instance).exists()
-    #     ):
-    #         t = Teacher.objects.select_related("user").filter(user=instance).first()
-    #         subject = "Your Teacher Profile Already Exists"
-    #         msg = f"""
-    #             Teacher ID :{t.id}
-    #             mail : {instance.email}
-                
-    #             You Can Login using credentials
-    #         """
-    #         send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+
 
 
 @receiver(post_delete, sender=Student)
