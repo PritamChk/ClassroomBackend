@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from .serializers.student import StudentReadSerializer
+from ..serializers.student import StudentReadSerializer
 from rest_framework.viewsets import ReadOnlyModelViewSet, GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin
-from .models import Student
+from ..models import Student
 
 
 class StudentViewSet(RetrieveModelMixin, GenericViewSet):
