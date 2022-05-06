@@ -93,30 +93,23 @@ class StudentAdmin(admin.ModelAdmin):
         "first_name",
         "last_name",
         "college_name",
-        # "level",
-        # "stream",
-        # "start_year",
-        # "end_year",
         "classroom",
     )
     search_fields = [
-        # "user__first_name__istartswith",
-        # "user__last_name__istartswith",
-        # "user__email__contains",
-        # "stream__icontains",
-        # "university_roll",
-        # "level__iexact",
-        # "start_year",
-        # "end_year",
+        "user__first_name__istartswith",
+        "user__last_name__istartswith",
+        "user__email__contains",
+        "classroom__stream__icontains",
+        "university_roll",
+        "classroom__level__iexact",
     ]
     list_filter = (
         "classroom",
-        # "college",
-        # "level",
-        # "stream",
-        # "university_roll",
-        # "start_year",
-        # "end_year",
+        "classroom__college__name",
+        "classroom__level",
+        "classroom__stream",
+        "classroom__start_year",
+        "classroom__end_year",
     )
     autocomplete_fields = ["classroom", "user"]
     list_select_related = ["user", "classroom", "classroom__college"]
