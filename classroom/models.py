@@ -1,4 +1,6 @@
 from datetime import date
+from random import randint
+from uuid import uuid4
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
@@ -9,7 +11,6 @@ from django.core.validators import (
 )
 from django.db import models
 
-# from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_extensions.db.fields import AutoSlugField
 
@@ -198,6 +199,13 @@ class Student(models.Model):
         - classroom: takes User()
     """
 
+    university_roll = models.PositiveBigIntegerField(
+        _("University Roll"),
+        help_text="Your University Roll No - (e.g. - 13071020030)",
+        null=True,
+        blank=False,
+        default=randint(10,9999999)
+    )
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,

@@ -5,10 +5,11 @@ from .classroom import ClassroomReadSerializer
 
 class StudentReadSerializer(ms):
     """
-        Returns Student ID & User Profile along with Classroom Details
+    Returns Student ID & User Profile along with Classroom Details
     """
+
     class Meta:
         model = Student
-        fields = "__all__"
+        fields = ("university_roll", "user", "classroom")
         # read_only_fields = "__all__"
         depth = 1

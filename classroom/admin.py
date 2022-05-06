@@ -88,6 +88,7 @@ class SemesterAdmin(admin.ModelAdmin):
 class StudentAdmin(admin.ModelAdmin):
     list_display = (
         "user",
+        "university_roll",
         "id",
         "first_name",
         "last_name",
@@ -96,7 +97,6 @@ class StudentAdmin(admin.ModelAdmin):
         # "stream",
         # "start_year",
         # "end_year",
-        # "university_roll",
         "classroom",
     )
     search_fields = [
@@ -120,6 +120,7 @@ class StudentAdmin(admin.ModelAdmin):
     )
     autocomplete_fields = ["classroom", "user"]
     list_select_related = ["user", "classroom", "classroom__college"]
+    readonly_fields = ["university_roll"]
 
 
 @admin.register(Teacher)

@@ -128,7 +128,12 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs
             classroom: Classroom = AllowedStudents.objects.get(
                 email=instance.email
             ).classroom
-            s = Student.objects.create(user=instance, classroom=classroom)
+            university_roll = AllowedStudents.objects.get(
+                email=instance.email
+            ).university_roll
+            s = Student.objects.create(
+                university_roll=university_roll, user=instance, classroom=classroom
+            )
             # TODO:send mail Abcd_1234
             subject = "Your Student Profile Has Been Created Successfully"
             msg = f"""
