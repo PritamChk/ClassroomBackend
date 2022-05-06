@@ -103,62 +103,65 @@ def create_allowed_teacher(sender, instance: Classroom, **kwargs):
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_profile(sender, instance: settings.AUTH_USER_MODEL, **kwargs):
-    if (
-        AllowedStudents.objects.filter(email=instance.email).exists()
-        and not Student.objects.select_related("user").filter(user=instance).exists()
-    ):
-        classroom: Classroom = AllowedStudents.objects.get(
-            email=instance.email
-        ).classroom
-        s = Student.objects.create(user=instance, classroom=classroom)
-        # TODO:send mail Abcd_1234
-        subject = "Your Student Profile Has Been Created Successfully"
-        msg = f"""
-            Student ID :{s.id}
-            mail : {instance.email}
-            classroom : {classroom.title}
-            
-            You Can Login After Activation Of your account
-        """
-        send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
-    elif (
-        AllowedTeacher.objects.filter(email=instance.email).exists()
-        and not Teacher.objects.select_related("user").filter(user=instance).exists()
-    ):
-        t = Teacher.objects.create(user=instance)
-        subject = "Your Teacher Profile Has Been Created Successfully"
-        msg = f"""
-            Teacher ID :{t.id}
-            mail : {instance.email}
-            
-            You Can Login After Activation Of your account
-        """
-        send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
-    elif (
-        AllowedTeacher.objects.filter(email=instance.email).exists()
-        and Teacher.objects.select_related("user").filter(user=instance).exists()
-    ):
-        t = Teacher.objects.select_related("user").filter(user=instance).first()
-        subject = "Your Teacher Profile Already Exists"
-        msg = f"""
-            Teacher ID :{t.id}
-            mail : {instance.email}
-            
-            You Can Login using credentials
-        """
-        send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
-    # elif instance.is_superuser and instance.is_staff:  # ADMIN
-    #     print("Admin")
-    # else:
-    #     subject = "Profile Creation Failed"
-    #     msg = f"""
-    #         You have not been assigned any class, but your account has been created.
-    #         So to create a profile contact ADMIN
+def create_profile(sender, instance: settings.AUTH_USER_MODEL, created,**kwargs):
+    if created:
+        if (
+            AllowedStudents.objects.filter(email=instance.email).exists()
+            and not Student.objects.select_related("user").filter(user=instance).exists()
+        ):
+            classroom: Classroom = AllowedStudents.objects.get(
+                email=instance.email
+            ).classroom
+            s = Student.objects.create(user=instance, classroom=classroom)
+            # TODO:send mail Abcd_1234
+            subject = "Your Student Profile Has Been Created Successfully"
+            msg = f"""
+                Student ID :{s.id}
+                mail : {instance.email}
+                classroom : {classroom.title}
+                
+                You Can Login After Activation Of your account
+            """
+            send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+        elif (
+            AllowedTeacher.objects.filter(email=instance.email).exists()
+            and not Teacher.objects.select_related("user").filter(user=instance).exists()
+        ):
+            t = Teacher.objects.create(user=instance)
+            subject = "Your Teacher Profile Has Been Created Successfully"
+            msg = f"""
+                Teacher ID :{t.id}
+                mail : {instance.email}
+                
+                You Can Login After Activation Of your account
+            """
+            send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+        elif instance.is_superuser or instance.is_staff:  # ADMIN
+            print("Admin")
+        else:
+            subject = "Profile Creation Failed"
+            msg = f"""
+                You have not been assigned any class, but your account has been created.
+                So to create a profile contact ADMIN
 
-    #         contact mail id: {settings.EMAIL_HOST_USER}
-    #     """
-    #     send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+                contact mail id: {settings.EMAIL_HOST_USER}
+            """
+            send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+    #FIXME: 
+    # else:    
+    #     if (
+    #         AllowedTeacher.objects.filter(email=instance.email).exists()
+    #         and Teacher.objects.select_related("user").filter(user=instance).exists()
+    #     ):
+    #         t = Teacher.objects.select_related("user").filter(user=instance).first()
+    #         subject = "Your Teacher Profile Already Exists"
+    #         msg = f"""
+    #             Teacher ID :{t.id}
+    #             mail : {instance.email}
+                
+    #             You Can Login using credentials
+    #         """
+    #         send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
 
 
 @receiver(post_delete, sender=Student)
