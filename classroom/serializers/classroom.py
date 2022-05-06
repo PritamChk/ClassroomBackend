@@ -15,7 +15,7 @@ class SemesterReadSerializer(ms):
 
 class ClassroomReadSerializer(ms):
     college = CollegeReadSerializer()
-    semeters = SemesterReadSerializer(many=True)
+    semesters = SemesterReadSerializer(many=True)
     class Meta:
         model = Classroom
         fields = (
