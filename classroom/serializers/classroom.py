@@ -15,7 +15,6 @@ class SemesterReadSerializer(ms):
 
 class ClassroomReadSerializer(ms):
     college = CollegeReadSerializer()
-    semesters = SemesterReadSerializer(many=True)
     class Meta:
         model = Classroom
         fields = (
@@ -28,9 +27,9 @@ class ClassroomReadSerializer(ms):
             "section",
             "no_of_semesters",
             "current_sem",
-            "semesters"
             "created_at",
             "college",
         )
-        select_related_fields = ["college"] #FIXME: This won't work
-        prefetch_related_fields = ["semesters"] #FIXME: This won't work
+        # depth=2
+        # select_related_fields = ["college"] #FIXME: This won't work
+        # prefetch_related_fields = ["semesters"] #FIXME: This won't work

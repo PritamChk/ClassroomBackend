@@ -1,11 +1,17 @@
+from classroom.serializers.classroom import ClassroomReadSerializer
+from classroom.serializers.student import StudentReadSerializer
 from rest_framework.decorators import api_view
-from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.mixins import (
+    CreateModelMixin,
+    DestroyModelMixin,
+    ListModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+)
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.generics import GenericAPIView
 
-from classroom.serializers.student import StudentReadSerializer
-from ..models import Student, Teacher
+from ..models import Classroom, Student, Teacher
 
 
 @api_view(["GET"])
@@ -29,14 +35,34 @@ def user_category(request, id):
         return Response({"user_type": "user unknown"})
 
 
-class StudentViewSet(RetrieveModelMixin, GenericViewSet):
+class StudentProfileViewSet(RetrieveModelMixin, GenericViewSet):
     """
     Student End point will return student profile details along with classroom details
     """
 
     my_tags = ["Student"]
-    queryset = Student.objects.select_related("user").select_related("classroom").all()
+    queryset = (
+        Student.objects.select_related("user")
+        .select_related("classroom")
+        .select_related("classroom__college")
+        .all()
+    )
     serializer_class = StudentReadSerializer
 
     def get_serializer_context(self):
         return {"request": self.request}
+
+
+class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
+    """
+    This view is used by student only
+    student can only retrive but won't be able to see the other classrooms
+    """
+
+    my_tags = ["Classroom For Student & Teacher"]
+    serializer_class = ClassroomReadSerializer
+    lookup_field = 'slug'
+    
+    def get_queryset(self):
+        classroom = Classroom.objects.select_related("college").prefetch_related('students').filter(slug=self.kwargs['slug'])
+        return classroom
