@@ -1,4 +1,7 @@
-from classroom.serializers.classroom import ClassroomReadSerializer
+from classroom.serializers.classroom import (
+    ClassroomReadSerializer,
+    SemesterReadSerializer,
+)
 from classroom.serializers.student import StudentReadSerializer
 from rest_framework.decorators import api_view
 from rest_framework.mixins import (
@@ -11,7 +14,7 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from ..models import Classroom, Student, Teacher
+from ..models import Classroom, Student, Teacher, Semester
 
 
 @api_view(["GET"])
@@ -59,10 +62,25 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
     student can only retrive but won't be able to see the other classrooms
     """
 
-    my_tags = ["Classroom For Student & Teacher"]
+    my_tags = ["Classroom For Student"]
     serializer_class = ClassroomReadSerializer
-    lookup_field = 'slug'
-    
+    lookup_field = "slug"
+
     def get_queryset(self):
-        classroom = Classroom.objects.select_related("college").prefetch_related('students').filter(slug=self.kwargs['slug'])
+        classroom = (
+            Classroom.objects.select_related("college")
+            .prefetch_related("students")
+            .filter(slug=self.kwargs["slug"])
+        )
         return classroom
+
+
+class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+    my_tags = ["Semester for Student"]
+    serializer_class = SemesterReadSerializer
+
+    def get_queryset(self):
+        sem = Semester.objects.select_related("classroom").filter(
+            classroom__slug=self.kwargs["classroom_slug"]
+        )
+        return sem
