@@ -1,5 +1,6 @@
 from rest_framework.serializers import ModelSerializer as ms
-from classroom.models import College, Classroom, Semester, Subject, Announcement
+from classroom.models import College, Classroom, Semester, Subject, Announcement, Teacher
+from classroom.serializers.teacher import TeacherReadForSubjectSerializer
 
 
 class CollegeReadSerializer(ms):
@@ -38,6 +39,7 @@ class ClassroomReadSerializer(ms):
 
 
 class SubjectReadSerializer(ms):
+    created_by = TeacherReadForSubjectSerializer()
     class Meta:
         model = Subject
         fields = (
@@ -47,6 +49,7 @@ class SubjectReadSerializer(ms):
             "subject_type",
             "credit_points",
             "created_at",
+            "created_by",
         )
 
 

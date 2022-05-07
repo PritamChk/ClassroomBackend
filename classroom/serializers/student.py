@@ -1,14 +1,23 @@
 from rest_framework.serializers import ModelSerializer as ms
-from classroom.models import Student
+from classroom.models import Student, User
 from .classroom import ClassroomReadSerializer
 from accounts.serializers import CurrentUserSerializer
+
+
+class StudentUserReadSerializer(ms):
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "contact_no", "email")
+
 
 class StudentReadSerializer(ms):
     """
     Returns Student ID & User Profile along with Classroom Details
     """
-    user = CurrentUserSerializer()
+
+    user = StudentUserReadSerializer()
     classroom = ClassroomReadSerializer()
+
     class Meta:
         model = Student
         fields = ("university_roll", "user", "classroom")

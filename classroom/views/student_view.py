@@ -1,4 +1,5 @@
 from classroom.serializers.classroom import (
+    AnnouncementsReadSerializer,
     ClassroomReadSerializer,
     SemesterReadSerializer,
     SubjectReadSerializer,
@@ -15,7 +16,7 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from ..models import Classroom, Student, Subject, Teacher, Semester
+from ..models import Announcement, Classroom, Student, Subject, Teacher, Semester
 
 
 @api_view(["GET"])
@@ -91,9 +92,21 @@ class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewS
 class SubjectsForStudentsViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     my_tags = ["subjects per sem [for student]"]
     serializer_class = SubjectReadSerializer
-    lookup_field='slug'
+    lookup_field = "slug"
 
     def get_queryset(self):
-        return Subject.objects.select_related("semester").filter(
-            semester__id=self.kwargs["semester_pk"]
+        return (
+            Subject.objects.select_related("semester")
+            .select_related("semester__classroom")
+            .filter(semester__id=self.kwargs["semester_pk"])
+        )  # FIXME: This might be slow in future. Req: Optimization
+
+
+class AnnouncementViewSet(ListModelMixin, GenericViewSet):
+    my_tags = ["subject -> announcement list"]
+    serializer_class = AnnouncementsReadSerializer
+
+    def get_queryset(self):
+        return Announcement.objects.select_related("subject").filter(
+            subject__slug=self.kwargs["subject_slug"]
         )
