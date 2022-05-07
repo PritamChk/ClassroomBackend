@@ -343,4 +343,7 @@ class Announcement(models.Model):
         ordering = ["-created_at", "-updated_at"]
 
     def __str__(self) -> str:
-        return self.heading
+        return f"{self.heading[:10]}..."
+
+    def heading_short(self):
+        return f"{self.heading[:10]}..."

@@ -2,6 +2,7 @@
 from django.contrib import admin
 
 from .models import (
+    Announcement,
     College,
     Classroom,
     Student,
@@ -187,3 +188,21 @@ class SubjectAdmin(admin.ModelAdmin):
     autocomplete_fields = ["semester", "created_by"]
     list_select_related = ["semester", "created_by", "semester__classroom"]
     date_hierarchy = "created_at"
+
+
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = (
+        "heading_short",
+        "id",
+        "body",
+        "created_at",
+        "updated_at",
+        "subject",
+        "posted_by",
+    )
+    list_filter = ("created_at", "updated_at", "subject", "posted_by")
+    list_select_related = ["subject", "posted_by"]
+    date_hierarchy = "created_at"
+    autocomplete_fields = ["subject", "posted_by"]
+    search_fields = ["heading__icontains", "heading__istartswith", "body__icontains"]
