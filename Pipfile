@@ -41,6 +41,7 @@ dev = "py manage.py runserver"
 db-update = "py manage.py makemigrations"
 db-apply = "py manage.py migrate"
 db_clear = "py manage.py reset_db"
+static = 'py manage.py collectstatic'
 deploy = "git push heroku main"
 smtp = "docker run --rm -it -p 5000:80 -p 2525:25 rnwood/smtp4dev"
 make-admin = "py manage.py createsuperuser"
