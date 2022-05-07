@@ -9,7 +9,8 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")  # TODO: SET DJANGO_SECRET_KEY
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "lms-classroom-api.herokuapp.com"
+    "lms-classroom-api.herokuapp.com",
+    "classroom-lms-api.herokuapp.com" #NEW ONE
 ]  # TODO: allow only localhost , port-> 3000,8000,5000,8081
 
 DATABASES = {"default": dj_database_url.config()}
