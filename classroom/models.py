@@ -156,6 +156,7 @@ class Classroom(models.Model):
 
 
 class Semester(models.Model):
+    #TODO:Introduce Slug for Sem
     classroom = models.ForeignKey(
         Classroom, on_delete=models.CASCADE, related_name="semesters"
     )
