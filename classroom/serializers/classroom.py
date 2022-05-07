@@ -47,7 +47,6 @@ class SubjectReadSerializer(ms):
             "subject_type",
             "credit_points",
             "created_at",
-            "created_by",
         )
 
 
