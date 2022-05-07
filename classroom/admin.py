@@ -8,6 +8,7 @@ from .models import (
     AllowedTeacher,
     AllowedStudents,
     Semester,
+    Subject,
     Teacher,
 )
 
@@ -124,6 +125,11 @@ class TeacherAdmin(admin.ModelAdmin):
     list_select_related = ["user"]
     autocomplete_fields = ["user", "classroom"]
     raw_id_fields = ("classroom",)
+    search_fields = [
+        # "user",
+        "user__first_name__istartswith",
+        "user__last_name__istartswith",
+    ]
 
 
 @admin.register(AllowedTeacher)
@@ -151,3 +157,23 @@ class AllowedStudentsAdmin(admin.ModelAdmin):
     list_select_related = ["classroom"]
     autocomplete_fields = ["classroom"]
     search_fields = ["university_roll", "email"]
+
+
+@admin.register(Subject)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = (
+        "slug",
+        "id",
+        "subject_code",
+        "title",
+        "subject_type",
+        "credit_points",
+        "semester",
+        "created_at",
+        "created_by",
+    )
+    list_filter = ("semester", "created_by", "semester__classroom__title")
+    search_fields = ("slug", "subject_code", "title", "created_by")
+    autocomplete_fields = ["semester", "created_by"]
+    list_select_related = ["semester", "created_by", "semester__classroom"]
+    date_hierarchy = "created_at"

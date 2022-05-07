@@ -156,7 +156,7 @@ class Classroom(models.Model):
 
 
 class Semester(models.Model):
-    #TODO:Introduce Slug for Sem
+    # TODO:Introduce Slug for Sem
     classroom = models.ForeignKey(
         Classroom, on_delete=models.CASCADE, related_name="semesters"
     )
@@ -172,6 +172,9 @@ class Semester(models.Model):
 
     class Meta:
         unique_together = ["classroom", "sem_no"]
+
+    def __str__(self) -> str:
+        return str(self.sem_no)
 
 
 class Teacher(models.Model):
@@ -191,6 +194,9 @@ class Teacher(models.Model):
     )
     classroom = models.ManyToManyField(Classroom, related_name="teachers", blank=True)
 
+    def __str__(self) -> str:
+        return f"{self.user.first_name}   {self.user.last_name}"
+
 
 class Student(models.Model):
     """
@@ -205,7 +211,7 @@ class Student(models.Model):
         help_text="Your University Roll No - (e.g. - 13071020030)",
         null=True,
         blank=False,
-        default=randint(10,9999999)
+        default=randint(10, 9999999),
     )
     user = models.OneToOneField(
         User,
@@ -271,3 +277,51 @@ class AllowedStudents(models.Model):
 
     def __str__(self) -> str:
         return f"{self.email} || {self.university_roll}"
+
+
+class Subject(models.Model):
+    """
+    # Subject belongs to semester
+        - **slug** will be used as filter key
+        - **subject_code** is [`optional`]
+        - **title** is required
+        - **subject_type** is required [Practical/Theory/Elective]
+        - **credit_points** [`optional`] type: positive small integer
+        - **credit_points** [`optional`] type: positive small integer
+    """
+
+    # --------------Choice Fields------------------
+    THEORY = "T"
+    PRACTICAL = "P"
+    ELECTIVE = "E"
+    SUBJECT_TYPE_CHOICE = [
+        (THEORY, _("Theory")),
+        (PRACTICAL, _("Practical")),
+        (ELECTIVE, _("Elective")),
+    ]
+    CP_ONE = 1
+    CP_TEN = 10
+    CP_CHOICE = [(i, _(str(i))) for i in range(CP_ONE, CP_TEN + 1)]
+    # ----------------------------------------------
+    slug = AutoSlugField(
+        populate_from=["title", "subject_type", "semester__sem_no", "credit_points"]
+    )
+    subject_code = models.CharField(max_length=20)
+    title = models.CharField(max_length=200)
+    subject_type = models.CharField(
+        max_length=5, choices=SUBJECT_TYPE_CHOICE, default=THEORY
+    )
+    credit_points = models.PositiveSmallIntegerField(choices=CP_CHOICE, default=CP_ONE)
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, related_name="subjects"
+    )
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        Teacher, on_delete=models.CASCADE, related_name="subjects"
+    )
+
+    class Meta:
+        ordering = ["-created_at", "title", "-credit_points"]
+
+    def __str__(self) -> str:
+        return self.slug
