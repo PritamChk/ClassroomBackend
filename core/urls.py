@@ -28,7 +28,7 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    path("classroom/", include("classroom.urls")),
+    path("classroom-app/", include("classroom.urls")),
     path("admin/", admin.site.urls),
     path("auth/", include("djoser.urls")),
     path("login/", include("djoser.urls.jwt")),

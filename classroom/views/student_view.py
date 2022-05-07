@@ -1,6 +1,7 @@
 from classroom.serializers.classroom import (
     ClassroomReadSerializer,
     SemesterReadSerializer,
+    SubjectReadSerializer,
 )
 from classroom.serializers.student import StudentReadSerializer
 from rest_framework.decorators import api_view
@@ -14,7 +15,7 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from ..models import Classroom, Student, Teacher, Semester
+from ..models import Classroom, Student, Subject, Teacher, Semester
 
 
 @api_view(["GET"])
@@ -85,3 +86,14 @@ class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewS
             classroom__slug=self.kwargs["classroom_slug"]
         )
         return sem
+
+
+class SubjectsForStudentsViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+    my_tags = ["subjects per sem [for student]"]
+    serializer_class = SubjectReadSerializer
+    lookup_field='slug'
+
+    def get_queryset(self):
+        return Subject.objects.select_related("semester").filter(
+            semester__id=self.kwargs["semester_pk"]
+        )

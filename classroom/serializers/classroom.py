@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer as ms
-from classroom.models import College, Classroom,Semester
+from classroom.models import College, Classroom, Semester, Subject, Announcement
 
 
 class CollegeReadSerializer(ms):
@@ -13,8 +13,10 @@ class SemesterReadSerializer(ms):
         model = Semester
         fields = "__all__"
 
+
 class ClassroomReadSerializer(ms):
     college = CollegeReadSerializer()
+
     class Meta:
         model = Classroom
         fields = (
@@ -33,3 +35,29 @@ class ClassroomReadSerializer(ms):
         # depth=2
         # select_related_fields = ["college"] #FIXME: This won't work
         # prefetch_related_fields = ["semesters"] #FIXME: This won't work
+
+
+class SubjectReadSerializer(ms):
+    class Meta:
+        model = Subject
+        fields = (
+            "slug",
+            "subject_code",
+            "title",
+            "subject_type",
+            "credit_points",
+            "created_at",
+            "created_by",
+        )
+
+
+class AnnouncementsReadSerializer(ms):
+    class Meta:
+        model = Announcement
+        fields = (
+            "id",
+            "heading",
+            "body",
+            "created_at",
+            "updated_at",
+        )
