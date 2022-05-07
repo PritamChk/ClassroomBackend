@@ -10,8 +10,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "classroom",
-        "USER": "pritam",
-        "PASSWORD": "Abcd_1234",
+        "USER": os.getenv("DB_USER", "pritam"),
+        "PASSWORD": os.getenv("DB_USER_PASSWORD","Abcd_1234"),
         "HOST": "localhost",
         "PORT": "3306",
     }
