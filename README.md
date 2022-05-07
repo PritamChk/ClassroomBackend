@@ -31,6 +31,8 @@
 - [`drf-yasg` (NA)](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/drf_yasg_integration.html)
 - [`django-debug-toolbar` (>= 3.2.4)](https://django-debug-toolbar.readthedocs.io/en/latest/installation.html)
 
+- [`Django Templated Mail`](https://django-templated-mail.readthedocs.io/en/latest/)
+
 ---
 
 > `OS` - `Windows 10`
@@ -57,7 +59,8 @@ docker run --rm -it -p 5000:80 -p 2525:25 rnwood/smtp4dev
 
 - pipenv run redis
 - celery -A core worker -l info -P eventlet
-- or pipenv run celery 
+- or pipenv run celery
+
 ## HEROKU CMDS
 
 ---
@@ -85,7 +88,9 @@ heroku config:set VARIABLE_NAME='value'
 ```
 
 > ### deploy app
+
 ---
+
 - #### step 1: `git remote -vv`
 - #### step 2: `git branch`
 - #### step 3: push branch to heroku `git push heroku main`
