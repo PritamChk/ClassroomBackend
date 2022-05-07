@@ -1,17 +1,19 @@
 from .common import *
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',"Not Exists")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "Not Exists")
 
 # TODO: Make this false in production
 DEBUG = True
+
+ALLOWED_HOSTS = ["localhost:3000", "127.0.0.0:3000", "*"]
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "classroom",
         "USER": os.getenv("DB_USER", "pritam"),
-        "PASSWORD": os.getenv("DB_USER_PASSWORD","Abcd_1234"),
+        "PASSWORD": os.getenv("DB_USER_PASSWORD", "Abcd_1234"),
         "HOST": "localhost",
         "PORT": "3306",
     }
