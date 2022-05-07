@@ -43,7 +43,7 @@ class StudentProfileViewSet(RetrieveModelMixin, GenericViewSet):
     Student End point will return student profile details along with classroom details
     """
 
-    my_tags = ["Student"]
+    my_tags = ["student"]
     queryset = (
         Student.objects.select_related("user")
         .select_related("classroom")
@@ -62,7 +62,8 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
     student can only retrive but won't be able to see the other classrooms
     """
 
-    my_tags = ["Classroom For Student"]
+    my_tags = ["classroom For student"]
+    swagger_schema = None
     serializer_class = ClassroomReadSerializer
     lookup_field = "slug"
 
@@ -76,7 +77,7 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
 
 
 class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    my_tags = ["Semester for Student"]
+    my_tags = ["semester for student"]
     serializer_class = SemesterReadSerializer
 
     def get_queryset(self):
