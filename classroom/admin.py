@@ -172,8 +172,18 @@ class SubjectAdmin(admin.ModelAdmin):
         "created_at",
         "created_by",
     )
-    list_filter = ("semester", "created_by", "semester__classroom__title")
-    search_fields = ("slug", "subject_code", "title", "created_by")
+    list_filter = (
+        "semester",
+        "created_by",
+        "semester__classroom__title",
+        "credit_points",
+    )
+    search_fields = (
+        "slug",
+        "subject_code__istartswith",
+        "title__icontains",
+        "title__istartswith",
+    )
     autocomplete_fields = ["semester", "created_by"]
     list_select_related = ["semester", "created_by", "semester__classroom"]
     date_hierarchy = "created_at"
