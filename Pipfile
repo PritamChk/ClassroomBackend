@@ -37,7 +37,8 @@ python_version = "3.10"
 allow_prereleases = true
 
 [scripts]
-dev = "py manage.py runserver"
+dev = "py manage.py runserver 9000"
+serve = "waitress-serve --listen=*:8000 core.wsgi:application"
 db-update = "py manage.py makemigrations"
 db-apply = "py manage.py migrate"
 db_clear = "py manage.py reset_db"

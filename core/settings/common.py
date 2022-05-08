@@ -188,5 +188,5 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL = "accounts.BaseAccount"
 
-DOMAIN = "localhost:3000"  # TODO: change after frontend deployment
+DOMAIN = "localhost:8081"  # TODO: change after frontend deployment
 SITE_NAME = "Classroom[LMS]"
