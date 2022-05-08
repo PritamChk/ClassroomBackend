@@ -123,6 +123,9 @@ STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(
     BASE_DIR, "static"
 )  # This line will collect all static files
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"  # FIXME: if not works, delete these line
 
 # Default primary key field type
@@ -187,4 +190,3 @@ AUTH_USER_MODEL = "accounts.BaseAccount"
 
 DOMAIN = "localhost:3000"  # TODO: change after frontend deployment
 SITE_NAME = "Classroom[LMS]"
-
