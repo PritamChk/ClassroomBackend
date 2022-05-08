@@ -77,7 +77,9 @@ def create_allowed_students(sender, instance: Classroom, **kwargs):
 @receiver(post_save, sender=Classroom)
 def create_allowed_teacher(sender, instance: Classroom, created, **kwargs):
     if created:
-        file_abs_path: os.PathLike = os.path.abspath(instance.allowed_teacher_list.name)
+        file_abs_path: os.PathLike = os.path.join(
+            settings.MEDIA_ROOT, instance.allowed_teacher_list.name
+        )#FIXME: Not working on taths pc
         df = None
         if str(file_abs_path).split(".")[-1] == "csv":
             df = pd.read_csv(file_abs_path)
