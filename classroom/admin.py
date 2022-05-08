@@ -5,6 +5,8 @@ from .models import (
     Announcement,
     College,
     Classroom,
+    Notes,
+    NotesAttachmentFile,
     Student,
     AllowedTeacher,
     AllowedStudents,
@@ -206,3 +208,34 @@ class AnnouncementAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
     autocomplete_fields = ["subject", "posted_by"]
     search_fields = ["heading__icontains", "heading__istartswith", "body__icontains"]
+
+
+class NotesAttachmentFileAdminInline(admin.TabularInline):
+    model = NotesAttachmentFile
+    min_num = 0
+    extra = 1
+
+
+@admin.register(Notes)
+class NotesAdmin(admin.ModelAdmin):
+    inlines = [NotesAttachmentFileAdminInline]
+    list_display = (
+        "id",
+        "slug",
+        "title",
+        "description",
+        "created_at",
+        "updated_at",
+        "subject",
+        "posted_by",
+    )
+    list_filter = ("created_at", "updated_at", "subject", "posted_by")
+    search_fields = ("slug",)
+    date_hierarchy = "created_at"
+
+
+@admin.register(NotesAttachmentFile)
+class NotesAttachmentFileAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "file_path", "created_at", "notes")
+    list_filter = ("created_at", "notes")
+    date_hierarchy = "created_at"

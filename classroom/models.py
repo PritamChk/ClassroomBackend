@@ -2,6 +2,7 @@ from datetime import date
 from random import randint
 from uuid import uuid4
 
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.core.validators import (
@@ -331,7 +332,7 @@ class Announcement(models.Model):
     heading = models.TextField(_("Heading"), default="No Heading Given")
     body = models.TextField(_("Description[Optional] "), null=True, blank=True)
     created_at = models.DateTimeField(_("Created At "), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Created At "), auto_now=True)
+    updated_at = models.DateTimeField(_("Updated At "), auto_now=True)
     subject = models.ForeignKey(
         Subject, on_delete=models.CASCADE, related_name="announcements"
     )
@@ -347,3 +348,55 @@ class Announcement(models.Model):
 
     def heading_short(self):
         return f"{self.heading[:10]}..."
+
+
+class Notes(models.Model):
+    slug = AutoSlugField(
+        populate_from=["title", "subject__title", "posted_by__user__first_name"]
+    )
+    title = models.CharField(_("Title"), max_length=255)
+    description = models.TextField(_("Description[optional]"), null=True, blank=True)
+    created_at = models.DateTimeField(_("Created At "), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated At "), auto_now=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="notes")
+    posted_by = models.ForeignKey(
+        Teacher, on_delete=models.SET_NULL, related_name="created_notes", null=True
+    )
+
+    class Meta:
+        verbose_name_plural = "Notes"
+        ordering = ["title", "-created_at"]
+
+    def __str__(self) -> str:
+        return self.title
+
+
+class NotesAttachmentFile(models.Model):
+    title = AutoSlugField(
+        populate_from=["notes__title", "notes__subject__title", "created_at"],
+        editable=True,
+        null=True,
+        blank=False,
+    )
+    file_path = models.FileField(
+        _("Upload File Here"),
+        null=True,
+        blank=True,
+        upload_to=f"{settings.MEDIA_ROOT}/classroom/notes/%Y/%m/%d",
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["xlsx", "pdf", "doc"],
+                message="Please Upload XLSX/PDF/Doc file only",
+            )
+        ],
+    )
+    created_at = models.DateTimeField(_("Created At "), auto_now_add=True)
+    notes = models.ForeignKey(
+        Notes, on_delete=models.CASCADE, related_name="attached_files"
+    )
+
+    class Meta:
+        ordering = ["id"]
+
+    def __str__(self) -> str:
+        return str(self.file_path.name)
