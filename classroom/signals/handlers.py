@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from celery import shared_task
 from classroom.tasks import (
     send_email_after_mass_profile_creation,
@@ -39,7 +40,11 @@ def create_sems_for_new_classroom(sender, instance: Classroom, **kwargs):
 @shared_task
 @receiver(post_save, sender=Classroom)
 def create_allowed_students(sender, instance: Classroom, **kwargs):
-    file_abs_path: os.PathLike = os.path.abspath(instance.allowed_student_list.name)
+    file_abs_path = os.path.abspath(
+        os.path.join(
+            settings.BASE_DIR, settings.MEDIA_ROOT, instance.allowed_student_list.name
+        )
+    )
     df = None
     if str(file_abs_path).split(".")[-1] == "csv":
         df = pd.read_csv(file_abs_path)
@@ -77,9 +82,16 @@ def create_allowed_students(sender, instance: Classroom, **kwargs):
 @receiver(post_save, sender=Classroom)
 def create_allowed_teacher(sender, instance: Classroom, created, **kwargs):
     if created:
-        file_abs_path: os.PathLike = os.path.join(
-            settings.MEDIA_ROOT, instance.allowed_teacher_list.name
-        )#FIXME: Not working on taths pc
+        # import termcolor
+
+        # termcolor.cprint(str(instance.allowed_teacher_list.name))
+        file_abs_path = os.path.abspath(
+            os.path.join(
+                settings.BASE_DIR,
+                settings.MEDIA_ROOT,
+                instance.allowed_teacher_list.name,
+            )
+        )  # FIXME: Not working on taths pc
         df = None
         if str(file_abs_path).split(".")[-1] == "csv":
             df = pd.read_csv(file_abs_path)
