@@ -1,9 +1,7 @@
 import os
-from pathlib import Path
 from celery import shared_task
 from classroom.tasks import (
     send_email_after_mass_profile_creation,
-    # create_bulk_allowed_teacher,
 )
 
 import pandas as pd
@@ -17,7 +15,7 @@ from classroom.models import (
     User,
 )
 from django.conf import settings
-from django.core.mail import send_mail, send_mass_mail
+from django.core.mail import send_mail
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.http import BadHeaderError
@@ -56,22 +54,11 @@ def create_allowed_students(sender, instance: Classroom, **kwargs):
         AllowedStudents(classroom=instance, **args) for args in df.to_dict("records")
     ]
     AllowedStudents.objects.bulk_create(list_of_students)
-    # create_bulk_allowed_teacher_or_student.delay(df, instance, AllowedStudents)
     email_list = df["email"].to_list()
     subject = "Create Your Student Account"
     prompt = "please use your following mail id to sign up in the Classroom[LMS]"
-    # mails = [
-    #     (
-    #         subject,
-    #         f"{prompt} - \nUSED MAIL ID : {str(m)}",
-    #         settings.EMAIL_HOST_USER,
-    #         [m],
-    #     )
-    #     for m in email_list
-    # ]
     try:
         send_email_after_mass_profile_creation.delay(subject, prompt, email_list)
-        # send_mass_mail(mails, fail_silently=True)
     except BadHeaderError:
         print("Could not able to sen emails to students")
     os.remove(file_abs_path)
@@ -82,9 +69,6 @@ def create_allowed_students(sender, instance: Classroom, **kwargs):
 @receiver(post_save, sender=Classroom)
 def create_allowed_teacher(sender, instance: Classroom, created, **kwargs):
     if created:
-        # import termcolor
-
-        # termcolor.cprint(str(instance.allowed_teacher_list.name))
         file_abs_path = os.path.abspath(
             os.path.join(
                 settings.BASE_DIR,
@@ -112,18 +96,8 @@ def create_allowed_teacher(sender, instance: Classroom, created, **kwargs):
         email_list = df["email"].to_list()
         subject = "Create Your Teacher Account"
         prompt = "please use your following mail id to sign up in the Classroom[LMS]"
-        # mails = [
-        #     (
-        #         subject,
-        #         f"{prompt} - \nUSED MAIL ID : {m}",
-        #         settings.EMAIL_HOST_USER,
-        #         [m],
-        #     )
-        #     for m in email_list
-        # ]
         try:
             send_email_after_mass_profile_creation.delay(subject, prompt, email_list)
-            # send_mass_mail(mails, fail_silently=True)
         except BadHeaderError:
             print("Could not able to sen emails to students")
         os.remove(file_abs_path)
@@ -148,7 +122,7 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs
             s = Student.objects.create(
                 university_roll=university_roll, user=instance, classroom=classroom
             )
-            # TODO:send mail Abcd_1234
+            # TODO: Add some other info also in the mail
             subject = "Your Student Profile Has Been Created Successfully"
             msg = f"""
                 Student ID :{s.id}
