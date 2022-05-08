@@ -213,7 +213,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
 class NotesAttachmentFileAdminInline(admin.TabularInline):
     model = NotesAttachmentFile
     min_num = 0
-    extra = 1
+    extra = 0
 
 
 @admin.register(Notes)
