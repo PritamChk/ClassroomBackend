@@ -376,7 +376,7 @@ class NotesAttachmentFile(models.Model):
         populate_from=["notes__title", "notes__subject__title", "created_at"],
         editable=True,
         null=True,
-        blank=False,
+        blank=True,
     )
     file_path = models.FileField(
         _("Upload File Here"),
