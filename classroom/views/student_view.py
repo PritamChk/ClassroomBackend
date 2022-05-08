@@ -20,7 +20,7 @@ from ..models import Announcement, Classroom, Student, Subject, Teacher, Semeste
 
 
 @api_view(["GET"])
-def user_category(request, id):
+def user_category(request, id):  # TODO: Shift this code in other file
     my_tags = ["User Category"]
     if Teacher.objects.select_related("user").filter(user__id=id).exists():
         teacher = (
@@ -90,7 +90,7 @@ class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewS
 
 
 class SubjectsForStudentsViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    my_tags = ["subjects per sem [for student]"]
+    my_tags = ["subjects / sem [student]"]
     serializer_class = SubjectReadSerializer
     lookup_field = "slug"
 
@@ -102,8 +102,11 @@ class SubjectsForStudentsViewSet(ListModelMixin, RetrieveModelMixin, GenericView
         )  # FIXME: This might be slow in future. Req: Optimization
 
 
-class AnnouncementViewSet(ListModelMixin, GenericViewSet):
-    my_tags = ["subject -> announcement list"]
+class AnnouncementForStudentsViewSet(ListModelMixin, GenericViewSet):
+    """
+        Announcements for the particular subject will be shown in decreasing order
+    """
+    my_tags = ["announcements /subject  [student]"]
     serializer_class = AnnouncementsReadSerializer
 
     def get_queryset(self):
