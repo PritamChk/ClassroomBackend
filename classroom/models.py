@@ -306,26 +306,31 @@ class Student(models.Model):
         return self.classroom.college.name
 
 
-# class AllowedStudents(models.Model):
-#     email = models.EmailField(_("Email Id"), max_length=255)
-#     university_roll = models.PositiveBigIntegerField(
-#         _("University Roll"),
-#         help_text="Your University Roll No - (e.g. - 13071020030)",
-#     )
-#     classroom = models.ForeignKey(
-#         Classroom, on_delete=models.CASCADE, related_name="allowed_students"
-#     )
+class AllowedStudents(models.Model):
+    email = models.EmailField(_("Email Id"), max_length=255)
+    university_roll = models.PositiveBigIntegerField(
+        _("University Roll"),
+        help_text="Your University Roll No - (e.g. - 13071020030)",
+    )
+    classroom = models.ForeignKey(
+        Classroom, on_delete=models.CASCADE, related_name="allowed_students"
+    )
 
-#     class Meta:
-#         unique_together = [
-#             ("university_roll", "classroom"),
-#             ("university_roll", "email"),
-#             ("classroom", "email"),
-#         ]
-#         verbose_name_plural = "Allowed Students"
+    class Meta:
+        unique_together = [
+            ("university_roll", "classroom"),
+            ("university_roll", "email"),
+            ("classroom", "email"),
+        ]
+        ordering = ["university_roll"]
+        verbose_name_plural = "Allowed Students"
 
-#     def __str__(self) -> str:
-#         return f"{self.email} || {self.university_roll}"
+    def __str__(self) -> str:
+        return f"{self.email} || {self.university_roll}"
+
+    @admin.display(ordering=["classroom__title"])
+    def get_classroom_name(self):
+        return self.classroom.title
 
 
 # class Subject(models.Model):
