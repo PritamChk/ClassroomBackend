@@ -101,127 +101,132 @@ class Teacher(models.Model):
 #     ) #TODO: add streams in other table if possible
 
 
-# class Classroom(models.Model):
-#     slug = AutoSlugField(
-#         populate_from=[
-#             "title",
-#             "level",
-#             "stream",
-#             "section",
-#             "start_year",
-#             "end_year",
-#             "college",
-#         ],
-#         editable=True,
-#     )
-#     title = models.CharField(_("Classroom Name"), max_length=255, null=True, blank=True)
-#     level = models.CharField(
-#         _("Level"),
-#         max_length=40,
-#         choices=LEVEL_CHOICES.choices,
-#         default=LEVEL_CHOICES.UnderGraduate,
-#         help_text="e.g - Masters/Bachelors",
-#     )
-#     stream = models.CharField(
-#         _("Your Stream"),
-#         max_length=255,
-#     ) #TODO: Make Drop Down
-#     start_year = models.PositiveSmallIntegerField(
-#         _("Starting Year"),
-#         # default=2022,
-#         default=date.today().year - 2,
-#         db_index=True,
-#         help_text="Write your session starting year (e.g. - 2020)",
-#         validators=[
-#             MinValueValidator(2000, "You can't select year less than 2000"),
-#             MaxValueValidator(
-#                 (date.today().year + 1),  # FIXME: Make this dynamic
-#                 # 2023,
-#                 "Max Year Can be selected only 1 year ahead of current year",
-#             ),
-#         ],
-#     )
-#     end_year = models.PositiveSmallIntegerField(
-#         _("Ending Year"),
-#         db_index=True,
-#         default=date.today().year,
-#         help_text="Write your session ending year (e.g. - 2020)",
-#         validators=[
-#             MinValueValidator(2000, "You can't select year less than 2000"),
-#             MaxValueValidator(
-#                 (2200),  # FIXME: Make this dynamic
-#                 "Max Year Can be selected only 1 year ahead of current year",
-#             ),
-#         ],
-#     )
-#     section = models.CharField(
-#         _("Section(optional)"),
-#         max_length=10,
-#         null=True,
-#         blank=True,
-#         choices=SECTION_CHOICES.choices,
-#         default=SECTION_CHOICES.A,
-#     )
-#     no_of_semesters = models.PositiveSmallIntegerField(
-#         _("Number of Sem"),
-#         default=4,
-#         validators=[
-#             MinValueValidator(4, "Min Course Duration is of 2 Years(4 semesters)"),
-#             MaxValueValidator(14),
-#             is_no_of_sem_even,
-#         ],
-#     )
-#     current_sem = models.PositiveSmallIntegerField(
-#         _("On Going Sem"),
-#         validators=[
-#             MinValueValidator(1),
-#             MaxValueValidator(14),
-#         ],
-#     )
-#     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-#     college = models.ForeignKey(
-#         College, on_delete=models.CASCADE, related_name="classrooms"
-#     )
-#     allowed_student_list = models.FileField(
-#         _("Upload student List File(.csv)"),
-#         # default=f"{settings.BASE_DIR}/{settings.MEDIA_ROOT}/classroom/students/no_file_of_student.csv",
-#         null=True,
-#         blank=True,
-#         upload_to=f"{settings.MEDIA_ROOT}/classroom/students/",
-#         validators=[
-#             FileExtensionValidator(
-#                 allowed_extensions=["csv", "xlsx"],
-#                 message="Please Upload CSV/XLSX file only",
-#             )
-#         ],
-#     )
-#     # TODO: use this to add teachers in classrooms and vice-versa
-#     # allowed_teacher_list = models.FileField(
-#     #     _("Upload teacher List File(.csv)"),
-#     #     upload_to=f"{settings.MEDIA_ROOT}/classroom/teachers/",
-#     #     # default=f"{settings.BASE_DIR}/{settings.MEDIA_ROOT}/classroom/teacher/no_file_of_teacher.csv",
-#     #     null=True,
-#     #     blank=True,
-#     #     validators=[
-#     #         FileExtensionValidator(
-#     #             allowed_extensions=["csv", "xlsx"],
-#     #             message="Please Upload CSV/XLSX file only",
-#     #         )
-#     #     ],
-#     # )
+class Classroom(models.Model):
+    slug = AutoSlugField(
+        populate_from=[
+            "title",
+            "level",
+            "stream",
+            "section",
+            "start_year",
+            "end_year",
+            "college",
+        ],
+    )
+    title = models.CharField(_("Classroom Name"), max_length=255, null=True, blank=True)
+    level = models.CharField(
+        _("Level"),
+        max_length=40,
+        choices=LEVEL_CHOICES.choices,
+        default=LEVEL_CHOICES.UnderGraduate,
+        help_text="e.g - Masters/Bachelors",
+    )
+    stream = models.CharField(
+        _("Your Stream"),
+        max_length=255,
+    )  # TODO: Make Drop Down
+    start_year = models.PositiveSmallIntegerField(
+        _("Starting Year"),
+        # default=2022,
+        default=date.today().year - 2,
+        db_index=True,
+        help_text="Write your session starting year (e.g. - 2020)",
+        validators=[
+            MinValueValidator(2000, "You can't select year less than 2000"),
+            MaxValueValidator(
+                (date.today().year + 1),  # FIXME: Make this dynamic
+                # 2023,
+                "Max Year Can be selected only 1 year ahead of current year",
+            ),
+        ],
+    )
+    end_year = models.PositiveSmallIntegerField(
+        _("Ending Year"),
+        db_index=True,
+        default=date.today().year,
+        help_text="Write your session ending year (e.g. - 2020)",
+        validators=[
+            MinValueValidator(2000, "You can't select year less than 2000"),
+            MaxValueValidator(
+                (2200),  # FIXME: Make this dynamic
+                "Max Year Can be selected only 1 year ahead of current year",
+            ),
+        ],
+    )
+    section = models.CharField(
+        _("Section(optional)"),
+        max_length=10,
+        null=True,
+        blank=True,
+        choices=SECTION_CHOICES.choices,
+        default=SECTION_CHOICES.A,
+    )
+    no_of_semesters = models.PositiveSmallIntegerField(
+        _("Number of Sem"),
+        default=4,
+        validators=[
+            MinValueValidator(4, "Min Course Duration is of 2 Years(4 semesters)"),
+            MaxValueValidator(14),
+            is_no_of_sem_even,
+        ],
+    )
+    current_sem = models.PositiveSmallIntegerField(
+        _("On Going Sem"),
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(14),
+        ],
+    )
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    college = models.ForeignKey(
+        College, on_delete=models.CASCADE, related_name="classrooms"
+    )
+    allowed_student_list = models.FileField(
+        _("Upload Student List File(.csv/xl)"),
+        null=True,
+        blank=True,
+        upload_to=f"{settings.MEDIA_ROOT}/classroom/students/",
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["csv", "xlsx"],
+                message="Please Upload CSV/XLSX file only",
+            )
+        ],
+    )
+    # TODO: use this to add teachers in classrooms and vice-versa
+    allowed_teacher_list = models.FileField(
+        _("Upload Teacher List File(.csv/xl)"),
+        upload_to=f"{settings.MEDIA_ROOT}/classroom/teachers/",
+        null=True,
+        blank=True,
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["csv", "xlsx"],
+                message="Please Upload CSV/XLSX file only",
+            )
+        ],
+    )
 
-#     class Meta:
-#         unique_together = [
-#             "level",
-#             "stream",
-#             "start_year",
-#             "end_year",
-#             "section",
-#             "college",
-#         ]
+    class Meta:
+        unique_together = [
+            "level",
+            "stream",
+            "start_year",
+            "end_year",
+            "section",
+            "college",
+        ]
+        ordering = [
+            "college__name",
+            "level",
+            "-start_year",
+            "-end_year",
+            "section",
+            "stream",
+        ]  #
 
-#     def __str__(self) -> str:
-#         return self.title
+    def __str__(self) -> str:
+        return self.title
 
 
 # class Semester(models.Model):
