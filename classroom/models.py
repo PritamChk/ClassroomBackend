@@ -62,6 +62,38 @@ class AllowedTeacher(models.Model):
         return f"{self.email}"
 
 
+class Teacher(models.Model):
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="teacher_profile",
+    )
+    college = models.ForeignKey(
+        College, on_delete=models.CASCADE, related_name="teachers"
+    )
+    # classroom = models.ManyToManyField(Classroom, related_name="teachers", blank=True) #TODO: Add this after classroom table created
+    class Meta:
+        ordering = ["user__first_name", "user__last_name"]
+
+    def __str__(self) -> str:
+        return f"{self.user.first_name} |  {self.user.id} | {self.id}"
+
+    @admin.display(ordering=["user__email"])
+    def get_email(self):
+        return self.user.email
+
+    @admin.display(ordering=["user__first_name"])
+    def get_email(self):
+        return self.user.first_name
+
+    @admin.display(ordering=["user__last_name"])
+    def get_email(self):
+        return self.user.last_name
+
+
 # class Stream(models.Model):
 #     name = models.CharField(_("Stream Name"), max_length=255)
 #     college = models.ForeignKey(
@@ -211,28 +243,6 @@ class AllowedTeacher(models.Model):
 
 #     def __str__(self) -> str:
 #         return str(self.sem_no)
-
-
-# class Teacher(models.Model):
-#     """
-#     # Teacher
-#     ----
-#         -  user : FKey to User()
-#         -  classroom : m2m classroom
-#     """
-
-#     user = models.OneToOneField(
-#         User,
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#         related_name="teacher_profile",
-#     )
-#     college = models.ForeignKey(College,on_delete=models.CASCADE,related_name='teachers')
-#     classroom = models.ManyToManyField(Classroom, related_name="teachers", blank=True)
-
-#     def __str__(self) -> str:
-#         return f"{self.user.first_name}   {self.user.last_name}"
 
 
 # class Student(models.Model):
