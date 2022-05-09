@@ -411,25 +411,25 @@ class Announcement(models.Model):
         return f"{self.heading[:10]}..."
 
 
-# class Notes(models.Model):
-#     slug = AutoSlugField(
-#         populate_from=["title", "subject__title", "posted_by__user__first_name"]
-#     )
-#     title = models.CharField(_("Title"), max_length=255)
-#     description = models.TextField(_("Description[optional]"), null=True, blank=True)
-#     created_at = models.DateTimeField(_("Created At "), auto_now_add=True)
-#     updated_at = models.DateTimeField(_("Updated At "), auto_now=True)
-#     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="notes")
-#     posted_by = models.ForeignKey(
-#         Teacher, on_delete=models.SET_NULL, related_name="created_notes", null=True
-#     )
+class Notes(models.Model):
+    slug = AutoSlugField(
+        populate_from=["title", "subject__title", "posted_by__user__first_name"]
+    )
+    title = models.CharField(_("Title"), max_length=255)
+    description = models.TextField(_("Description[optional]"), null=True, blank=True)
+    created_at = models.DateTimeField(_("Created At "), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated At "), auto_now=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="notes")
+    posted_by = models.ForeignKey(
+        Teacher, on_delete=models.SET_NULL, related_name="created_notes", null=True
+    )
 
-#     class Meta:
-#         verbose_name_plural = "Notes"
-#         ordering = ["title", "-created_at"]
+    class Meta:
+        verbose_name_plural = "Notes"
+        ordering = ["title", "-created_at"]
 
-#     def __str__(self) -> str:
-#         return self.title
+    def __str__(self) -> str:
+        return self.title
 
 
 # class NotesAttachmentFile(models.Model):
