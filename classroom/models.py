@@ -432,32 +432,32 @@ class Notes(models.Model):
         return self.title
 
 
-# class NotesAttachmentFile(models.Model):
-#     title = AutoSlugField(
-#         populate_from=["notes__title", "notes__subject__title", "created_at"],
-#         editable=True,
-#         null=True,
-#         blank=True,
-#     )
-#     file_path = models.FileField(
-#         _("Upload File Here"),
-#         null=True,
-#         blank=True,
-#         upload_to=f"{settings.MEDIA_ROOT}/classroom/notes/%Y/%m/%d",
-#         validators=[
-#             FileExtensionValidator(
-#                 allowed_extensions=["xlsx", "pdf", "doc"],
-#                 message="Please Upload XLSX/PDF/Doc file only",
-#             )
-#         ],
-#     )
-#     created_at = models.DateTimeField(_("Created At "), auto_now_add=True)
-#     notes = models.ForeignKey(
-#         Notes, on_delete=models.CASCADE, related_name="attached_files"
-#     )
+class NotesAttachmentFile(models.Model):
+    title = AutoSlugField(
+        populate_from=["notes__title", "notes__subject__title", "created_at"],
+        editable=True,
+        null=True,
+        blank=True,
+    )
+    file_path = models.FileField(
+        _("Upload File Here"),
+        null=True,
+        blank=True,
+        upload_to=f"{settings.MEDIA_ROOT}/classroom/notes/%Y/%m/%d",
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["xlsx", "pdf", "doc"],
+                message="Please Upload XLSX/PDF/Doc file only",
+            )
+        ],
+    )
+    created_at = models.DateTimeField(_("Created At "), auto_now_add=True)
+    notes = models.ForeignKey(
+        Notes, on_delete=models.CASCADE, related_name="attached_files"
+    )
 
-#     class Meta:
-#         ordering = ["id"]
+    class Meta:
+        ordering = ["id"]
 
-#     def __str__(self) -> str:
-#         return str(self.file_path.name)
+    def __str__(self) -> str:
+        return str(self.file_path.name)
