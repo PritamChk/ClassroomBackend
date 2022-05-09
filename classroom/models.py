@@ -44,11 +44,22 @@ class College(models.Model):
             )
         ],
     )
+
     class Meta:
         ordering = ["name", "city", "state"]
 
     def __str__(self) -> str:
         return f"{self.name} - {self.city}"
+
+
+class AllowedTeacher(models.Model):
+    email = models.EmailField(_("Email Id"), max_length=255)
+    college = models.ForeignKey(
+        College, on_delete=models.CASCADE, related_name="allowed_teachers"
+    )
+
+    def __str__(self) -> str:
+        return f"{self.email}"
 
 
 # class Stream(models.Model):
@@ -82,7 +93,7 @@ class College(models.Model):
 #     stream = models.CharField(
 #         _("Your Stream"),
 #         max_length=255,
-#     ) #TODO: Make Drop Down 
+#     ) #TODO: Make Drop Down
 #     start_year = models.PositiveSmallIntegerField(
 #         _("Starting Year"),
 #         # default=2022,
@@ -271,16 +282,6 @@ class College(models.Model):
 #     @admin.display(ordering="classroom__college__name")
 #     def college_name(self):
 #         return self.classroom.college.name
-
-
-# class AllowedTeacher(models.Model):
-#     email = models.EmailField(_("Email Id"), max_length=255)
-#     college = models.ForeignKey(
-#         College, on_delete=models.CASCADE, related_name="allowed_teachers"
-#     )
-
-#     def __str__(self) -> str:
-#         return f"{self.email}"
 
 
 # class AllowedStudents(models.Model):
