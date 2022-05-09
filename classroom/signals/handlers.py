@@ -37,54 +37,97 @@ def create_sems_for_new_classroom(sender, instance: Classroom, **kwargs):
 
 @shared_task
 @receiver(post_save, sender=Classroom)
-def create_allowed_students(sender, instance: Classroom, **kwargs):
-    file_abs_path = os.path.abspath(
-        os.path.join(
-            settings.BASE_DIR, settings.MEDIA_ROOT, instance.allowed_student_list.name
+def create_allowed_students(sender, instance: Classroom, created, **kwargs):
+    if created:
+        file_abs_path = None
+        student_file_path = os.path.join(
+            settings.BASE_DIR,
+            settings.MEDIA_ROOT,
+            instance.allowed_student_list.name,
         )
-    )
-    df = None
-    if str(file_abs_path).split(".")[-1] == "csv":
-        df = pd.read_csv(file_abs_path)
-    elif str(file_abs_path).split(".")[-1] == "xlsx":
-        df = pd.read_excel(file_abs_path)
-    else:
-        raise FileNotFoundError("File ta nei")  # FIXME: Don't Raise error in frontend
-    list_of_students = [
-        AllowedStudents(classroom=instance, **args) for args in df.to_dict("records")
-    ]
-    AllowedStudents.objects.bulk_create(list_of_students)
-    email_list = df["email"].to_list()
-    subject = "Create Your Student Account"
-    prompt = "please use your following mail id to sign up in the Classroom[LMS]"
-    try:
-        send_email_after_mass_profile_creation.delay(subject, prompt, email_list)
-    except BadHeaderError:
-        print("Could not able to sen emails to students")
-    os.remove(file_abs_path)
-    Classroom.objects.update(allowed_student_list="")
+        if os.path.exists(student_file_path):
+            file_abs_path = os.path.abspath(student_file_path)
+        else:
+            send_mail(
+                "Allowed Student List Does Not Exists",
+                "You Have To Create Allowed Students Manually",
+                settings.EMAIL_HOST_USER,
+                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            )
+            return None
+
+        df = None
+        if str(file_abs_path).split(".")[-1] == "csv":
+            df = pd.read_csv(file_abs_path)
+        elif str(file_abs_path).split(".")[-1] == "xlsx":
+            df = pd.read_excel(file_abs_path)
+        # else:
+        #     raise FileNotFoundError(
+        #         "File ta nei"
+        #     )  # FIXME: Don't Raise error in frontend
+        if df.get(["university_roll", "email"], default=None) == None:
+            send_mail(
+                "Wrong File Structure",
+                "column name should be => 'university_roll' | 'email' ",
+                settings.EMAIL_HOST_USER,
+                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            )
+            return None
+        list_of_students = [
+            AllowedStudents(classroom=instance, **args)
+            for args in df.to_dict("records")
+        ]
+        AllowedStudents.objects.bulk_create(list_of_students)
+        email_list = df["email"].to_list()
+        subject = "Create Your Student Account"
+        prompt = "please use your following mail id to sign up in the Classroom[LMS]"
+        try:
+            send_email_after_mass_profile_creation.delay(subject, prompt, email_list)
+        except BadHeaderError:
+            print("Could not able to sen emails to students")
+        os.remove(file_abs_path)
+        Classroom.objects.update(allowed_student_list="")
 
 
 @shared_task
 @receiver(post_save, sender=Classroom)
 def create_allowed_teacher(sender, instance: Classroom, created, **kwargs):
     if created:
-        file_abs_path = os.path.abspath(
-            os.path.join(
-                settings.BASE_DIR,
-                settings.MEDIA_ROOT,
-                instance.allowed_teacher_list.name,
+        file_abs_path = None
+        teacher_file_path = os.path.join(
+            settings.BASE_DIR,
+            settings.MEDIA_ROOT,
+            instance.allowed_teacher_list.name,
+        )
+        if os.path.exists(teacher_file_path):
+            file_abs_path = os.path.abspath(teacher_file_path)
+        else:
+            send_mail(
+                "Allowed Teacher List Does Not Exists",
+                "You Have To Create Allowed Teachers Manually",
+                settings.EMAIL_HOST_USER,
+                ["dba@admin.com"],  # FIXME: Send mail to session dba
             )
-        )  # FIXME: Not working on taths pc
+            return None
+
         df = None
         if str(file_abs_path).split(".")[-1] == "csv":
-            df = pd.read_csv(file_abs_path)
+            df: pd.DataFrame = pd.read_csv(file_abs_path)
         elif str(file_abs_path).split(".")[-1] == "xlsx":
             df = pd.read_excel(file_abs_path)
-        else:
-            raise FileNotFoundError(
-                "File ta nei"
-            )  # FIXME: Don't Raise error in frontend
+        # else:
+        #     raise FileNotFoundError(
+        #         "File ta nei"
+        #     )  # FIXME: Don't Raise error in frontend
+
+        if df.get(["email"], default=None) == None:
+            send_mail(
+                "Wrong File Structure",
+                "column name should be => 'email' ",
+                settings.EMAIL_HOST_USER,
+                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            )
+            return None
         df_dict = df.to_dict("records")
         print(df_dict)
         list_of_teachers = [

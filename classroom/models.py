@@ -15,6 +15,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_extensions.db.fields import AutoSlugField
 
+from classroom.constants import LEVEL_CHOICES, SECTION_CHOICES
+from classroom.validators import is_no_of_sem_even
+
 # from classroom.managers import ClassroomManager
 
 User = get_user_model()
@@ -55,7 +58,9 @@ class Classroom(models.Model):
     level = models.CharField(
         _("Level"),
         max_length=40,
-        help_text="e.g - UG/PG/MASTERS",
+        choices=LEVEL_CHOICES.choices,
+        default=LEVEL_CHOICES.UnderGraduate,
+        help_text="e.g - Masters/Bachelors",
     )
     stream = models.CharField(
         _("Your Stream"),
@@ -94,7 +99,8 @@ class Classroom(models.Model):
         max_length=10,
         null=True,
         blank=True,
-        default="A",
+        choices=SECTION_CHOICES.choices,
+        default=SECTION_CHOICES.A,
     )
     no_of_semesters = models.PositiveSmallIntegerField(
         _("Number of Sem"),
@@ -102,6 +108,7 @@ class Classroom(models.Model):
         validators=[
             MinValueValidator(4, "Min Course Duration is of 2 Years(4 semesters)"),
             MaxValueValidator(14),
+            is_no_of_sem_even,
         ],
     )
     current_sem = models.PositiveSmallIntegerField(
@@ -117,10 +124,10 @@ class Classroom(models.Model):
     )
     allowed_student_list = models.FileField(
         _("Upload student List File(.csv)"),
-        # null=,
-        # blank=True,
+        default=None,
+        null=True,
+        blank=True,
         upload_to=f"{settings.MEDIA_ROOT}/classroom/students/",
-        default="",
         validators=[
             FileExtensionValidator(
                 allowed_extensions=["csv", "xlsx"],
@@ -131,9 +138,9 @@ class Classroom(models.Model):
     allowed_teacher_list = models.FileField(
         _("Upload teacher List File(.csv)"),
         upload_to=f"{settings.MEDIA_ROOT}/classroom/teachers/",
-        # null=True,
-        # blank=True,
-        default="",
+        default=None,
+        null=True,
+        blank=True,
         validators=[
             FileExtensionValidator(
                 allowed_extensions=["csv", "xlsx"],
