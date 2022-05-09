@@ -74,7 +74,7 @@ class Teacher(models.Model):
     college = models.ForeignKey(
         College, on_delete=models.CASCADE, related_name="teachers"
     )
-    # classroom = models.ManyToManyField(Classroom, related_name="teachers", blank=True) #TODO: Add this after classroom table created
+    classroom = models.ManyToManyField('Classroom', related_name="teachers", blank=True) #TODO: Add this after classroom table created
     class Meta:
         ordering = ["user__first_name", "user__last_name"]
 
@@ -223,7 +223,7 @@ class Classroom(models.Model):
             "-end_year",
             "section",
             "stream",
-        ]  #
+        ]  
 
     def __str__(self) -> str:
         return self.title
