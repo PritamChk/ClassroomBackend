@@ -124,7 +124,7 @@ class Classroom(models.Model):
     )
     allowed_student_list = models.FileField(
         _("Upload student List File(.csv)"),
-        default=None,
+        # default=f"{settings.BASE_DIR}/{settings.MEDIA_ROOT}/classroom/students/no_file_of_student.csv",
         null=True,
         blank=True,
         upload_to=f"{settings.MEDIA_ROOT}/classroom/students/",
@@ -138,7 +138,7 @@ class Classroom(models.Model):
     allowed_teacher_list = models.FileField(
         _("Upload teacher List File(.csv)"),
         upload_to=f"{settings.MEDIA_ROOT}/classroom/teachers/",
-        default=None,
+        # default=f"{settings.BASE_DIR}/{settings.MEDIA_ROOT}/classroom/teacher/no_file_of_teacher.csv",
         null=True,
         blank=True,
         validators=[

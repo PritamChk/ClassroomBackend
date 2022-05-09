@@ -39,6 +39,8 @@ def create_sems_for_new_classroom(sender, instance: Classroom, **kwargs):
 @receiver(post_save, sender=Classroom)
 def create_allowed_students(sender, instance: Classroom, created, **kwargs):
     if created:
+        if instance.allowed_student_list == None:
+            return None
         file_abs_path = None
         student_file_path = os.path.join(
             settings.BASE_DIR,
@@ -65,7 +67,7 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
         #     raise FileNotFoundError(
         #         "File ta nei"
         #     )  # FIXME: Don't Raise error in frontend
-        if df.get(["university_roll", "email"], default=None) == None:
+        if not ("university_roll" in df.columns and "email" in df.columns):
             send_mail(
                 "Wrong File Structure",
                 "column name should be => 'university_roll' | 'email' ",
@@ -93,6 +95,8 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
 @receiver(post_save, sender=Classroom)
 def create_allowed_teacher(sender, instance: Classroom, created, **kwargs):
     if created:
+        if instance.allowed_teacher_list == None:
+            return None
         file_abs_path = None
         teacher_file_path = os.path.join(
             settings.BASE_DIR,
@@ -120,7 +124,7 @@ def create_allowed_teacher(sender, instance: Classroom, created, **kwargs):
         #         "File ta nei"
         #     )  # FIXME: Don't Raise error in frontend
 
-        if df.get(["email"], default=None) == None:
+        if not "email" in df.columns:
             send_mail(
                 "Wrong File Structure",
                 "column name should be => 'email' ",
