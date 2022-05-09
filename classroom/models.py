@@ -74,7 +74,10 @@ class Teacher(models.Model):
     college = models.ForeignKey(
         College, on_delete=models.CASCADE, related_name="teachers"
     )
-    classroom = models.ManyToManyField('Classroom', related_name="teachers", blank=True) #TODO: Add this after classroom table created
+    classroom = models.ManyToManyField(
+        "Classroom", related_name="teachers", blank=True
+    )  # TODO: Add this after classroom table created
+
     class Meta:
         ordering = ["user__first_name", "user__last_name"]
 
@@ -223,31 +226,36 @@ class Classroom(models.Model):
             "-end_year",
             "section",
             "stream",
-        ]  
+        ]
 
     def __str__(self) -> str:
         return self.title
 
 
-# class Semester(models.Model):
-#     classroom = models.ForeignKey(
-#         Classroom, on_delete=models.CASCADE, related_name="semesters"
-#     )
-#     sem_no = models.PositiveSmallIntegerField(
-#         _("Semester No"),
-#         # editable=False,
-#         validators=[
-#             MinValueValidator(1, "sem value > 0"),
-#             MaxValueValidator(14, "sem value < 15"),
-#         ],
-#     )
-#     is_current_sem = models.BooleanField(_("is this sem going on? "), default=False)
+class Semester(models.Model):
+    classroom = models.ForeignKey(
+        Classroom, on_delete=models.CASCADE, related_name="semesters"
+    )
+    sem_no = models.PositiveSmallIntegerField(
+        _("Semester No"),
+        # editable=False,
+        validators=[
+            MinValueValidator(1, "sem value > 0"),
+            MaxValueValidator(14, "sem value < 15"),
+        ],
+    )
+    is_current_sem = models.BooleanField(_("is this sem going on? "), default=False)
 
-#     class Meta:
-#         unique_together = ["classroom", "sem_no"]
+    class Meta:
+        unique_together = ["classroom", "sem_no"]
+        ordering = ["classroom__title", "sem_no"]
 
-#     def __str__(self) -> str:
-#         return str(self.sem_no)
+    def __str__(self) -> str:
+        return str(self.sem_no)
+
+    @admin.display(ordering=["classroom__title"])
+    def classroom_name(self):
+        return self.classroom.title
 
 
 # class Student(models.Model):
