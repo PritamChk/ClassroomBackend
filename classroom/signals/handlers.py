@@ -40,6 +40,12 @@ def create_sems_for_new_classroom(sender, instance: Classroom, **kwargs):
 def create_allowed_students(sender, instance: Classroom, created, **kwargs):
     if created:
         if instance.allowed_student_list == None:
+            send_mail(
+                "Allowed Student List Does Not Exists",
+                "You Have To Create Allowed Students Manually",
+                settings.EMAIL_HOST_USER,
+                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            )
             return None
         file_abs_path = None
         student_file_path = os.path.join(
@@ -96,6 +102,12 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
 def create_allowed_teacher(sender, instance: Classroom, created, **kwargs):
     if created:
         if instance.allowed_teacher_list == None:
+            send_mail(
+                "Allowed Teacher List Does Not Exists",
+                "You Have To Create Allowed Teachers Manually",
+                settings.EMAIL_HOST_USER,
+                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            )
             return None
         file_abs_path = None
         teacher_file_path = os.path.join(
