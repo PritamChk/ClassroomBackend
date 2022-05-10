@@ -61,18 +61,24 @@ class AllowedTeacherAdmin(admin.ModelAdmin):
     ]
 
 
-# @admin.register(Teacher)
-# class TeacherAdmin(admin.ModelAdmin):
-#     list_display = ("id", 'first_name','last_name' ,"user" , 'college')
-#     list_filter = ("user", "college")
-#     list_prefetch_related = ["classroom"]
-#     list_select_related = ["user",'college']
-#     autocomplete_fields = ["user", "classroom",'college']
-#     search_fields = [
-#         "user__first_name__istartswith",
-#         "user__last_name__istartswith",
-#     ]
-
+@admin.register(Teacher)
+class TeacherAdmin(admin.ModelAdmin):
+    list_display = ("id", "get_first_name", "get_last_name", "user", "college")
+    list_display_links = ["id", "get_first_name", "user"]
+    list_filter = ("user", "college")
+    list_prefetch_related = ["classroom"]
+    list_select_related = ["user", "college"]
+    autocomplete_fields = [
+        "user",
+        # "classroom", #TODO: Add later
+        "college",
+    ]
+    search_fields = [
+        "user__first_name__istartswith",
+        "user__last_name__istartswith",
+        "college",
+        # "classroom" #TODO: Add later
+    ]
 
 
 # @admin.register(Classroom)
@@ -160,7 +166,6 @@ class AllowedTeacherAdmin(admin.ModelAdmin):
 #     autocomplete_fields = ["classroom", "user"]
 #     list_select_related = ["user", "classroom", "classroom__college"]
 #     readonly_fields = ["university_roll"]
-
 
 
 # @admin.register(AllowedStudents)
