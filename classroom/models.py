@@ -89,11 +89,11 @@ class Teacher(models.Model):
         return self.user.email
 
     @admin.display(ordering=["user__first_name"])
-    def get_email(self):
+    def get_first_name(self):
         return self.user.first_name
 
     @admin.display(ordering=["user__last_name"])
-    def get_email(self):
+    def get_last_name(self):
         return self.user.last_name
 
 
