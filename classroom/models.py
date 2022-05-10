@@ -74,15 +74,15 @@ class Teacher(models.Model):
     college = models.ForeignKey(
         College, on_delete=models.CASCADE, related_name="teachers"
     )
-    classroom = models.ManyToManyField(
-        "Classroom", related_name="teachers", blank=True
-    )  # TODO: Add this after classroom table created
+    # classroom = models.ManyToManyField(
+    #     "Classroom", related_name="teachers", blank=True
+    # )  # TODO: Add this after classroom table created
 
     class Meta:
         ordering = ["user__first_name", "user__last_name"]
 
     def __str__(self) -> str:
-        return f"{self.user.first_name} |  {self.user.id} | {self.id}"
+        return f"{self.user.first_name} {self.user.last_name} |  {self.user.email} "
 
     @admin.display(ordering=["user__email"])
     def get_email(self):
@@ -189,6 +189,7 @@ class Classroom(models.Model):
             )
         ],
     )
+    teachers = models.ManyToManyField(Teacher, related_name="classrooms")
     # TODO: use this to add teachers in classrooms and vice-versa
     allowed_teacher_list = models.FileField(
         _("Upload Teacher List File(.csv/xl)"),
