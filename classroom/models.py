@@ -32,7 +32,7 @@ class College(models.Model):
     address = models.TextField(null=True, blank=True)
     # TODO: send signal by college instead of Classroom
     allowed_teacher_list = models.FileField(
-        _("Upload teacher List File(.csv)"),
+        _("Upload teacher List File(.csv/.xl)"),
         upload_to=f"{settings.MEDIA_ROOT}/classroom/teachers/",
         # default=f"{settings.BASE_DIR}/{settings.MEDIA_ROOT}/classroom/teacher/no_file_of_teacher.csv",
         null=True,
