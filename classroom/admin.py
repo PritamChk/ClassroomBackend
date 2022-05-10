@@ -34,10 +34,10 @@ class CollegeAdmin(admin.ModelAdmin):
         "allowed_teacher_list",
     )
     search_fields = (
-        "name__istartswith",
+        "name",
         "address__icontains",
-        "city__istartswith",
-        "state__istartswith",
+        "city",
+        "state",
     )
     inlines = [AllowedTeacherInline]
     list_display_links = ["slug", "name"]
@@ -66,7 +66,7 @@ class TeacherAdmin(admin.ModelAdmin):
     list_display = ("id", "get_first_name", "get_last_name", "user", "college")
     list_display_links = ["id", "get_first_name", "user"]
     list_filter = ("user", "college")
-    list_prefetch_related = ["classroom"]
+    list_prefetch_related = ["classrooms"]
     list_select_related = ["user", "college"]
     autocomplete_fields = [
         "user",
@@ -81,45 +81,47 @@ class TeacherAdmin(admin.ModelAdmin):
     ]
 
 
-# @admin.register(Classroom)
-# class ClassroomAdmin(admin.ModelAdmin):
-#     list_display = (
-#         "title",
-#         "id",
-#         "level",
-#         "stream",
-#         "start_year",
-#         "end_year",
-#         "section",
-#         "no_of_semesters",
-#         "current_sem",
-#         "created_at",
-#         "college",
-#     )
-#     readonly_fields = ["slug"]
-#     list_filter = (
-#         "created_at",
-#         "college",
-#         "level",
-#         "stream",
-#         "start_year",
-#         "end_year",
-#         "section",
-#         "no_of_semesters",
-#         "current_sem",
-#     )
-#     search_fields = [
-#         "title__icontains",
-#         "title__istartswith",
-#         "level__icontains",
-#         "level__iexact",
-#         "stream__icontains",
-#         "stream__istartswith",
-#         "section__iexact",
-#     ]
-#     list_select_related = ["college"]
-#     autocomplete_fields = ["college"]
-#     date_hierarchy = "created_at"
+@admin.register(Classroom)
+class ClassroomAdmin(admin.ModelAdmin):
+    list_display = (
+        'slug',
+        'title',
+        'level',
+        'stream',
+        'start_year',
+        'end_year',
+        'section',
+        'no_of_semesters',
+        'current_sem',
+        'college',
+        'id',
+    )
+    list_display_links = ['slug','title','id']
+    readonly_fields = ["slug"]
+    list_filter = (
+        "created_at",
+        "college",
+        "level",
+        "stream",
+        "start_year",
+        "end_year",
+        "section",
+        "no_of_semesters",
+        "current_sem",
+    )
+    search_fields = [
+        "title__icontains",
+        # "title",
+        "level__icontains",
+        # "level",
+        "stream__icontains",
+        # "stream",
+        "section",
+    ]
+    list_select_related = ["college"]
+    list_prefetch_related = ["teachers"]
+    autocomplete_fields = ["college",'teachers']
+    date_hierarchy = "created_at"
 
 
 # @admin.register(Semester)
