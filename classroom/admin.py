@@ -45,6 +45,36 @@ class CollegeAdmin(admin.ModelAdmin):
     readonly_fields = ["slug"]
 
 
+@admin.register(AllowedTeacher)
+class AllowedTeacherAdmin(admin.ModelAdmin):
+    list_display = ("id", "email", "college")
+    list_display_links = ["id", "email"]
+    list_select_related = ["college"]
+    autocomplete_fields = ["college"]
+    list_filter = ["college"]
+    search_fields = [
+        "email",
+        "college__name__icontains",
+        "college__name__istartswith",
+        "college__city__istartswith",
+        "college__state__icontains",
+    ]
+
+
+# @admin.register(Teacher)
+# class TeacherAdmin(admin.ModelAdmin):
+#     list_display = ("id", 'first_name','last_name' ,"user" , 'college')
+#     list_filter = ("user", "college")
+#     list_prefetch_related = ["classroom"]
+#     list_select_related = ["user",'college']
+#     autocomplete_fields = ["user", "classroom",'college']
+#     search_fields = [
+#         "user__first_name__istartswith",
+#         "user__last_name__istartswith",
+#     ]
+
+
+
 # @admin.register(Classroom)
 # class ClassroomAdmin(admin.ModelAdmin):
 #     list_display = (
@@ -131,36 +161,6 @@ class CollegeAdmin(admin.ModelAdmin):
 #     list_select_related = ["user", "classroom", "classroom__college"]
 #     readonly_fields = ["university_roll"]
 
-
-# @admin.register(Teacher)
-# class TeacherAdmin(admin.ModelAdmin):
-#     list_display = ("id", "user")
-#     list_filter = ("user", "classroom")
-#     list_prefetch_related = ["classroom"]
-#     list_select_related = ["user"]
-#     autocomplete_fields = ["user", "classroom"]
-#     raw_id_fields = ("classroom",)
-#     search_fields = [
-#         # "user",
-#         "user__first_name__istartswith",
-#         "user__last_name__istartswith",
-#     ]
-
-
-# @admin.register(AllowedTeacher)
-# class AllowedTeacherAdmin(admin.ModelAdmin):
-#     list_display = ("email", "id")
-#     raw_id_fields = ("classrooms",)
-#     list_prefetch_related = ["classrooms"]
-#     autocomplete_fields = ["classrooms"]
-#     list_filter = ["classrooms"]
-#     search_fields = [
-#         "email",
-#         "classrooms__title__icontains",
-#         "classrooms__stream__icontains",
-#         "classrooms__level__icontains",
-#         # "classrooms__college__name__istartswith", #FIXME:search in allowed teacher
-#     ]
 
 
 # @admin.register(AllowedStudents)
