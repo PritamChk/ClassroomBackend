@@ -97,13 +97,6 @@ class Teacher(models.Model):
         return self.user.last_name
 
 
-# class Stream(models.Model):
-#     name = models.CharField(_("Stream Name"), max_length=255)
-#     college = models.ForeignKey(
-#         College, on_delete=models.CASCADE, related_name="streams"
-#     ) #TODO: add streams in other table if possible
-
-
 class Classroom(models.Model):
     slug = AutoSlugField(
         populate_from=[
