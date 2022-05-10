@@ -9,7 +9,10 @@ DEBUG = True
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv('DB_NAME',"classroom",),
+        "NAME": os.getenv(
+            "DB_NAME",
+            "classroom",
+        ),
         "USER": os.getenv("DB_USER", "pritam"),
         "PASSWORD": os.getenv("DB_USER_PASSWORD", "Abcd_1234"),
         "HOST": "localhost",
