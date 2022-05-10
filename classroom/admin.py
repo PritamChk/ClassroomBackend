@@ -63,40 +63,40 @@ class AllowedTeacherAdmin(admin.ModelAdmin):
 
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
-    list_display = ("id", "get_first_name", "get_last_name", "user", "college")
+    list_display = ["id", "get_first_name", "get_last_name", "user", "college"]
     list_display_links = ["id", "get_first_name", "user"]
     list_filter = ("user", "college")
     list_prefetch_related = ["classrooms"]
     list_select_related = ["user", "college"]
     autocomplete_fields = [
         "user",
-        # "classroom", #TODO: Add later
+        "classrooms",  # TODO: Add later
         "college",
     ]
     search_fields = [
         "user__first_name__istartswith",
         "user__last_name__istartswith",
         "college",
-        # "classroom" #TODO: Add later
+        "classrooms",  # TODO: Add later
     ]
 
 
 @admin.register(Classroom)
 class ClassroomAdmin(admin.ModelAdmin):
     list_display = (
-        'slug',
-        'title',
-        'level',
-        'stream',
-        'start_year',
-        'end_year',
-        'section',
-        'no_of_semesters',
-        'current_sem',
-        'college',
-        'id',
+        "slug",
+        "title",
+        "level",
+        "stream",
+        "start_year",
+        "end_year",
+        "section",
+        "no_of_semesters",
+        "current_sem",
+        "college",
+        "id",
     )
-    list_display_links = ['slug','title','id']
+    list_display_links = ["slug", "title", "id"]
     readonly_fields = ["slug"]
     list_filter = (
         "created_at",
@@ -120,141 +120,142 @@ class ClassroomAdmin(admin.ModelAdmin):
     ]
     list_select_related = ["college"]
     list_prefetch_related = ["teachers"]
-    autocomplete_fields = ["college",'teachers']
+    autocomplete_fields = ["college", "teachers"]
     date_hierarchy = "created_at"
 
 
-# @admin.register(Semester)
-# class SemesterAdmin(admin.ModelAdmin):
-#     list_display = ("id", "classroom", "sem_no", "is_current_sem")
-#     list_filter = ("classroom", "is_current_sem", "classroom__college")
-#     list_editable = ["is_current_sem"]
-#     autocomplete_fields = ["classroom"]
-#     list_select_related = ["classroom", "classroom__college"]
-#     search_fields = [
-#         "classroom__title__icontains",
-#         "classroom__level__icontains",
-#         "classroom__stream__icontains",
-#     ]
+@admin.register(Semester)
+class SemesterAdmin(admin.ModelAdmin):
+    list_display = ("id", "classroom", "sem_no", "is_current_sem")
+    list_filter = ("classroom", "is_current_sem", "classroom__college")
+    list_editable = ["is_current_sem"]
+    autocomplete_fields = ["classroom"]
+    list_select_related = ["classroom", "classroom__college"]
+    search_fields = [
+        "classroom__title__icontains",
+        "classroom__level__icontains",
+        "classroom__stream__icontains",
+    ]
 
 
-# @admin.register(Student)
-# class StudentAdmin(admin.ModelAdmin):
-#     list_display = (
-#         "user",
-#         "university_roll",
-#         "id",
-#         "first_name",
-#         "last_name",
-#         "college_name",
-#         "classroom",
-#     )
-#     search_fields = [
-#         "user__first_name__istartswith",
-#         "user__last_name__istartswith",
-#         "user__email__contains",
-#         "classroom__stream__icontains",
-#         "university_roll",
-#         "classroom__level__iexact",
-#     ]
-#     list_filter = (
-#         "classroom",
-#         "classroom__college__name",
-#         "classroom__level",
-#         "classroom__stream",
-#         "classroom__start_year",
-#         "classroom__end_year",
-#     )
-#     autocomplete_fields = ["classroom", "user"]
-#     list_select_related = ["user", "classroom", "classroom__college"]
-#     readonly_fields = ["university_roll"]
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "university_roll",
+        "id",
+        "first_name",
+        "last_name",
+        "college_name",
+        "classroom",
+    )
+    search_fields = [
+        "user__first_name__istartswith",
+        "user__last_name__istartswith",
+        "user__email__contains",
+        "classroom__stream__icontains",
+        "university_roll",
+        "classroom__level__iexact",
+    ]
+    list_filter = (
+        "classroom",
+        "classroom__college__name",
+        "classroom__level",
+        "classroom__stream",
+        "classroom__start_year",
+        "classroom__end_year",
+    )
+    autocomplete_fields = ["classroom", "user"]
+    list_select_related = ["user", "classroom", "classroom__college"]
+    list_display_links= ["user", "first_name"]
+    readonly_fields = ["university_roll"]
 
 
-# @admin.register(AllowedStudents)
-# class AllowedStudentsAdmin(admin.ModelAdmin):
-#     list_display = ("email", "id", "university_roll", "classroom")
-#     # list_editable = ["classroom"] #TODO: Open Later if needed
-#     list_filter = ["classroom"]
-#     raw_id_fields = ("classroom",)
-#     list_select_related = ["classroom"]
-#     autocomplete_fields = ["classroom"]
-#     search_fields = ["university_roll", "email"]
+@admin.register(AllowedStudents)
+class AllowedStudentsAdmin(admin.ModelAdmin):
+    list_display = ("email", "id", "university_roll", "classroom")
+    # list_editable = ["classroom"] #TODO: Open Later if needed
+    list_filter = ["classroom"]
+    raw_id_fields = ("classroom",)
+    list_select_related = ["classroom"]
+    autocomplete_fields = ["classroom"]
+    search_fields = ["university_roll", "email"]
 
 
-# @admin.register(Subject)
-# class SubjectAdmin(admin.ModelAdmin):
-#     list_display = (
-#         "slug",
-#         "id",
-#         "subject_code",
-#         "title",
-#         "subject_type",
-#         "credit_points",
-#         "semester",
-#         "created_at",
-#         "created_by",
-#     )
-#     list_filter = (
-#         "semester",
-#         "created_by",
-#         "semester__classroom__title",
-#         "credit_points",
-#     )
-#     search_fields = (
-#         "slug",
-#         "subject_code__istartswith",
-#         "title__icontains",
-#         "title__istartswith",
-#     )
-#     autocomplete_fields = ["semester", "created_by"]
-#     list_select_related = ["semester", "created_by", "semester__classroom"]
-#     date_hierarchy = "created_at"
+@admin.register(Subject)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = (
+        "slug",
+        "id",
+        "subject_code",
+        "title",
+        "subject_type",
+        "credit_points",
+        "semester",
+        "created_at",
+        "created_by",
+    )
+    list_filter = (
+        "semester",
+        "created_by",
+        "semester__classroom__title",
+        "credit_points",
+    )
+    search_fields = (
+        "slug",
+        "subject_code__istartswith",
+        "title__icontains",
+        "title__istartswith",
+    )
+    autocomplete_fields = ["semester", "created_by"]
+    list_select_related = ["semester", "created_by", "semester__classroom"]
+    date_hierarchy = "created_at"
 
 
-# @admin.register(Announcement)
-# class AnnouncementAdmin(admin.ModelAdmin):
-#     list_display = (
-#         "heading_short",
-#         "id",
-#         "body",
-#         "created_at",
-#         "updated_at",
-#         "subject",
-#         "posted_by",
-#     )
-#     list_filter = ("created_at", "updated_at", "subject", "posted_by")
-#     list_select_related = ["subject", "posted_by"]
-#     date_hierarchy = "created_at"
-#     autocomplete_fields = ["subject", "posted_by"]
-#     search_fields = ["heading__icontains", "heading__istartswith", "body__icontains"]
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = (
+        "heading_short",
+        "id",
+        "body",
+        "created_at",
+        "updated_at",
+        "subject",
+        "posted_by",
+    )
+    list_filter = ("created_at", "updated_at", "subject", "posted_by")
+    list_select_related = ["subject", "posted_by"]
+    date_hierarchy = "created_at"
+    autocomplete_fields = ["subject", "posted_by"]
+    search_fields = ["heading__icontains", "heading__istartswith", "body__icontains"]
 
 
-# class NotesAttachmentFileAdminInline(admin.TabularInline):
-#     model = NotesAttachmentFile
-#     min_num = 0
-#     extra = 0
+class NotesAttachmentFileAdminInline(admin.TabularInline):
+    model = NotesAttachmentFile
+    min_num = 0
+    extra = 0
 
 
-# @admin.register(Notes)
-# class NotesAdmin(admin.ModelAdmin):
-#     inlines = [NotesAttachmentFileAdminInline]
-#     list_display = (
-#         "id",
-#         "slug",
-#         "title",
-#         "description",
-#         "created_at",
-#         "updated_at",
-#         "subject",
-#         "posted_by",
-#     )
-#     list_filter = ("created_at", "updated_at", "subject", "posted_by")
-#     search_fields = ("slug",)
-#     date_hierarchy = "created_at"
+@admin.register(Notes)
+class NotesAdmin(admin.ModelAdmin):
+    inlines = [NotesAttachmentFileAdminInline]
+    list_display = (
+        "id",
+        "slug",
+        "title",
+        "description",
+        "created_at",
+        "updated_at",
+        "subject",
+        "posted_by",
+    )
+    list_filter = ("created_at", "updated_at", "subject", "posted_by")
+    search_fields = ("slug",)
+    date_hierarchy = "created_at"
 
 
-# @admin.register(NotesAttachmentFile)
-# class NotesAttachmentFileAdmin(admin.ModelAdmin):
-#     list_display = ("id", "title", "file_path", "created_at", "notes")
-#     list_filter = ("created_at", "notes")
-#     date_hierarchy = "created_at"
+@admin.register(NotesAttachmentFile)
+class NotesAttachmentFileAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "file_path", "created_at", "notes")
+    list_filter = ("created_at", "notes")
+    date_hierarchy = "created_at"
