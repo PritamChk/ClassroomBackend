@@ -67,8 +67,8 @@ class Teacher(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
+        # null=True,
+        # blank=True,
         related_name="teacher_profile",
     )
     college = models.ForeignKey(
