@@ -1,36 +1,48 @@
-# # -*- coding: utf-8 -*-
-# from django.contrib import admin
+# -*- coding: utf-8 -*-
+from django.contrib import admin
 
-# from .models import (
-#     Announcement,
-#     College,
-#     Classroom,
-#     Notes,
-#     NotesAttachmentFile,
-#     Student,
-#     AllowedTeacher,
-#     AllowedStudents,
-#     Semester,
-#     Subject,
-#     Teacher,
-# )
+from .models import (
+    Announcement,
+    College,
+    Classroom,
+    Notes,
+    NotesAttachmentFile,
+    Student,
+    AllowedTeacher,
+    AllowedStudents,
+    Semester,
+    Subject,
+    Teacher,
+)
 
 
-# @admin.register(College)
-# class CollegeAdmin(admin.ModelAdmin):
-#     list_display = ("name", "id", "city", "state", "address")
-#     search_fields = ("name", "address", "city", "state")
-#     list_filter = ["city", "state"]
-#     readonly_fields = ["slug"]
+class AllowedTeacherInline(admin.StackedInline):
+    model = AllowedTeacher
+    min_num = 0
+    extra = 0
 
-#     # @admin.display() #FIXME: Show no of classrooms per college
-#     # def no_of_classes(self, obj: College):
-#     #     return (
-#     #         College.objects.prefetch_related("classrooms")
-#     #         .filter(id=obj.id)
-#     #         .annotate(count=Count("classrooms"))
-#     #         .get("count")
-#     #     )
+
+@admin.register(College)
+class CollegeAdmin(admin.ModelAdmin):
+    list_display = (
+        "slug",
+        "name",
+        "id",
+        "city",
+        "state",
+        "address",
+        "allowed_teacher_list",
+    )
+    search_fields = (
+        "name__istartswith",
+        "address__icontains",
+        "city__istartswith",
+        "state__istartswith",
+    )
+    inlines = [AllowedTeacherInline]
+    list_display_links = ["slug", "name"]
+    list_filter = ["city", "state"]
+    readonly_fields = ["slug"]
 
 
 # @admin.register(Classroom)
