@@ -213,9 +213,7 @@ def create_allowed_teacher_for_classroom_level(
             .filter(college=instance.college)
             .values_list("email", flat=True)
         )
-        from termcolor import cprint
 
-        cprint(college_allowed_teacher_list, "red")
         list_of_teachers = []
         rejected_teacher_mails = []
         for allowed_teacher in df_dict:
@@ -237,11 +235,8 @@ def create_allowed_teacher_for_classroom_level(
                 ["dba@admin.com"],
                 "",
             )
-        # list_of_teachers = [
-        #     AllowedTeacher(classroom=instance, **args) for args in df.to_dict("records")
-        # ]
+
         AllowedTeacherClassroomLevel.objects.bulk_create(list_of_teachers)
-        # create_bulk_allowed_teacher.delay(df_dict, instance)
         email_list = df["email"].to_list()
         subject = "Teacher Account Associated With Classroom"
         prompt = (
@@ -289,7 +284,17 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs
             .filter(user=instance)
             .exists()
         ):
-            t = Teacher.objects.create(user=instance)
+            college_detail = College.objects.get(
+                pk=(
+                    AllowedTeacher.objects.filter(email=instance.email)
+                    .select_related("college")
+                    .values_list('college',flat=True)
+                )[0]
+            )
+            from termcolor import cprint
+
+            cprint(college_detail, "red")
+            t = Teacher.objects.create(user=instance, college=college_detail)
             subject = "Your Teacher Profile Has Been Created Successfully"
             msg = f"""
                 Teacher ID :{t.id}
