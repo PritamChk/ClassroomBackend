@@ -129,4 +129,4 @@ class NotesForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet)
     def get_queryset(self):
         return Notes.objects.select_related(
             "subject", "posted_by", "posted_by__user"
-        ).filter(subject__slug=self.kwargs["subject_slug"])
+        ).prefetch_related('attached_files').filter(subject__slug=self.kwargs["subject_slug"])

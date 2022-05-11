@@ -1,5 +1,5 @@
 from xml.etree.ElementInclude import include
-from rest_framework.serializers import ModelSerializer as ms
+from rest_framework.serializers import ModelSerializer as ms,IntegerField
 from accounts.serializers import CurrentUserSerializer
 from classroom.models import Teacher, User
 
@@ -17,10 +17,10 @@ class MinimalUserDetailsSerializer(ms):
 
 class MinimalTeacherDetailsSerializer(ms):
     user = MinimalUserDetailsSerializer()
-
+    teacher_id  = IntegerField(source = 'id')
     class Meta:
         model = Teacher
-        fields = ["user", "id"]
+        fields = ["user", "teacher_id"]
         # depth = 1
 
 

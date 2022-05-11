@@ -255,6 +255,7 @@ class NotesAdmin(admin.ModelAdmin):
         "subject",
         "posted_by",
     )
+    list_display_links = ['slug',"title"]
     list_filter = ("created_at", "updated_at", "subject", "posted_by")
     search_fields = ("slug",)
     date_hierarchy = "created_at"
@@ -263,6 +264,7 @@ class NotesAdmin(admin.ModelAdmin):
 @admin.register(NotesAttachmentFile)
 class NotesAttachmentFileAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "file_path", "created_at", "notes")
+    list_display_links = ["title"]
     list_filter = ("created_at", "notes")
     date_hierarchy = "created_at"
 

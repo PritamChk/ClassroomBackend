@@ -1,8 +1,9 @@
-from rest_framework.serializers import ModelSerializer as ms, SlugField
+from rest_framework.serializers import ModelSerializer as ms, SlugField,FilePathField,FileField
 from classroom.models import (
     College,
     Classroom,
     Notes,
+    NotesAttachmentFile,
     Semester,
     Subject,
     Announcement,
@@ -78,9 +79,17 @@ class AnnouncementsReadSerializer(ms):
         )
 
 
+class NotesFileReadByStudentSerializer(ms):
+    file_path = FileField(max_length=None, use_url=True, required=False)
+    class Meta:
+        model = NotesAttachmentFile
+        fields = ["title", "file_path", "created_at"]
+
+
 class NotesReadForStudentSerializer(ms):
     posted_by = MinimalTeacherDetailsSerializer()
-    subject = SlugField(source="subject.slug")
+    subject_slug = SlugField(source="subject.slug")
+    attached_files = NotesFileReadByStudentSerializer(many=True)
 
     class Meta:
         model = Notes
@@ -90,6 +99,8 @@ class NotesReadForStudentSerializer(ms):
             "description",
             "created_at",
             "updated_at",
-            "subject",
+            "subject_slug",
             "posted_by",
+            "attached_files",
         )
+        # depth = 1
