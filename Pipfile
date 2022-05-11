@@ -49,3 +49,4 @@ admin-code = 'py manage.py admin_generator classroom'
 redis = "docker run -d -p 6379:6379 redis"
 celery = "celery -A core worker -l info -P eventlet -E"
 cmd = "py manage.py shell_plus"
+lint = "black ./"
