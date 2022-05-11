@@ -2,6 +2,7 @@
 from django.contrib import admin
 
 from .models import (
+    AllowedTeacherClassroomLevel,
     Announcement,
     College,
     Classroom,
@@ -167,7 +168,7 @@ class StudentAdmin(admin.ModelAdmin):
     )
     autocomplete_fields = ["classroom", "user"]
     list_select_related = ["user", "classroom", "classroom__college"]
-    list_display_links= ["user", "first_name"]
+    list_display_links = ["user", "first_name"]
     readonly_fields = ["university_roll"]
 
 
@@ -259,3 +260,11 @@ class NotesAttachmentFileAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "file_path", "created_at", "notes")
     list_filter = ("created_at", "notes")
     date_hierarchy = "created_at"
+
+
+@admin.register(AllowedTeacherClassroomLevel)
+class AllowedTeacherClassroomLevelAdmin(admin.ModelAdmin):
+    list_display = ("id", "email", "classroom")
+    list_display_links = ["email"]
+    search_fields = ["email", "classroom"]
+    list_filter = ("classroom",)
