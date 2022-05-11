@@ -1,6 +1,18 @@
-from rest_framework.serializers import ModelSerializer as ms
-from classroom.models import College, Classroom, Semester, Subject, Announcement, Teacher
-from classroom.serializers.teacher import TeacherReadForSubjectSerializer
+from rest_framework.serializers import ModelSerializer as ms, SlugField
+from classroom.models import (
+    College,
+    Classroom,
+    Notes,
+    Semester,
+    Subject,
+    Announcement,
+    Teacher,
+)
+from classroom.serializers.teacher import (
+    MinimalTeacherDetailsSerializer,
+    MinimalUserDetailsSerializer,
+    TeacherReadForSubjectSerializer,
+)
 
 
 class CollegeReadSerializer(ms):
@@ -10,9 +22,12 @@ class CollegeReadSerializer(ms):
 
 
 class SemesterReadSerializer(ms):
+    classroom__slug = SlugField(source="classroom.slug")
+
     class Meta:
         model = Semester
-        fields = "__all__"
+        fields = ["classroom__slug", "sem_no", "is_current_sem"]
+        select_related_fields = ["classroom"]
 
 
 class ClassroomReadSerializer(ms):
@@ -33,13 +48,11 @@ class ClassroomReadSerializer(ms):
             "created_at",
             "college",
         )
-        # depth=2
-        # select_related_fields = ["college"] #FIXME: This won't work
-        # prefetch_related_fields = ["semesters"] #FIXME: This won't work
 
 
 class SubjectReadSerializer(ms):
     created_by = TeacherReadForSubjectSerializer()
+
     class Meta:
         model = Subject
         fields = (
@@ -62,4 +75,21 @@ class AnnouncementsReadSerializer(ms):
             "body",
             "created_at",
             "updated_at",
+        )
+
+
+class NotesReadForStudentSerializer(ms):
+    posted_by = MinimalTeacherDetailsSerializer()
+    subject = SlugField(source="subject.slug")
+
+    class Meta:
+        model = Notes
+        fields = (
+            "slug",
+            "title",
+            "description",
+            "created_at",
+            "updated_at",
+            "subject",
+            "posted_by",
         )

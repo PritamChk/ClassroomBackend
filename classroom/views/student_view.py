@@ -1,6 +1,7 @@
 from classroom.serializers.classroom import (
     AnnouncementsReadSerializer,
     ClassroomReadSerializer,
+    NotesReadForStudentSerializer,
     SemesterReadSerializer,
     SubjectReadSerializer,
 )
@@ -16,7 +17,7 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from ..models import Announcement, Classroom, Student, Subject, Teacher, Semester
+from ..models import Announcement, Classroom, Notes, Student, Subject, Teacher, Semester
 
 
 @api_view(["GET"])
@@ -81,7 +82,7 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
 class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     my_tags = ["semester for student"]
     serializer_class = SemesterReadSerializer
-
+    # lookup_field = 'id'
     def get_queryset(self):
         sem = Semester.objects.select_related("classroom").filter(
             classroom__slug=self.kwargs["classroom_slug"]
@@ -104,8 +105,9 @@ class SubjectsForStudentsViewSet(ListModelMixin, RetrieveModelMixin, GenericView
 
 class AnnouncementForStudentsViewSet(ListModelMixin, GenericViewSet):
     """
-        Announcements for the particular subject will be shown in decreasing order
+    Announcements for the particular subject will be shown in decreasing order
     """
+
     my_tags = ["announcements /subject  [student]"]
     serializer_class = AnnouncementsReadSerializer
 
@@ -113,3 +115,18 @@ class AnnouncementForStudentsViewSet(ListModelMixin, GenericViewSet):
         return Announcement.objects.select_related("subject").filter(
             subject__slug=self.kwargs["subject_slug"]
         )
+
+
+class NotesForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+    """
+    Notes for the particular subject will be shown in decreasing order
+    """
+
+    my_tags = ["notes/subject [student]"]
+    serializer_class = NotesReadForStudentSerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        return Notes.objects.select_related(
+            "subject", "posted_by", "posted_by__user"
+        ).filter(subject__slug=self.kwargs["subject_slug"])
