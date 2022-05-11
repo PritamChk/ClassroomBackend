@@ -1,5 +1,6 @@
 import os
 from celery import shared_task
+from classroom.serializers import teacher
 from classroom.tasks import (
     send_email_after_mass_profile_creation,
 )
@@ -337,3 +338,18 @@ def auto_join_teacher_to_classes(sender, instance: Teacher, created, **kwargs):
             instance.classrooms.add(*qset)
         except:
             cprint("already assigned classrooms to teacher ", "yellow")
+
+
+@receiver(post_save, sender=AllowedTeacherClassroomLevel)
+def assign_classroom_to_existing_teacher(
+    sender, instance: AllowedTeacherClassroomLevel, created, **kwargs
+):
+    classroom = Classroom.objects.get(pk=instance.classroom.id)
+    teacher_query = Teacher.objects.select_related("user").filter(
+        user__email=instance.email
+    )
+    if teacher_query.exists():
+        teacher_query.first().classrooms.add(classroom)
+        subject = "Sir You have been Assigned A new Class"
+        msg = f"Classroom - {classroom.title}"
+        send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
