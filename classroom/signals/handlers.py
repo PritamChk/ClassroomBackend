@@ -19,7 +19,7 @@ from classroom.models import (
 )
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.http import BadHeaderError
 
@@ -219,8 +219,11 @@ def create_allowed_teacher_for_classroom_level(
         rejected_teacher_mails = []
         for allowed_teacher in df_dict:
             if allowed_teacher["email"] in college_allowed_teacher_list:
-                list_of_teachers.append(
-                    AllowedTeacherClassroomLevel(classroom=instance, **allowed_teacher)
+                # list_of_teachers.append(
+                #     AllowedTeacherClassroomLevel(classroom=instance, **allowed_teacher)
+                # )
+                AllowedTeacherClassroomLevel.objects.create(
+                    classroom=instance, **allowed_teacher
                 )
             else:
                 rejected_teacher_mails.append(allowed_teacher["email"])
@@ -236,8 +239,7 @@ def create_allowed_teacher_for_classroom_level(
                 ["dba@admin.com"],
                 "",
             )
-
-        AllowedTeacherClassroomLevel.objects.bulk_create(list_of_teachers)
+        # AllowedTeacherClassroomLevel.objects.bulk_create(list_of_teachers)
         email_list = df["email"].to_list()
         subject = "Teacher Account Associated With Classroom"
         prompt = (
@@ -346,15 +348,32 @@ def auto_join_teacher_to_classes(sender, instance: Teacher, created, **kwargs):
 def assign_classroom_to_existing_teacher(
     sender, instance: AllowedTeacherClassroomLevel, created, **kwargs
 ):
-    classroom = Classroom.objects.get(pk=instance.classroom.id)
-    teacher_query = Teacher.objects.select_related("user").filter(
-        user__email=instance.email
+    from termcolor import cprint
+
+    t = (
+        "assign_classroom_to_existing_teacher "
+        + instance.email
+        + "\n---> "
+        + str(created)
     )
-    if teacher_query.exists():
-        teacher_query.first().classrooms.add(classroom)
-        subject = "Sir You have been Assigned A new Class"
-        msg = f"Classroom - {classroom.title}"
-        send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+    cprint(t, "red")
+    if created:
+        classroom = Classroom.objects.get(pk=instance.classroom.id)
+        cprint(classroom, "red")
+        teacher_query = Teacher.objects.select_related("user").filter(
+            user__email=instance.email
+        )
+        cprint(str(teacher_query.exists())+" -> "+instance.email, "blue")
+        if teacher_query.exists():
+            teacher = teacher_query.first()
+            teacher.classrooms.add(classroom)
+            teacher.save()
+            for cl in teacher.classrooms.all():
+                cprint("Classrooms of teacher -> ",'cyan')
+                cprint(cl,'cyan')
+            subject = "Sir You have been Assigned A new Class"
+            msg = f"Classroom - {classroom.title}"
+            send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
 
 
 @shared_task
