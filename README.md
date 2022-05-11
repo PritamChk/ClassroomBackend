@@ -11,6 +11,7 @@
 ---
 
 > - [Pritam Chakraborty](https://github.com/PritamChk)
+> - [Tathagata Das](https://github.com/TathagataDas99/)
 > - [Rimi Mondal](https://github.com/RimiDeb13)
 
 > #### Project Start Date : 5-Feb-2022
