@@ -127,6 +127,11 @@ class NotesForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet)
     lookup_field = "slug"
 
     def get_queryset(self):
-        return Notes.objects.select_related(
-            "subject", "posted_by", "posted_by__user"
-        ).prefetch_related('attached_files').filter(subject__slug=self.kwargs["subject_slug"])
+        return (
+            Notes.objects.select_related("subject", "posted_by", "posted_by__user")
+            .prefetch_related("attached_files")
+            .filter(subject__slug=self.kwargs["subject_slug"])
+        )
+
+
+# TODO: Add Assignment View
