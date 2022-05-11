@@ -394,7 +394,7 @@ class Subject(models.Model):
         ordering = ["-created_at", "title", "-credit_points"]
 
     def __str__(self) -> str:
-        return self.slug
+        return f"{self.title} - {self.subject_code}"
 
 
 class Announcement(models.Model):
