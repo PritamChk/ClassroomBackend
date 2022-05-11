@@ -66,7 +66,7 @@ class AllowedTeacherAdmin(admin.ModelAdmin):
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ["id", "get_first_name", "get_last_name", "user", "college"]
     list_display_links = ["id", "get_first_name", "user"]
-    list_filter = ("user", "college")
+    list_filter = ("user", "college", "classrooms__title")
     list_prefetch_related = ["classrooms"]
     list_select_related = ["user", "college"]
     autocomplete_fields = [
@@ -102,6 +102,7 @@ class ClassroomAdmin(admin.ModelAdmin):
     list_filter = (
         "created_at",
         "college",
+        "teachers",
         "level",
         "stream",
         "start_year",

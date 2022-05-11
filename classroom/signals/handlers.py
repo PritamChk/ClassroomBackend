@@ -288,7 +288,7 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs
                 pk=(
                     AllowedTeacher.objects.filter(email=instance.email)
                     .select_related("college")
-                    .values_list('college',flat=True)
+                    .values_list("college", flat=True)
                 )[0]
             )
             from termcolor import cprint
@@ -322,3 +322,18 @@ def delete_user_on_student_delete(sender, instance: Student, **kwargs):
     user = User.objects.filter(pk=instance.user.id)
     if user.exists():
         user.delete()
+
+
+@receiver(post_save, sender=Teacher)
+def auto_join_teacher_to_classes(sender, instance: Teacher, created, **kwargs):
+    from termcolor import cprint
+
+    if created:
+        qset = Classroom.objects.prefetch_related("allowed_teachers").filter(
+            allowed_teachers__email=instance.user.email
+        )
+        cprint(list(qset), "blue")
+        try:
+            instance.classrooms.add(*qset)
+        except:
+            cprint("already assigned classrooms to teacher ", "yellow")
