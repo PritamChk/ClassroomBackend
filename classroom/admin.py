@@ -255,7 +255,7 @@ class NotesAdmin(admin.ModelAdmin):
         "subject",
         "posted_by",
     )
-    list_display_links = ['slug',"title"]
+    list_display_links = ["slug", "title"]
     list_filter = ("created_at", "updated_at", "subject", "posted_by")
     search_fields = ("slug",)
     date_hierarchy = "created_at"

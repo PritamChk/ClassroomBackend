@@ -9,20 +9,54 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('classroom', '0006_semester'),
+        ("classroom", "0006_semester"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Student',
+            name="Student",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('university_roll', models.PositiveBigIntegerField(blank=True, help_text='Your University Roll No - (e.g. - 13071020030)', null=True, verbose_name='University Roll')),
-                ('classroom', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='students', to='classroom.classroom')),
-                ('user', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='student_profile', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "university_roll",
+                    models.PositiveBigIntegerField(
+                        blank=True,
+                        help_text="Your University Roll No - (e.g. - 13071020030)",
+                        null=True,
+                        verbose_name="University Roll",
+                    ),
+                ),
+                (
+                    "classroom",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="students",
+                        to="classroom.classroom",
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="student_profile",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['user__first_name', 'user__last_name'],
+                "ordering": ["user__first_name", "user__last_name"],
             },
         ),
     ]

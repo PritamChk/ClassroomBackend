@@ -1,4 +1,9 @@
-from rest_framework.serializers import ModelSerializer as ms, SlugField,FilePathField,FileField
+from rest_framework.serializers import (
+    ModelSerializer as ms,
+    SlugField,
+    FilePathField,
+    FileField,
+)
 from classroom.models import (
     College,
     Classroom,
@@ -81,6 +86,7 @@ class AnnouncementsReadSerializer(ms):
 
 class NotesFileReadByStudentSerializer(ms):
     file_path = FileField(max_length=None, use_url=True, required=False)
+
     class Meta:
         model = NotesAttachmentFile
         fields = ["title", "file_path", "created_at"]

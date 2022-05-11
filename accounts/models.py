@@ -57,6 +57,6 @@ class BaseAccount(AbstractUser):
     REQUIRED_FIELDS = ["first_name", "last_name"]
 
     class Meta:
-        ordering = ["first_name", "last_name","email"]
+        ordering = ["first_name", "last_name", "email"]
         verbose_name = "User"
         verbose_name_plural = "Users"

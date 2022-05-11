@@ -1,8 +1,9 @@
 """
 CORE URLS
 """
-from django.urls import path,include
+from django.urls import path, include
 from .views import *
+
 urlpatterns = [
-    path('',test,name="test-url"),
+    path("", test, name="test-url"),
 ]

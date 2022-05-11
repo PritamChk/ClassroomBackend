@@ -8,25 +8,70 @@ import django_extensions.db.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('classroom', '0010_announcement'),
+        ("classroom", "0010_announcement"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Notes',
+            name="Notes",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', django_extensions.db.fields.AutoSlugField(blank=True, editable=False, populate_from=['title', 'subject__title', 'posted_by__user__first_name'])),
-                ('title', models.CharField(max_length=255, verbose_name='Title')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='Description[optional]')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At ')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated At ')),
-                ('posted_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='created_notes', to='classroom.teacher')),
-                ('subject', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notes', to='classroom.subject')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "slug",
+                    django_extensions.db.fields.AutoSlugField(
+                        blank=True,
+                        editable=False,
+                        populate_from=[
+                            "title",
+                            "subject__title",
+                            "posted_by__user__first_name",
+                        ],
+                    ),
+                ),
+                ("title", models.CharField(max_length=255, verbose_name="Title")),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, null=True, verbose_name="Description[optional]"
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At "),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated At "),
+                ),
+                (
+                    "posted_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="created_notes",
+                        to="classroom.teacher",
+                    ),
+                ),
+                (
+                    "subject",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="notes",
+                        to="classroom.subject",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Notes',
-                'ordering': ['title', '-created_at'],
+                "verbose_name_plural": "Notes",
+                "ordering": ["title", "-created_at"],
             },
         ),
     ]

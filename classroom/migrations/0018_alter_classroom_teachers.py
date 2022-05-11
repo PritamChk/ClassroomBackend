@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('classroom', '0017_allowedteacherclassroomlevel'),
+        ("classroom", "0017_allowedteacherclassroomlevel"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='classroom',
-            name='teachers',
-            field=models.ManyToManyField(blank=True, editable=False, related_name='classrooms', to='classroom.teacher'),
+            model_name="classroom",
+            name="teachers",
+            field=models.ManyToManyField(
+                blank=True,
+                editable=False,
+                related_name="classrooms",
+                to="classroom.teacher",
+            ),
         ),
     ]

@@ -8,21 +8,54 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('classroom', '0005_teacher_classroom'),
+        ("classroom", "0005_teacher_classroom"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Semester',
+            name="Semester",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sem_no', models.PositiveSmallIntegerField(validators=[django.core.validators.MinValueValidator(1, 'sem value > 0'), django.core.validators.MaxValueValidator(14, 'sem value < 15')], verbose_name='Semester No')),
-                ('is_current_sem', models.BooleanField(default=False, verbose_name='is this sem going on? ')),
-                ('classroom', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='semesters', to='classroom.classroom')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sem_no",
+                    models.PositiveSmallIntegerField(
+                        validators=[
+                            django.core.validators.MinValueValidator(
+                                1, "sem value > 0"
+                            ),
+                            django.core.validators.MaxValueValidator(
+                                14, "sem value < 15"
+                            ),
+                        ],
+                        verbose_name="Semester No",
+                    ),
+                ),
+                (
+                    "is_current_sem",
+                    models.BooleanField(
+                        default=False, verbose_name="is this sem going on? "
+                    ),
+                ),
+                (
+                    "classroom",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="semesters",
+                        to="classroom.classroom",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['classroom__title', 'sem_no'],
-                'unique_together': {('classroom', 'sem_no')},
+                "ordering": ["classroom__title", "sem_no"],
+                "unique_together": {("classroom", "sem_no")},
             },
         ),
     ]

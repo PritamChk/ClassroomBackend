@@ -7,16 +7,31 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('classroom', '0016_alter_classroom_teachers'),
+        ("classroom", "0016_alter_classroom_teachers"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AllowedTeacherClassroomLevel',
+            name="AllowedTeacherClassroomLevel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('email', models.EmailField(max_length=255, verbose_name='Email Id')),
-                ('classroom', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='allowed_teachers', to='classroom.classroom')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("email", models.EmailField(max_length=255, verbose_name="Email Id")),
+                (
+                    "classroom",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="allowed_teachers",
+                        to="classroom.classroom",
+                    ),
+                ),
             ],
         ),
     ]

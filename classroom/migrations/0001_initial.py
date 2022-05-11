@@ -9,23 +9,51 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='College',
+            name="College",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', django_extensions.db.fields.AutoSlugField(blank=True, editable=False, populate_from=['name', 'state', 'city'])),
-                ('name', models.CharField(max_length=255, verbose_name='College Name')),
-                ('city', models.CharField(max_length=255, verbose_name='City')),
-                ('state', models.CharField(max_length=255, verbose_name='State')),
-                ('address', models.TextField(blank=True, null=True)),
-                ('allowed_teacher_list', models.FileField(blank=True, null=True, upload_to='P:\\Codes\\SEM_4_Major_Project\\Code\\ClassroomBackend\\media/classroom/teachers/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['csv', 'xlsx'], message='Please Upload CSV/XLSX file only')], verbose_name='Upload teacher List File(.csv)')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "slug",
+                    django_extensions.db.fields.AutoSlugField(
+                        blank=True,
+                        editable=False,
+                        populate_from=["name", "state", "city"],
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="College Name")),
+                ("city", models.CharField(max_length=255, verbose_name="City")),
+                ("state", models.CharField(max_length=255, verbose_name="State")),
+                ("address", models.TextField(blank=True, null=True)),
+                (
+                    "allowed_teacher_list",
+                    models.FileField(
+                        blank=True,
+                        null=True,
+                        upload_to="P:\\Codes\\SEM_4_Major_Project\\Code\\ClassroomBackend\\media/classroom/teachers/",
+                        validators=[
+                            django.core.validators.FileExtensionValidator(
+                                allowed_extensions=["csv", "xlsx"],
+                                message="Please Upload CSV/XLSX file only",
+                            )
+                        ],
+                        verbose_name="Upload teacher List File(.csv)",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['name', 'city', 'state'],
+                "ordering": ["name", "city", "state"],
             },
         ),
     ]

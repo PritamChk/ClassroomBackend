@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0001_initial'),
+        ("accounts", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='baseaccount',
-            name='email',
-            field=models.EmailField(help_text='This will be used as username for login', max_length=250, unique=True, verbose_name='Email Id'),
+            model_name="baseaccount",
+            name="email",
+            field=models.EmailField(
+                help_text="This will be used as username for login",
+                max_length=250,
+                unique=True,
+                verbose_name="Email Id",
+            ),
         ),
     ]

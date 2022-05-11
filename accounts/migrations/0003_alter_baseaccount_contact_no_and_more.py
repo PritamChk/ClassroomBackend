@@ -7,18 +7,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_alter_baseaccount_email'),
+        ("accounts", "0002_alter_baseaccount_email"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='baseaccount',
-            name='contact_no',
-            field=models.CharField(blank=True, db_index=True, help_text='\n            👌🏻E.g - 9881284481\n            ❌ +91 9812300122\n            ❌ 09812300122\n        ', max_length=15, null=True, unique=True, validators=[django.core.validators.RegexValidator('^\\d{10}$', 'Phone no should contain 10 digits')], verbose_name='Phone No'),
+            model_name="baseaccount",
+            name="contact_no",
+            field=models.CharField(
+                blank=True,
+                db_index=True,
+                help_text="\n            👌🏻E.g - 9881284481\n            ❌ +91 9812300122\n            ❌ 09812300122\n        ",
+                max_length=15,
+                null=True,
+                unique=True,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        "^\\d{10}$", "Phone no should contain 10 digits"
+                    )
+                ],
+                verbose_name="Phone No",
+            ),
         ),
         migrations.AlterField(
-            model_name='baseaccount',
-            name='is_active',
-            field=models.BooleanField(default=False, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active'),
+            model_name="baseaccount",
+            name="is_active",
+            field=models.BooleanField(
+                default=False,
+                help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                verbose_name="active",
+            ),
         ),
     ]

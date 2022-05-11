@@ -7,22 +7,47 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('classroom', '0007_student'),
+        ("classroom", "0007_student"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AllowedStudents',
+            name="AllowedStudents",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('email', models.EmailField(max_length=255, verbose_name='Email Id')),
-                ('university_roll', models.PositiveBigIntegerField(help_text='Your University Roll No - (e.g. - 13071020030)', verbose_name='University Roll')),
-                ('classroom', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='allowed_students', to='classroom.classroom')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("email", models.EmailField(max_length=255, verbose_name="Email Id")),
+                (
+                    "university_roll",
+                    models.PositiveBigIntegerField(
+                        help_text="Your University Roll No - (e.g. - 13071020030)",
+                        verbose_name="University Roll",
+                    ),
+                ),
+                (
+                    "classroom",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="allowed_students",
+                        to="classroom.classroom",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Allowed Students',
-                'ordering': ['university_roll'],
-                'unique_together': {('university_roll', 'email'), ('university_roll', 'classroom'), ('classroom', 'email')},
+                "verbose_name_plural": "Allowed Students",
+                "ordering": ["university_roll"],
+                "unique_together": {
+                    ("university_roll", "email"),
+                    ("university_roll", "classroom"),
+                    ("classroom", "email"),
+                },
             },
         ),
     ]

@@ -3,9 +3,11 @@ from djoser.serializers import (
     UsernameResetConfirmSerializer as uname_reset,
 )
 
+
 class UseranmeResetConfirmSerializer(uname_reset):
     class Meta(uname_reset.Meta):
-        fields = ('uid','token','email')
+        fields = ("uid", "token", "email")
+
 
 class CurrentUserSerializer(usz):
     """

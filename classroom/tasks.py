@@ -25,5 +25,3 @@ def send_email_after_mass_profile_creation(subject: str, prompt: str, email_list
         for m in email_list
     ]
     send_mass_mail(mails, fail_silently=True)
-
-

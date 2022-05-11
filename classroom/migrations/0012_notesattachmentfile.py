@@ -9,21 +9,65 @@ import django_extensions.db.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('classroom', '0011_notes'),
+        ("classroom", "0011_notes"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='NotesAttachmentFile',
+            name="NotesAttachmentFile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', django_extensions.db.fields.AutoSlugField(blank=True, editable=False, null=True, populate_from=['notes__title', 'notes__subject__title', 'created_at'])),
-                ('file_path', models.FileField(blank=True, null=True, upload_to='P:\\Codes\\SEM_4_Major_Project\\Code\\ClassroomBackend\\media/classroom/notes/%Y/%m/%d', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['xlsx', 'pdf', 'doc'], message='Please Upload XLSX/PDF/Doc file only')], verbose_name='Upload File Here')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At ')),
-                ('notes', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='attached_files', to='classroom.notes')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "title",
+                    django_extensions.db.fields.AutoSlugField(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        populate_from=[
+                            "notes__title",
+                            "notes__subject__title",
+                            "created_at",
+                        ],
+                    ),
+                ),
+                (
+                    "file_path",
+                    models.FileField(
+                        blank=True,
+                        null=True,
+                        upload_to="P:\\Codes\\SEM_4_Major_Project\\Code\\ClassroomBackend\\media/classroom/notes/%Y/%m/%d",
+                        validators=[
+                            django.core.validators.FileExtensionValidator(
+                                allowed_extensions=["xlsx", "pdf", "doc"],
+                                message="Please Upload XLSX/PDF/Doc file only",
+                            )
+                        ],
+                        verbose_name="Upload File Here",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At "),
+                ),
+                (
+                    "notes",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="attached_files",
+                        to="classroom.notes",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['id'],
+                "ordering": ["id"],
             },
         ),
     ]

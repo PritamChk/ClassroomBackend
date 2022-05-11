@@ -9,14 +9,19 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('classroom', '0014_remove_teacher_classroom_classroom_teachers'),
+        ("classroom", "0014_remove_teacher_classroom_classroom_teachers"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='teacher',
-            name='user',
-            field=models.OneToOneField(default='9d1f0ef716ff4fc1a6380ecdd021e60f', on_delete=django.db.models.deletion.CASCADE, related_name='teacher_profile', to=settings.AUTH_USER_MODEL),
+            model_name="teacher",
+            name="user",
+            field=models.OneToOneField(
+                default="9d1f0ef716ff4fc1a6380ecdd021e60f",
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="teacher_profile",
+                to=settings.AUTH_USER_MODEL,
+            ),
             preserve_default=False,
         ),
     ]
