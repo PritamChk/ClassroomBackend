@@ -355,3 +355,17 @@ def assign_classroom_to_existing_teacher(
         subject = "Sir You have been Assigned A new Class"
         msg = f"Classroom - {classroom.title}"
         send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+
+
+@shared_task
+@receiver(post_delete, sender=AllowedTeacherClassroomLevel)
+def remove_class_after_removal_of_assigned_teacher(sender, instance, **kwargs):
+    classroom = Classroom.objects.get(pk=instance.classroom.id)
+    teacher_query = Teacher.objects.select_related("user").filter(
+        user__email=instance.email
+    )
+    if teacher_query.exists():
+        teacher_query.first().classrooms.remove(classroom)
+        subject = "Sir You have been Assigned A new Class"
+        msg = f"Classroom - {classroom.title}"
+        send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
