@@ -189,7 +189,7 @@ class Classroom(models.Model):
             )
         ],
     )
-    teachers = models.ManyToManyField(Teacher, related_name="classrooms")
+    teachers = models.ManyToManyField(Teacher, related_name="classrooms",blank=True)
     # TODO: use this to add teachers in classrooms and vice-versa
     allowed_teacher_list = models.FileField(
         _("Upload Teacher List File(.csv/xl)"),
