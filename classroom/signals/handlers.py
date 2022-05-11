@@ -325,6 +325,7 @@ def delete_user_on_student_delete(sender, instance: Student, **kwargs):
         user.delete()
 
 
+@shared_task
 @receiver(post_save, sender=Teacher)
 def auto_join_teacher_to_classes(sender, instance: Teacher, created, **kwargs):
     from termcolor import cprint
@@ -340,6 +341,7 @@ def auto_join_teacher_to_classes(sender, instance: Teacher, created, **kwargs):
             cprint("already assigned classrooms to teacher ", "yellow")
 
 
+@shared_task
 @receiver(post_save, sender=AllowedTeacherClassroomLevel)
 def assign_classroom_to_existing_teacher(
     sender, instance: AllowedTeacherClassroomLevel, created, **kwargs
