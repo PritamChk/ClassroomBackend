@@ -219,12 +219,12 @@ def create_allowed_teacher_for_classroom_level(
         rejected_teacher_mails = []
         for allowed_teacher in df_dict:
             if allowed_teacher["email"] in college_allowed_teacher_list:
-                # list_of_teachers.append(
-                #     AllowedTeacherClassroomLevel(classroom=instance, **allowed_teacher)
-                # )
-                AllowedTeacherClassroomLevel.objects.create(
-                    classroom=instance, **allowed_teacher
+                list_of_teachers.append(
+                    AllowedTeacherClassroomLevel(classroom=instance, **allowed_teacher)
                 )
+                # AllowedTeacherClassroomLevel.objects.create(
+                #     classroom=instance, **allowed_teacher
+                # )
             else:
                 rejected_teacher_mails.append(allowed_teacher["email"])
         if len(rejected_teacher_mails) > 0:
@@ -239,7 +239,7 @@ def create_allowed_teacher_for_classroom_level(
                 ["dba@admin.com"],
                 "",
             )
-        # AllowedTeacherClassroomLevel.objects.bulk_create(list_of_teachers)
+        AllowedTeacherClassroomLevel.objects.bulk_create(list_of_teachers)
         email_list = df["email"].to_list()
         subject = "Teacher Account Associated With Classroom"
         prompt = (
@@ -330,21 +330,22 @@ def delete_user_on_student_delete(sender, instance: Student, **kwargs):
 @shared_task
 @receiver(post_save, sender=Teacher)
 def auto_join_teacher_to_classes(sender, instance: Teacher, created, **kwargs):
-    from termcolor import cprint
+    # from termcolor import cprint
 
     if created:
         qset = Classroom.objects.prefetch_related("allowed_teachers").filter(
             allowed_teachers__email=instance.user.email
         )
-        cprint(list(qset), "blue")
+        # cprint(list(qset), "blue")
         try:
             instance.classrooms.add(*qset)
         except:
             cprint("already assigned classrooms to teacher ", "yellow")
 
 
-@shared_task
-@receiver(post_save, sender=AllowedTeacherClassroomLevel)
+@receiver(
+    post_save, sender=AllowedTeacherClassroomLevel
+)  # FIXME: classroom pre signed up teachers are not saving
 def assign_classroom_to_existing_teacher(
     sender, instance: AllowedTeacherClassroomLevel, created, **kwargs
 ):
@@ -363,14 +364,14 @@ def assign_classroom_to_existing_teacher(
         teacher_query = Teacher.objects.select_related("user").filter(
             user__email=instance.email
         )
-        cprint(str(teacher_query.exists())+" -> "+instance.email, "blue")
+        cprint(str(teacher_query.exists()) + " -> " + instance.email, "blue")
         if teacher_query.exists():
             teacher = teacher_query.first()
-            teacher.classrooms.add(classroom)
-            teacher.save()
-            for cl in teacher.classrooms.all():
-                cprint("Classrooms of teacher -> ",'cyan')
-                cprint(cl,'cyan')
+            classroom.teachers.add(teacher)
+            classroom.save()
+            for tchr in classroom.teachers.all():
+                cprint("Classrooms of teacher -> ", "cyan")
+                cprint(tchr, "cyan")
             subject = "Sir You have been Assigned A new Class"
             msg = f"Classroom - {classroom.title}"
             send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])

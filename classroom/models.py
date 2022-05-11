@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from django_extensions.db.fields import AutoSlugField
 
 from classroom.constants import LEVEL_CHOICES, SECTION_CHOICES
+from classroom.managers import AllowedTeacherClassroomLevelManager
 from classroom.validators import is_no_of_sem_even
 
 
@@ -227,6 +228,7 @@ class Classroom(models.Model):
 
 
 class AllowedTeacherClassroomLevel(models.Model):
+    objects = AllowedTeacherClassroomLevelManager()
     email = models.EmailField(_("Email Id"), max_length=255)
     classroom = models.ForeignKey(
         Classroom, on_delete=models.CASCADE, related_name="allowed_teachers"
