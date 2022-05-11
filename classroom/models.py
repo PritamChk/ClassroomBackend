@@ -189,7 +189,7 @@ class Classroom(models.Model):
             )
         ],
     )
-    teachers = models.ManyToManyField(Teacher, related_name="classrooms",blank=True)
+    teachers = models.ManyToManyField(Teacher, related_name="classrooms", blank=True)
     # TODO: use this to add teachers in classrooms and vice-versa
     allowed_teacher_list = models.FileField(
         _("Upload Teacher List File(.csv/xl)"),
@@ -224,6 +224,16 @@ class Classroom(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+
+class AllowedTeacherClassroomLevel(models.Model):
+    email = models.EmailField(_("Email Id"), max_length=255)
+    classroom = models.ForeignKey(
+        Classroom, on_delete=models.CASCADE, related_name="allowed_teachers"
+    )
+
+    def __str__(self) -> str:
+        return f"{self.email}"
 
 
 class Semester(models.Model):
