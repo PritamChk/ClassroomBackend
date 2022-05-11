@@ -95,6 +95,7 @@ class ClassroomAdmin(admin.ModelAdmin):
         "no_of_semesters",
         "current_sem",
         "college",
+        "get_teachers",
         "id",
     )
     list_display_links = ["slug", "title", "id"]
@@ -121,9 +122,12 @@ class ClassroomAdmin(admin.ModelAdmin):
         "section",
     ]
     list_select_related = ["college"]
-    list_prefetch_related = ["teachers"]
+    list_prefetch_related = ["teachers__id"]
     autocomplete_fields = ["college", "teachers"]
     date_hierarchy = "created_at"
+
+    def get_teachers(self, obj):
+        return "\n".join([t.user.email for t in obj.teachers.all()])
 
 
 @admin.register(Semester)

@@ -217,11 +217,28 @@ def create_allowed_teacher_for_classroom_level(
 
         list_of_teachers = []
         rejected_teacher_mails = []
+        from termcolor import cprint
+
         for allowed_teacher in df_dict:
             if allowed_teacher["email"] in college_allowed_teacher_list:
                 list_of_teachers.append(
                     AllowedTeacherClassroomLevel(classroom=instance, **allowed_teacher)
                 )
+                cprint("OUTSIDE OF IF", "yellow")
+                if (
+                    Teacher.objects.select_related("user")
+                    .filter(user__email=allowed_teacher["email"])
+                    .exists()
+                ):
+                    cprint("INSIDE OF IF", "yellow")
+                    teacher = Teacher.objects.select_related("user").get(
+                        user__email=allowed_teacher["email"]
+                    )
+                    instance.teachers.add(teacher)
+                    instance.save(force_update=True)
+                    for tchr in instance.teachers.all():
+                        cprint("Classrooms of teachers -> ", "cyan")
+                        cprint(tchr, "cyan")
                 # AllowedTeacherClassroomLevel.objects.create(
                 #     classroom=instance, **allowed_teacher
                 # )
@@ -369,7 +386,7 @@ def assign_classroom_to_existing_teacher(
         if teacher_query.exists():
             teacher = teacher_query.first()
             classroom.teachers.add(teacher)
-            classroom.save()
+            classroom.save(force_update=True)
             for tchr in classroom.teachers.all():
                 cprint("Classrooms of teacher -> ", "cyan")
                 cprint(tchr, "cyan")
