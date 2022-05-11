@@ -340,7 +340,8 @@ def auto_join_teacher_to_classes(sender, instance: Teacher, created, **kwargs):
         try:
             instance.classrooms.add(*qset)
         except:
-            cprint("already assigned classrooms to teacher ", "yellow")
+            pass
+            # cprint("already assigned classrooms to teacher ", "yellow")
 
 
 @receiver(
