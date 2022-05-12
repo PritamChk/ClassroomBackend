@@ -5,6 +5,7 @@ from termcolor import cprint
 from classroom.views.teacher_view import (
     ClassroomsForTeacherViewSet,
     SemesterForTeacherViewSet,
+    SubjectForTeacherViewSet,
     TeacherProfileViewSet,
 )
 
@@ -22,9 +23,15 @@ teacher_classrooms_sem = NestedDefaultRouter(
 teacher_classrooms_sem.register("sem", SemesterForTeacherViewSet, basename="sem")
 
 
+teacher_subject = NestedDefaultRouter(teacher_classrooms_sem, "sem", lookup="sem")
+teacher_subject.register("subject", SubjectForTeacherViewSet, basename="subject")
+
 teacher_urlpatterns = []
 teacher_urlpatterns += (
-    teacher_router.urls + teacher_classrooms.urls + teacher_classrooms_sem.urls
+    teacher_router.urls
+    + teacher_classrooms.urls
+    + teacher_classrooms_sem.urls
+    + teacher_subject.urls
 )
 
 for turl in teacher_urlpatterns:

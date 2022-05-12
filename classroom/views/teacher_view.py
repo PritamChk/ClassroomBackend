@@ -49,17 +49,28 @@ class SemesterForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericViewS
         return sem
 
 
-class SubjectForTeacher(ModelViewSet):
+class SubjectForTeacherViewSet(ModelViewSet):
+    http_method_names = ["get", "post", "patch", "head", "options"]
     my_tags = ["subjects/classroom [teacher]"]
 
     def get_serializer_class(self):
-        if self.request.method == "GET" or self.request.method == "PATCH":
+        if self.request.method == "GET":
             return SubjectRetriveForTeacherSerializer
         elif self.request.method == "POST":
             return SubjectCreateByTeacherSerializer
         return SubjectRetriveForTeacherSerializer
 
     def get_queryset(self):
-        return Subject.objects.select_related("created_by", "semester").filter(
-            semester=self.kwargs["semester_pk"], created_by=self.kwargs["teacher_pk"]
+        return (
+            Subject.objects.select_related("created_by", "semester")
+            .filter(
+                semester=self.kwargs["sem_pk"], created_by=self.kwargs["teacher_pk"]
+            )
+            .all()
         )
+
+    def get_serializer_context(self):
+        return {
+            "created_by": self.kwargs.get("teacher_pk"),
+            "sem_pk": self.kwargs.get("sem_pk"),
+        }

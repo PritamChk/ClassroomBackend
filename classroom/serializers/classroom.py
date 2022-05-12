@@ -14,6 +14,7 @@ from classroom.models import (
     Announcement,
     Teacher,
 )
+from django.shortcuts import get_object_or_404
 from classroom.serializers.teacher import (
     MinimalTeacherDetailsSerializer,
     MinimalUserDetailsSerializer,
@@ -150,7 +151,7 @@ class SubjectRetriveForTeacherSerializer(ms):
             "credit_points",
             "created_at",
         ]
-        readonly_fields = ["slug", "created_at"]
+        read_only_fields = ["slug", "created_at"]
 
 
 class SubjectCreateByTeacherSerializer(ms):
@@ -162,6 +163,36 @@ class SubjectCreateByTeacherSerializer(ms):
             "subject_type",
             "credit_points",
             "created_at",
-            "semester",
-            "created_by",
         ]
+
+    def create(self, validated_data):
+        from rest_framework.exceptions import NotFound
+        from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT
+
+        created_by = self.context.get("created_by")
+        semester_pk = self.context.get("sem_pk")
+        try:
+            sem = Semester.objects.get(pk=semester_pk)
+        except:
+            raise NotFound(
+                detail=f"Semester_Pk - {semester_pk} does not exists",
+                code=HTTP_404_NOT_FOUND,
+            )
+        try:
+            teacher = Teacher.objects.get(pk=created_by)
+        except:
+            raise NotFound(
+                detail=f"Teacher with id - {created_by} does not exists",
+                code=HTTP_404_NOT_FOUND,
+            )
+        try:
+            self.instance = Subject.objects.create(
+                created_by=teacher, semester=sem, **validated_data
+            )
+        except:
+            raise NotFound(
+                detail=f"Subject Creation failed",
+                code=HTTP_204_NO_CONTENT,
+            )
+
+        return self.instance
