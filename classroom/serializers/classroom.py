@@ -110,3 +110,18 @@ class NotesReadForStudentSerializer(ms):
             "attached_files",
         )
         # depth = 1
+
+
+class SubjectRetriveSerializer(ms):
+    class Meta:
+        model = Subject
+        fields = [
+            "slug",
+            "subject_code",
+            "title",
+            "subject_type",
+            "credit_points",
+            "created_at",
+        ]
+        readonly_fields = ['slug','created_at']
+        
