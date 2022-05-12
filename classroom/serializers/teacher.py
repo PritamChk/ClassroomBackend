@@ -55,7 +55,8 @@ class TeacherClassroomsGetSerializer(ms):
             "current_sem",
         )
 
-#----------------- teacher view serializers -----------------
+
+# ----------------- teacher view serializers -----------------
 class TeacherProfileSerializer(ms):
     user = MinimalUserDetailsSerializer()
     teacher_id = IntegerField(source="id")

@@ -3,10 +3,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin
-from classroom.models import Classroom, Subject, Teacher
+from classroom.models import Classroom, Semester, Subject, Teacher
 from classroom.serializers.classroom import (
     ClassroomReadForStudentSerializer,
     ClassroomReadForTeacherSerializer,
+    SemesterReadSerializer,
     SubjectCreateByTeacherSerializer,
     SubjectRetriveForTeacherSerializer,
 )
@@ -29,12 +30,23 @@ class TeacherProfileViewSet(RetrieveModelMixin, GenericViewSet):
 class ClassroomsForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     my_tags = ["classrooms for teacher"]
     serializer_class = ClassroomReadForTeacherSerializer
-    lookup_field='slug'
+    lookup_field = "slug"
 
     def get_queryset(self):
-        return Classroom.objects.prefetch_related("teachers",'semesters').filter(
+        return Classroom.objects.prefetch_related("teachers", "semesters").filter(
             teachers__id=self.kwargs["teacher_pk"]
         )
+
+
+class SemesterForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+    my_tags = ["semester for teacher"]
+    serializer_class = SemesterReadSerializer
+    # lookup_field = 'id'
+    def get_queryset(self):
+        sem = Semester.objects.select_related("classroom").filter(
+            classroom__slug=self.kwargs["classroom_slug"]
+        )
+        return sem
 
 
 # class SubjectForTeacher(ModelViewSet):

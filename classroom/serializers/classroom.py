@@ -28,13 +28,13 @@ class CollegeReadSerializer(ms):
 
 
 class SemesterReadSerializer(ms):
-    # classroom__slug = SlugField(source="classroom.slug")
+    classroom__slug = SlugField(source="classroom.slug")
 
     class Meta:
         model = Semester
         fields = [
             "id",
-            # "classroom__slug", #TODO:If req then open
+            "classroom__slug",  # TODO:If req then open
             "sem_no",
             "is_current_sem",
         ]
