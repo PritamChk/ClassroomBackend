@@ -1,6 +1,6 @@
 from classroom.serializers.classroom import (
     AnnouncementsReadSerializer,
-    ClassroomReadSerializer,
+    ClassroomReadForStudentSerializer,
     NotesReadForStudentSerializer,
     SemesterReadSerializer,
     SubjectReadSerializer,
@@ -67,7 +67,7 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
 
     my_tags = ["classroom For student"]
     swagger_schema = None
-    serializer_class = ClassroomReadSerializer
+    serializer_class = ClassroomReadForStudentSerializer
     lookup_field = "slug"
 
     def get_queryset(self):
