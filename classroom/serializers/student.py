@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer as ms
 from classroom.models import Student, User
-from .classroom import ClassroomReadSerializer
+from .classroom import ClassroomReadForStudentSerializer
 from accounts.serializers import CurrentUserSerializer
 
 
@@ -16,7 +16,7 @@ class StudentReadSerializer(ms):
     """
 
     user = StudentUserReadSerializer()
-    classroom = ClassroomReadSerializer()
+    classroom = ClassroomReadForStudentSerializer()
 
     class Meta:
         model = Student

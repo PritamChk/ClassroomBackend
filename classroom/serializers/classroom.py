@@ -28,15 +28,20 @@ class CollegeReadSerializer(ms):
 
 
 class SemesterReadSerializer(ms):
-    classroom__slug = SlugField(source="classroom.slug")
+    # classroom__slug = SlugField(source="classroom.slug")
 
     class Meta:
         model = Semester
-        fields = ["classroom__slug", "sem_no", "is_current_sem"]
+        fields = [
+            "id",
+            # "classroom__slug", #TODO:If req then open
+            "sem_no",
+            "is_current_sem",
+        ]
         select_related_fields = ["classroom"]
 
 
-class ClassroomReadSerializer(ms):
+class ClassroomReadForStudentSerializer(ms):
     college = CollegeReadSerializer()
 
     class Meta:
@@ -51,6 +56,28 @@ class ClassroomReadSerializer(ms):
             "section",
             "no_of_semesters",
             "current_sem",
+            "created_at",
+            "college",
+        )
+
+
+class ClassroomReadForTeacherSerializer(ms):
+    college = CollegeReadSerializer()
+    semesters_list = SemesterReadSerializer(source="semesters", many=True)
+
+    class Meta:
+        model = Classroom
+        fields = (
+            "slug",
+            "title",
+            "level",
+            "stream",
+            "start_year",
+            "end_year",
+            "section",
+            "no_of_semesters",
+            "current_sem",
+            "semesters_list",
             "created_at",
             "college",
         )
@@ -112,7 +139,7 @@ class NotesReadForStudentSerializer(ms):
         # depth = 1
 
 
-class SubjectRetriveSerializer(ms):
+class SubjectRetriveForTeacherSerializer(ms):
     class Meta:
         model = Subject
         fields = [
@@ -123,5 +150,18 @@ class SubjectRetriveSerializer(ms):
             "credit_points",
             "created_at",
         ]
-        readonly_fields = ['slug','created_at']
-        
+        readonly_fields = ["slug", "created_at"]
+
+
+class SubjectCreateByTeacherSerializer(ms):
+    class Meta:
+        model = Subject
+        fields = fields = [
+            "subject_code",
+            "title",
+            "subject_type",
+            "credit_points",
+            "created_at",
+            "semester",
+            "created_by",
+        ]
