@@ -6,13 +6,6 @@ from rest_framework.serializers import (
 from accounts.serializers import CurrentUserSerializer
 from classroom.models import Classroom, Teacher, User
 
-# from classroom.serializers.classroom import ClassroomReadSerializer
-
-# class MinimalUserDetailsSerializer(ms):
-#     class Meta:
-#         model = User
-#         fields = ['first_name','last_name','email']
-
 
 class MinimalUserDetailsSerializer(ms):
     class Meta:
@@ -27,7 +20,6 @@ class MinimalTeacherDetailsSerializer(ms):
     class Meta:
         model = Teacher
         fields = ["user", "teacher_id"]
-        # depth = 1
 
 
 class TeacherReadForSubjectSerializer(ms):
