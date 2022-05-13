@@ -81,21 +81,22 @@ class SubjectForTeacherViewSet(ModelViewSet):
 
 
 class AnnouncementPostByTeacherViewSet(ModelViewSet):
+    http_method_names = ["get", "post", "patch", "head", "options"]
     my_tags = ["[teacher] 5. announcement/subject"]
+    # lookup_field='slug'
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return AnnouncementsReadSerializer
         return AnnouncementsPostOrUpdateSerializer
-        
-    
+
     def get_queryset(self):
         return Announcement.objects.select_related("posted_by", "subject").filter(
-            posted_by=self.kwargs["teacher_pk"], subject=self.kwargs["subject_slug"]
+            posted_by=self.kwargs["teacher_pk"], subject__slug=self.kwargs["subject_slug"]
         )
 
     def get_serializer_context(self):
         return {
-            "teacher_pk": self.kwargs["teacher_pk"],
-            "subject_slug": self.kwargs["subject_slug"],
+            "teacher_pk": self.kwargs.get("teacher_pk"),
+            "subject_slug": self.kwargs.get("subject_slug"),
         }

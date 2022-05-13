@@ -73,11 +73,10 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
             df = pd.read_csv(file_abs_path)
         elif str(file_abs_path).split(".")[-1] == "xlsx":
             df = pd.read_excel(file_abs_path)
-        # else:
-        #     raise FileNotFoundError(
-        #         "File ta nei"
-        #     )  # FIXME: Don't Raise error in frontend
-        if not ("university_roll" in df.columns and "email" in df.columns):
+
+        if not (
+            "university_roll" in df.columns and "email" in df.columns
+        ):  # TODO:check col name case insensitive
             send_mail(
                 "Wrong File Structure",
                 "column name should be => 'university_roll' | 'email' ",

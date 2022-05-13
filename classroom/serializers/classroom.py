@@ -147,6 +147,7 @@ class AnnouncementsPostOrUpdateSerializer(ms):
             self.instance = Announcement.objects.create(
                 posted_by=teacher, subject=subject, **validated_data
             )
+            # TODO: on announcement send mass mail to allowed students of that class
         except:
             raise NotFound(
                 detail=f"Subject Creation failed",
