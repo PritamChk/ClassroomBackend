@@ -44,7 +44,7 @@ class TeacherProfileViewSet(RetrieveModelMixin, GenericViewSet):
         return (
             Teacher.objects.select_related("user").prefetch_related("classrooms")
             # .filter(user__id=self.request.user.id) #TODO:This will work after permission applied
-            .filter(id=self.kwargs["pk"])
+            .filter(id=self.kwargs.get("pk"))
         )
 
 

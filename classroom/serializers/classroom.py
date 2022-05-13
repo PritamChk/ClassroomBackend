@@ -329,6 +329,7 @@ class NotesCreateForTeacherSerializer(ms):  # Combine this with Student Notes Re
 
         return self.instance
 
+
 class NotesUpdateForTeacherSerializer(ms):  # Combine this with Student Notes Read
     # attached_files = NotesFileUploadByTeacherSerializer(many=True, required=False)
 
