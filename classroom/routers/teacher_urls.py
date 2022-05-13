@@ -34,5 +34,5 @@ teacher_urlpatterns += (
     + teacher_subject.urls
 )
 
-for turl in teacher_urlpatterns:
-    cprint(turl, "yellow")
+for teacher_url in teacher_urlpatterns:
+    cprint(teacher_url, "yellow")
