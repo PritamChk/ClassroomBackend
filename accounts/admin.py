@@ -1,5 +1,8 @@
 from django.contrib import admin
+from django.contrib import messages
+from django.utils.translation import ngettext
 from django.contrib.auth.admin import UserAdmin
+
 
 from .forms import *
 from .models import BaseAccount
@@ -56,3 +59,32 @@ class BaseAccountAdmin(UserAdmin):
         "is_active",
     ]
     search_fields = ["email", "first_name", "last_name", "contact_no"]
+    actions = ["make_users_active", "make_users_inactive"]
+
+    @admin.action(description="make user active")
+    def make_users_active(self, request, queryset):
+        updated = queryset.update(is_active=True)
+        self.message_user(
+            request,
+            ngettext(
+                "%d user was successfully activated.",
+                "%d users were successfully activated.",
+                updated,
+            )
+            % updated,
+            messages.SUCCESS,
+        )
+
+    @admin.action(description="make user inactive")
+    def make_users_inactive(self, request, queryset):
+        updated = queryset.update(is_active=False)
+        self.message_user(
+            request,
+            ngettext(
+                "%d user was successfully deactivated.",
+                "%d users were successfully deactivated.",
+                updated,
+            )
+            % updated,
+            messages.SUCCESS,
+        )
