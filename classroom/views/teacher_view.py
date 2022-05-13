@@ -65,7 +65,7 @@ class SemesterForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericViewS
     # lookup_field = 'id'
     def get_queryset(self):
         sem = Semester.objects.select_related("classroom").filter(
-            classroom__slug=self.kwargs["teacher_classrooms_slug"]
+            classroom__slug=self.kwargs.get("teacher_classrooms_slug")
         )
         return sem
 
@@ -86,7 +86,8 @@ class SubjectForTeacherViewSet(ModelViewSet):
         return (
             Subject.objects.select_related("created_by", "semester")
             .filter(
-                semester=self.kwargs["sem_pk"], created_by=self.kwargs["teacher_pk"]
+                semester=self.kwargs.get("sem_pk"),
+                created_by=self.kwargs.get("teacher_pk"),
             )
             .all()
         )

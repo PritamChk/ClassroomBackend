@@ -74,7 +74,7 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
         classroom = (
             Classroom.objects.select_related("college")
             .prefetch_related("students")
-            .filter(slug=self.kwargs["slug"])
+            .filter(slug=self.kwargs.get("slug"))
         )
         return classroom
 
@@ -85,7 +85,7 @@ class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewS
     # lookup_field = 'id'
     def get_queryset(self):
         sem = Semester.objects.select_related("classroom").filter(
-            classroom__slug=self.kwargs["classroom_slug"]
+            classroom__slug=self.kwargs.get("classroom_slug")
         )
         return sem
 
@@ -99,7 +99,7 @@ class SubjectsForStudentsViewSet(ListModelMixin, RetrieveModelMixin, GenericView
         return (
             Subject.objects.select_related("semester")
             .select_related("semester__classroom")
-            .filter(semester__id=self.kwargs["semester_pk"])
+            .filter(semester__id=self.kwargs.get("semester_pk"))
         )  # FIXME: This might be slow in future. Req: Optimization
 
 
@@ -113,7 +113,7 @@ class AnnouncementForStudentsViewSet(ListModelMixin, GenericViewSet):
 
     def get_queryset(self):
         return Announcement.objects.select_related("subject").filter(
-            subject__slug=self.kwargs["subject_slug"]
+            subject__slug=self.kwargs.get("subject_slug")
         )
 
 
@@ -130,7 +130,7 @@ class NotesForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet)
         return (
             Notes.objects.select_related("subject", "posted_by", "posted_by__user")
             .prefetch_related("attached_files")
-            .filter(subject__slug=self.kwargs["subject_slug"])
+            .filter(subject__slug=self.kwargs.get("subject_slug"))
         )
 
 
