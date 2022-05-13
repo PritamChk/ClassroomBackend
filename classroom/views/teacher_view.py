@@ -16,7 +16,7 @@ from classroom.serializers.teacher import TeacherProfileSerializer
 
 
 class TeacherProfileViewSet(RetrieveModelMixin, GenericViewSet):
-    my_tags = ["[teacher] profile"]
+    my_tags = ["[teacher] 1. profile"]
     serializer_class = TeacherProfileSerializer
 
     def get_queryset(self):
@@ -28,7 +28,7 @@ class TeacherProfileViewSet(RetrieveModelMixin, GenericViewSet):
 
 
 class ClassroomsForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    my_tags = ["[teacher] classrooms"]
+    my_tags = ["[teacher] 2. classrooms"]
     serializer_class = ClassroomReadForTeacherSerializer
     lookup_field = "slug"
 
@@ -39,7 +39,7 @@ class ClassroomsForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericVie
 
 
 class SemesterForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    my_tags = ["[teacher] semester"]
+    my_tags = ["[teacher] 3. semester"]
     serializer_class = SemesterReadSerializer
     # lookup_field = 'id'
     def get_queryset(self):
@@ -51,7 +51,7 @@ class SemesterForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericViewS
 
 class SubjectForTeacherViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "head", "options"]
-    my_tags = ["[teacher] subjects/classroom"]
+    my_tags = ["[teacher] 4. subjects/classroom"]
 
     def get_serializer_class(self):
         if self.request.method == "GET":
