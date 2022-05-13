@@ -158,12 +158,14 @@ class SubjectCreateByTeacherSerializer(ms):
     class Meta:
         model = Subject
         fields = fields = [
+            "id",
             "subject_code",
             "title",
             "subject_type",
             "credit_points",
             "created_at",
         ]
+        read_only_field = ["id", "created_at"]
 
     def create(self, validated_data):
         from rest_framework.exceptions import NotFound
