@@ -530,3 +530,7 @@ class Assignment(models.Model):
 
     def short_description(self) -> str:
         return self.description[:30]
+
+
+class SubmittedAssignment(models.Model):
+    pass
