@@ -42,7 +42,7 @@ class ClassroomsForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericVie
 
 
 class SemesterForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    my_tags = ["[teacher] 3. semester"]
+    my_tags = ["[teacher] 3. semesters/classroom"]
     serializer_class = SemesterReadSerializer
     # lookup_field = 'id'
     def get_queryset(self):

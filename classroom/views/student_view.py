@@ -46,7 +46,7 @@ class StudentProfileViewSet(RetrieveModelMixin, GenericViewSet):
     Student End point will return student profile details along with classroom details
     """
 
-    my_tags = ["[student] profile"]
+    my_tags = ["[student] 1. profile"]
     queryset = (
         Student.objects.select_related("user")
         .select_related("classroom")
@@ -65,7 +65,7 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
     student can only retrive but won't be able to see the other classrooms
     """
 
-    my_tags = ["[student] classroom"]
+    my_tags = ["[student] 2. classroom"]
     swagger_schema = None
     serializer_class = ClassroomReadForStudentSerializer
     lookup_field = "slug"
@@ -80,7 +80,7 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
 
 
 class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    my_tags = ["[student] semester"]
+    my_tags = ["[student] 3. semester"]
     serializer_class = SemesterReadSerializer
     # lookup_field = 'id'
     def get_queryset(self):
@@ -91,7 +91,7 @@ class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewS
 
 
 class SubjectsForStudentsViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    my_tags = ["[student] subjects"]
+    my_tags = ["[student] 4. subjects"]
     serializer_class = SubjectReadSerializer
     lookup_field = "slug"
 
@@ -108,7 +108,7 @@ class AnnouncementForStudentsViewSet(ListModelMixin, GenericViewSet):
     Announcements for the particular subject will be shown in decreasing order
     """
 
-    my_tags = ["[student] announcements/subject  "]
+    my_tags = ["[student] 5. announcements/subject  "]
     serializer_class = AnnouncementsReadSerializer
 
     def get_queryset(self):
@@ -122,7 +122,7 @@ class NotesForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet)
     Notes for the particular subject will be shown in decreasing order
     """
 
-    my_tags = ["[student] notes/subject"]
+    my_tags = ["[student] 6. notes/subject"]
     serializer_class = NotesReadForStudentSerializer
     lookup_field = "slug"
 
