@@ -485,7 +485,7 @@ class Assignment(models.Model):
         _("Marks:"),
         default=100,
         validators=[
-            MaxValueValidator(100, "so sir you want to take exam more than 100 marks?😑")
+            MaxValueValidator(100, "assignments can't be alloted more than 100 marks 😑")
         ],
     )
     attached_pdf = models.FileField(
@@ -532,5 +532,55 @@ class Assignment(models.Model):
         return self.description[:30]
 
 
-class SubmittedAssignment(models.Model):
-    pass
+# class SubmittedAssignment(models.Model):
+#     # FK to assignment
+#     assignment = models.ForeignKey(
+#         Assignment, on_delete=models.CASCADE, related_name="submissions"
+#     )
+#     # ----------------FOR STUDENT ----------------------------------------------
+#     submitted_by = models.ForeignKey(
+#         Student, on_delete=models.CASCADE, related_name="attempted_assignments"
+#     )
+#     answer_section = models.TextField(null=True, blank=True)
+#     submitted_file = models.FileField(
+#         _("Upload File Here📁"),
+#         null=True,
+#         blank=True,
+#         max_length=500,
+#         upload_to=f"{settings.MEDIA_ROOT}/classroom/assignment_submitions/%Y/%m/%d",
+#         validators=[
+#             FileExtensionValidator(
+#                 allowed_extensions=["pdf"],
+#                 message="Please Upload PDF file only",
+#             ),
+#             pdf_file_size_lt_5mb,
+#         ],
+#     )
+#     is_submitted = models.BooleanField(_("submitted : "), default=False)
+#     submission_time = models.DateTimeField(auto_now_add=True, editable=False)
+
+#     # ------------- FOR TEACHER Control -------------
+#     score = models.IntegerField(
+#         _("0<=x<=100"),
+#         default=0,
+#         validators=[
+#             MinValueValidator(0, "Score should be >= 0"),
+#             MaxValueValidator(
+#                 100,
+#                 "score should be <= 100",
+#             ),
+#         ],
+#     )
+#     has_scored = models.BooleanField(_("Scored by teacher : "), default=False)
+#     remarks = models.TextField(_("remarks"), blank=True, null=True, max_length=400)
+#     scored_by = models.ForeignKey(
+#         Teacher,
+#         on_delete=models.SET_NULL,
+#         related_name="scored_assignments",
+#         blank=True,
+#         null=True,
+#     )
+
+#     class Meta:
+#         unique_together = [["assignment", "submitted_by"]]
+#         ordering = ["-submission_time", "-score"]
