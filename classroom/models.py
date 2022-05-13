@@ -1,5 +1,6 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 from random import randint
+from time import time
 
 from django.conf import settings
 from django.contrib import admin
@@ -16,7 +17,11 @@ from django_extensions.db.fields import AutoSlugField
 
 from classroom.constants import LEVEL_CHOICES, SECTION_CHOICES
 from classroom.managers import AllowedTeacherClassroomLevelManager
-from classroom.validators import is_no_of_sem_even
+from classroom.validators import (
+    assignment_date_gte_today,
+    is_no_of_sem_even,
+    pdf_file_size_lt_5mb,
+)
 
 
 User = get_user_model()
@@ -471,3 +476,38 @@ class NotesAttachmentFile(models.Model):
 
     def __str__(self) -> str:
         return str(self.file_path.name)
+
+
+class Assignment(models.Model):
+    title = models.CharField(_("Assignment Title"), max_length=300)
+    description = models.TextField(null=True, blank=True)
+    attached_pdf = models.FileField(
+        _("Upload File Here"),
+        null=True,
+        blank=True,
+        max_length=500,
+        upload_to=f"{settings.MEDIA_ROOT}/classroom/assignments/%Y/%m/%d",
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["pdf"],
+                message="Please Upload PDF file only",
+            ),
+            pdf_file_size_lt_5mb,
+        ],
+    )
+    due_date = models.DateField(
+        _("Due by"),
+        default=(date.today() + timedelta(days=1)),
+        validators=[assignment_date_gte_today],
+    )
+    due_time = models.TimeField(_("Due time"), default=datetime.now())
+    subject = models.ForeignKey(
+        Subject, on_delete=models.CASCADE, related_name="assignments"
+    )
+    given_by = models.ForeignKey(
+        Teacher, on_delete=models.SET_NULL, null=True, related_name="assignments_given"
+    )
+
+    created_at = models.DateTimeField(
+        _("Created At "), auto_now_add=True, editable=False
+    )
