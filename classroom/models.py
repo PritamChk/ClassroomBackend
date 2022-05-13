@@ -511,3 +511,15 @@ class Assignment(models.Model):
     created_at = models.DateTimeField(
         _("Created At "), auto_now_add=True, editable=False
     )
+
+    class Meta:
+        ordering = ["due_date", "due_time", "-created_at"]
+
+    def __str__(self) -> str:
+        return self.title
+
+    def file_path(self):
+        return self.attached_pdf
+
+    def short_description(self) -> str:
+        return self.description[:30]
