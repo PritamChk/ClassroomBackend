@@ -23,6 +23,7 @@ redis = "*"
 celery = "*"
 eventlet = "*"
 drf-nested-routers = "*"
+drf-writable-nested = "*"
 
 [dev-packages]
 black = "*"
