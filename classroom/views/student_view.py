@@ -22,7 +22,7 @@ from ..models import Announcement, Classroom, Notes, Student, Subject, Teacher, 
 
 @api_view(["GET"])
 def user_category(request, id):  # TODO: Shift this code in other file
-    my_tags = ["User Category"]
+    my_tags = ["user Category"]
     if Teacher.objects.select_related("user").filter(user__id=id).exists():
         teacher = (
             Teacher.objects.select_related("user").filter(user__id=id)
@@ -46,7 +46,7 @@ class StudentProfileViewSet(RetrieveModelMixin, GenericViewSet):
     Student End point will return student profile details along with classroom details
     """
 
-    my_tags = ["student"]
+    my_tags = ["[student] profile"]
     queryset = (
         Student.objects.select_related("user")
         .select_related("classroom")
@@ -65,7 +65,7 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
     student can only retrive but won't be able to see the other classrooms
     """
 
-    my_tags = ["classroom For student"]
+    my_tags = ["[student] classroom"]
     swagger_schema = None
     serializer_class = ClassroomReadForStudentSerializer
     lookup_field = "slug"
@@ -80,7 +80,7 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
 
 
 class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    my_tags = ["semester for student"]
+    my_tags = ["[student] semester"]
     serializer_class = SemesterReadSerializer
     # lookup_field = 'id'
     def get_queryset(self):
@@ -91,7 +91,7 @@ class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewS
 
 
 class SubjectsForStudentsViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    my_tags = ["subjects / sem [student]"]
+    my_tags = ["[student] subjects"]
     serializer_class = SubjectReadSerializer
     lookup_field = "slug"
 
@@ -108,7 +108,7 @@ class AnnouncementForStudentsViewSet(ListModelMixin, GenericViewSet):
     Announcements for the particular subject will be shown in decreasing order
     """
 
-    my_tags = ["announcements /subject  [student]"]
+    my_tags = ["[student] announcements/subject  "]
     serializer_class = AnnouncementsReadSerializer
 
     def get_queryset(self):
@@ -122,7 +122,7 @@ class NotesForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet)
     Notes for the particular subject will be shown in decreasing order
     """
 
-    my_tags = ["notes/subject [student]"]
+    my_tags = ["[student] notes/subject"]
     serializer_class = NotesReadForStudentSerializer
     lookup_field = "slug"
 
