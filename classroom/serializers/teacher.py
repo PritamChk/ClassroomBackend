@@ -1,6 +1,5 @@
 from rest_framework.serializers import (
     ModelSerializer as ms,
-    HyperlinkedRelatedField,
     IntegerField,
 )
 from accounts.serializers import CurrentUserSerializer
