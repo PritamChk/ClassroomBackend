@@ -249,7 +249,7 @@ class NotesAdmin(admin.ModelAdmin):
         "id",
         "slug",
         "title",
-        "description",
+        "short_description",
         "created_at",
         "updated_at",
         "subject",

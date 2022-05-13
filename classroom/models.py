@@ -439,6 +439,10 @@ class Notes(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    @admin.display(ordering="description")
+    def short_description(self):
+        return self.description[:10]
+
 
 class NotesAttachmentFile(models.Model):
     title = AutoSlugField(
