@@ -481,8 +481,15 @@ class NotesAttachmentFile(models.Model):
 class Assignment(models.Model):
     title = models.CharField(_("Assignment Title"), max_length=300)
     description = models.TextField(null=True, blank=True)
+    alloted_marks = models.PositiveSmallIntegerField(
+        _("Marks:"),
+        default=100,
+        validators=[
+            MaxValueValidator(100, "so sir you want to take exam more than 100 marks?😑")
+        ],
+    )
     attached_pdf = models.FileField(
-        _("Upload File Here"),
+        _("Upload File Here📁"),
         null=True,
         blank=True,
         max_length=500,
@@ -513,7 +520,7 @@ class Assignment(models.Model):
     )
 
     class Meta:
-        ordering = ["due_date", "due_time", "-created_at"]
+        ordering = ["due_date", "due_time", "alloted_marks", "-created_at"]
 
     def __str__(self) -> str:
         return self.title
