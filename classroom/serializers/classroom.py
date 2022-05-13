@@ -1,3 +1,5 @@
+from rest_framework.exceptions import NotFound
+from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT
 from rest_framework.serializers import (
     ModelSerializer as ms,
     SlugField,
@@ -112,6 +114,48 @@ class AnnouncementsReadSerializer(ms):
         )
 
 
+class AnnouncementsPostOrUpdateSerializer(ms):
+    class Meta:
+        model = Announcement
+        fields = (
+            "id",
+            "heading",
+            "body",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    def create(self, validated_data):
+        subject_slug = self.context.get("subject_slug")
+        teacher_pk = self.context.get("teacher_pk")
+        try:
+            subject = Subject.objects.get(slug=subject_slug)
+        except:
+            raise NotFound(
+                detail=f"Subject with slug- {subject_slug} does not exists",
+                code=HTTP_404_NOT_FOUND,
+            )
+        try:
+            teacher = Teacher.objects.get(pk=teacher_pk)
+        except:
+            raise NotFound(
+                detail=f"Teacher with id - {teacher_pk} does not exists",
+                code=HTTP_404_NOT_FOUND,
+            )
+        try:
+            self.instance = Announcement.objects.create(
+                posted_by=teacher, subject=subject, **validated_data
+            )
+        except:
+            raise NotFound(
+                detail=f"Subject Creation failed",
+                code=HTTP_204_NO_CONTENT,
+            )
+
+        return self.instance
+
+
 class NotesFileReadByStudentSerializer(ms):
     file_path = FileField(max_length=None, use_url=True, required=False)
 
@@ -159,17 +203,16 @@ class SubjectCreateByTeacherSerializer(ms):
         model = Subject
         fields = fields = [
             "id",
+            "slug",
             "subject_code",
             "title",
             "subject_type",
             "credit_points",
             "created_at",
         ]
-        read_only_field = ["id", "created_at"]
+        read_only_field = ["id", "created_at", "slug"]
 
     def create(self, validated_data):
-        from rest_framework.exceptions import NotFound
-        from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT
 
         created_by = self.context.get("created_by")
         semester_pk = self.context.get("sem_pk")
