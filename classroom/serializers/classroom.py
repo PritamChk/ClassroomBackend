@@ -242,3 +242,90 @@ class SubjectCreateByTeacherSerializer(ms):
             )
 
         return self.instance
+
+
+class NotesFileUploadByTeacherSerializer(ms):
+    file_path = FileField(max_length=None, use_url=True, required=False)
+
+    class Meta:
+        model = NotesAttachmentFile
+        fields = ["id", "title", "file_path", "created_at"]
+        read_only_fields = ["id", "title", "created_at"]
+
+    def create(self, validated_data):
+        notes_slug = self.context.get("notes_slug")
+        try:
+            notes = Notes.objects.get(slug=notes_slug)
+        except:
+            raise NotFound(
+                detail=f"notes with slug - {notes_slug} does not exists",
+                code=HTTP_404_NOT_FOUND,
+            )
+
+        try:
+            self.instance = NotesAttachmentFile.objects.create(
+                notes=notes, **validated_data
+            )
+        except:
+            raise NotFound(
+                detail=f"Subject Creation failed",
+                code=HTTP_204_NO_CONTENT,
+            )
+
+        return self.instance
+
+
+class NotesWriteForTeacherSerializer(ms):  # Combine this with Student Notes Read
+    attached_files = NotesFileUploadByTeacherSerializer(many=True,required=False)
+    class Meta:
+        model = Notes
+        fields = (
+            "id",
+            "slug",
+            "title",
+            "description",
+            "created_at",
+            "updated_at",
+            "subject",
+            "posted_by",
+            "attached_files",
+        )
+        read_only_fields = [
+            "id",
+            "slug",
+            "created_at",
+            "updated_at",
+            "subject",
+            "posted_by",
+            # "attached_files",
+        ]
+
+    def create(self, validated_data):
+
+        created_by = self.context.get("teacher_pk")
+        subject_slug = self.context.get("subject_slug")
+        try:
+            subject = Subject.objects.get(slug=subject_slug)
+        except:
+            raise NotFound(
+                detail=f"subject_slug - {subject_slug} does not exists",
+                code=HTTP_404_NOT_FOUND,
+            )
+        try:
+            teacher = Teacher.objects.get(pk=created_by)
+        except:
+            raise NotFound(
+                detail=f"Teacher with id - {created_by} does not exists",
+                code=HTTP_404_NOT_FOUND,
+            )
+        try:
+            self.instance = Notes.objects.create(
+                posted_by=teacher, subject=subject, **validated_data
+            )
+        except:
+            raise NotFound(
+                detail=f"Notes Creation failed",
+                code=HTTP_204_NO_CONTENT,
+            )
+
+        return self.instance

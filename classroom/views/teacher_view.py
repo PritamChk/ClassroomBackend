@@ -3,13 +3,30 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.generics import RetrieveAPIView
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin
-from classroom.models import Announcement, Classroom, Semester, Subject, Teacher
+from rest_framework.mixins import (
+    ListModelMixin,
+    CreateModelMixin,
+    RetrieveModelMixin,
+    DestroyModelMixin,
+)
+from classroom.models import (
+    Announcement,
+    Classroom,
+    Notes,
+    NotesAttachmentFile,
+    Semester,
+    Subject,
+    Teacher,
+)
 from classroom.serializers.classroom import (
     AnnouncementsPostOrUpdateSerializer,
     AnnouncementsReadSerializer,
     ClassroomReadForStudentSerializer,
     ClassroomReadForTeacherSerializer,
+    NotesFileReadByStudentSerializer,
+    NotesFileUploadByTeacherSerializer,
+    NotesReadForStudentSerializer,
+    NotesWriteForTeacherSerializer,
     SemesterReadSerializer,
     SubjectCreateByTeacherSerializer,
     SubjectRetriveForTeacherSerializer,
@@ -92,7 +109,8 @@ class AnnouncementPostByTeacherViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Announcement.objects.select_related("posted_by", "subject").filter(
-            posted_by=self.kwargs["teacher_pk"], subject__slug=self.kwargs["subject_slug"]
+            posted_by=self.kwargs.get("teacher_pk"),
+            subject__slug=self.kwargs.get("subject_slug"),
         )
 
     def get_serializer_context(self):
@@ -100,3 +118,44 @@ class AnnouncementPostByTeacherViewSet(ModelViewSet):
             "teacher_pk": self.kwargs.get("teacher_pk"),
             "subject_slug": self.kwargs.get("subject_slug"),
         }
+
+
+class TeacherNotesUploadViewSet(ModelViewSet):
+    http_method_names = ["get", "post", "patch", "head", "options"]
+    my_tags = ["[teacher] 6.1 notes crud"]
+    lookup_field = "slug"
+    # serializer_class = NotesWriteForTeacherSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in SAFE_METHODS:
+            return NotesReadForStudentSerializer
+        return NotesWriteForTeacherSerializer
+
+    def get_queryset(self):
+        return (
+            Notes.objects.select_related("posted_by", "subject")
+            .prefetch_related("attached_files")
+            .filter(
+                posted_by=self.kwargs.get("teacher_pk"),
+                subject__slug=self.kwargs.get("subject_slug"),
+            )
+        )
+
+    def get_serializer_context(self):
+        return {
+            "teacher_pk": self.kwargs.get("teacher_pk"),
+            "subject_slug": self.kwargs.get("subject_slug"),
+        }
+
+
+class FileUploadDeleteViewSet(CreateModelMixin, DestroyModelMixin, GenericViewSet):
+    my_tags = ["[teacher] 6.2 upload/delete attached notes file"]
+    serializer_class = NotesFileUploadByTeacherSerializer
+
+    def get_serializer_context(self):
+        return {"notes_slug": self.kwargs.get("notes_slug")}
+
+    def get_queryset(self):
+        return NotesAttachmentFile.objects.select_related("notes").filter(
+            notes=self.kwargs.get("notes_slug"),
+        )

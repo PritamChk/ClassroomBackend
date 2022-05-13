@@ -71,14 +71,14 @@ class TeacherAdmin(admin.ModelAdmin):
     list_select_related = ["user", "college"]
     autocomplete_fields = [
         "user",
-        "classrooms",  
+        "classrooms",
         "college",
     ]
     search_fields = [
         "user__first_name__istartswith",
         "user__last_name__istartswith",
         "college",
-        "classrooms",  
+        "classrooms",
     ]
 
 
