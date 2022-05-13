@@ -275,12 +275,12 @@ class NotesFileUploadByTeacherSerializer(ms):
         return self.instance
 
 
-class NotesWriteForTeacherSerializer(ms):  # Combine this with Student Notes Read
-    attached_files = NotesFileUploadByTeacherSerializer(many=True,required=False)
+class NotesCreateForTeacherSerializer(ms):  # Combine this with Student Notes Read
+    attached_files = NotesFileUploadByTeacherSerializer(many=True, required=False)
+
     class Meta:
         model = Notes
         fields = (
-            "id",
             "slug",
             "title",
             "description",
@@ -291,7 +291,6 @@ class NotesWriteForTeacherSerializer(ms):  # Combine this with Student Notes Rea
             "attached_files",
         )
         read_only_fields = [
-            "id",
             "slug",
             "created_at",
             "updated_at",
@@ -329,3 +328,18 @@ class NotesWriteForTeacherSerializer(ms):  # Combine this with Student Notes Rea
             )
 
         return self.instance
+
+class NotesUpdateForTeacherSerializer(ms):  # Combine this with Student Notes Read
+    # attached_files = NotesFileUploadByTeacherSerializer(many=True, required=False)
+
+    class Meta:
+        model = Notes
+        fields = (
+            "title",
+            "description",
+        )
+        read_only_fields = [
+            "slug",
+            "created_at",
+            "updated_at",
+        ]

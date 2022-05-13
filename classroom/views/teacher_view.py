@@ -26,7 +26,8 @@ from classroom.serializers.classroom import (
     NotesFileReadByStudentSerializer,
     NotesFileUploadByTeacherSerializer,
     NotesReadForStudentSerializer,
-    NotesWriteForTeacherSerializer,
+    NotesCreateForTeacherSerializer,
+    NotesUpdateForTeacherSerializer,
     SemesterReadSerializer,
     SubjectCreateByTeacherSerializer,
     SubjectRetriveForTeacherSerializer,
@@ -129,7 +130,9 @@ class TeacherNotesUploadViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return NotesReadForStudentSerializer
-        return NotesWriteForTeacherSerializer
+        elif self.request.method == "PATCH":
+            return NotesUpdateForTeacherSerializer
+        return NotesCreateForTeacherSerializer
 
     def get_queryset(self):
         return (
