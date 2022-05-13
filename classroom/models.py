@@ -441,7 +441,7 @@ class Notes(models.Model):
 
     @admin.display(ordering="description")
     def short_description(self):
-        return self.description[:10]
+        return self.description[:40]
 
 
 class NotesAttachmentFile(models.Model):
