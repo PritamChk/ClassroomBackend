@@ -547,7 +547,7 @@ class Assignment(models.Model):
 #         null=True,
 #         blank=True,
 #         max_length=500,
-#         upload_to=f"{settings.MEDIA_ROOT}/classroom/assignment_submitions/%Y/%m/%d",
+#         upload_to=f"{settings.MEDIA_ROOT}/classroom/assignment_submissions/%Y/%m/%d",
 #         validators=[
 #             FileExtensionValidator(
 #                 allowed_extensions=["pdf"],
