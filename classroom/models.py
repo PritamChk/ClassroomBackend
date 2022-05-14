@@ -478,58 +478,58 @@ class NotesAttachmentFile(models.Model):
         return str(self.file_path.name)
 
 
-class Assignment(models.Model):
-    title = models.CharField(_("Assignment Title"), max_length=300)
-    description = models.TextField(null=True, blank=True)
-    alloted_marks = models.PositiveSmallIntegerField(
-        _("Marks:"),
-        default=100,
-        validators=[
-            MaxValueValidator(100, "assignments can't be alloted more than 100 marks 😑")
-        ],
-    )
-    attached_pdf = models.FileField(
-        _("Upload File Here📁"),
-        null=True,
-        blank=True,
-        max_length=500,
-        upload_to=f"{settings.MEDIA_ROOT}/classroom/assignments/%Y/%m/%d",
-        validators=[
-            FileExtensionValidator(
-                allowed_extensions=["pdf"],
-                message="Please Upload PDF file only",
-            ),
-            pdf_file_size_lt_5mb,
-        ],
-    )
-    due_date = models.DateField(
-        _("Due by"),
-        default=(date.today() + timedelta(days=1)),
-        validators=[assignment_date_gte_today],
-    )
-    due_time = models.TimeField(_("Due time"), default=datetime.now())
-    subject = models.ForeignKey(
-        Subject, on_delete=models.CASCADE, related_name="assignments"
-    )
-    given_by = models.ForeignKey(
-        Teacher, on_delete=models.SET_NULL, null=True, related_name="assignments_given"
-    )
+# class Assignment(models.Model):
+#     title = models.CharField(_("Assignment Title"), max_length=300)
+#     description = models.TextField(null=True, blank=True)
+#     alloted_marks = models.PositiveSmallIntegerField(
+#         _("Marks:"),
+#         default=100,
+#         validators=[
+#             MaxValueValidator(100, "assignments can't be alloted more than 100 marks 😑")
+#         ],
+#     )
+#     attached_pdf = models.FileField(
+#         _("Upload File Here📁"),
+#         null=True,
+#         blank=True,
+#         max_length=500,
+#         upload_to=f"{settings.MEDIA_ROOT}/classroom/assignments/%Y/%m/%d",
+#         validators=[
+#             FileExtensionValidator(
+#                 allowed_extensions=["pdf"],
+#                 message="Please Upload PDF file only",
+#             ),
+#             pdf_file_size_lt_5mb,
+#         ],
+#     )
+#     due_date = models.DateField(
+#         _("Due by"),
+#         default=(date.today() + timedelta(days=1)),
+#         validators=[assignment_date_gte_today],
+#     )
+#     due_time = models.TimeField(_("Due time"), default=datetime.now())
+#     subject = models.ForeignKey(
+#         Subject, on_delete=models.CASCADE, related_name="assignments"
+#     )
+#     given_by = models.ForeignKey(
+#         Teacher, on_delete=models.SET_NULL, null=True, related_name="assignments_given"
+#     )
 
-    created_at = models.DateTimeField(
-        _("Created At "), auto_now_add=True, editable=False
-    )
+#     created_at = models.DateTimeField(
+#         _("Created At "), auto_now_add=True, editable=False
+#     )
 
-    class Meta:
-        ordering = ["due_date", "due_time", "alloted_marks", "-created_at"]
+#     class Meta:
+#         ordering = ["due_date", "due_time", "alloted_marks", "-created_at"]
 
-    def __str__(self) -> str:
-        return self.title
+#     def __str__(self) -> str:
+#         return self.title
 
-    def file_path(self):
-        return self.attached_pdf
+#     def file_path(self):
+#         return self.attached_pdf
 
-    def short_description(self) -> str:
-        return self.description[:30]
+#     def short_description(self) -> str:
+#         return self.description[:30]
 
 
 # class SubmittedAssignment(models.Model):
