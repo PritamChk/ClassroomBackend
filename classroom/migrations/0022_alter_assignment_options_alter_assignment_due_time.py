@@ -7,17 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('classroom', '0021_assignment'),
+        ("classroom", "0021_assignment"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='assignment',
-            options={'ordering': ['due_date', 'due_time', '-created_at']},
+            name="assignment",
+            options={"ordering": ["due_date", "due_time", "-created_at"]},
         ),
         migrations.AlterField(
-            model_name='assignment',
-            name='due_time',
-            field=models.TimeField(default=datetime.datetime(2022, 5, 13, 22, 16, 11, 407031), verbose_name='Due time'),
+            model_name="assignment",
+            name="due_time",
+            field=models.TimeField(
+                default=datetime.datetime(2022, 5, 13, 22, 16, 11, 407031),
+                verbose_name="Due time",
+            ),
         ),
     ]

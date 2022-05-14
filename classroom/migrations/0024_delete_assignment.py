@@ -6,11 +6,14 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('classroom', '0023_alter_assignment_options_assignment_alloted_marks_and_more'),
+        (
+            "classroom",
+            "0023_alter_assignment_options_assignment_alloted_marks_and_more",
+        ),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='Assignment',
+            name="Assignment",
         ),
     ]
