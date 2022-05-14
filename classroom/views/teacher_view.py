@@ -71,7 +71,7 @@ class SemesterForTeacherViewSet(ListModelMixin, RetrieveModelMixin, GenericViewS
 
 
 class SubjectForTeacherViewSet(ModelViewSet):
-    http_method_names = ["get", "post", "patch", "head", "options"]
+    http_method_names = ["get", "post", "patch", "delete", "head", "options"]
     my_tags = ["[teacher] 4. subjects/classroom"]
     lookup_field = "slug"
 
@@ -100,7 +100,7 @@ class SubjectForTeacherViewSet(ModelViewSet):
 
 
 class AnnouncementPostByTeacherViewSet(ModelViewSet):
-    http_method_names = ["get", "post", "patch", "head", "options"]
+    http_method_names = ["get", "post", "patch", "delete", "head", "options"]
     my_tags = ["[teacher] 5. announcement/subject"]
     # lookup_field='slug'
 
@@ -123,7 +123,7 @@ class AnnouncementPostByTeacherViewSet(ModelViewSet):
 
 
 class TeacherNotesUploadViewSet(ModelViewSet):
-    http_method_names = ["get", "post", "patch", "head", "options"]
+    http_method_names = ["get", "post", "delete", "patch", "head", "options"]
     my_tags = ["[teacher] 6.1 notes crud"]
     lookup_field = "slug"
     # serializer_class = NotesWriteForTeacherSerializer
