@@ -152,14 +152,16 @@ class TeacherNotesUploadViewSet(ModelViewSet):
         }
 
 
-class FileUploadDeleteViewSet(CreateModelMixin, DestroyModelMixin, GenericViewSet):
+class FileUploadDeleteViewSet(ModelViewSet):
+    http_method_names = ["get", "post", "patch", "delete", "options", "head"]
     my_tags = ["[teacher] 6.2 upload/delete attached notes file"]
     serializer_class = NotesFileUploadByTeacherSerializer
+    lookup_field = "title"
 
     def get_serializer_context(self):
         return {"notes_slug": self.kwargs.get("notes_slug")}
 
     def get_queryset(self):
         return NotesAttachmentFile.objects.select_related("notes").filter(
-            notes=self.kwargs.get("notes_slug"),
+            notes__slug=self.kwargs.get("notes_slug"),
         )
