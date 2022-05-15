@@ -7,38 +7,10 @@ from classroom.serializers.classroom import (
 )
 from classroom.serializers.student import StudentReadSerializer
 from rest_framework.decorators import api_view
-from rest_framework.mixins import (
-    CreateModelMixin,
-    DestroyModelMixin,
-    ListModelMixin,
-    RetrieveModelMixin,
-    UpdateModelMixin,
-)
-from rest_framework.response import Response
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.viewsets import GenericViewSet
 
-from ..model import Announcement, Classroom, Notes, Student, Subject, Teacher, Semester
-
-
-@api_view(["GET"])
-def user_category(request, id):  # TODO: Shift this code in other file
-    my_tags = ["user Category"]
-    if Teacher.objects.select_related("user").filter(user__id=id).exists():
-        teacher = (
-            Teacher.objects.select_related("user").filter(user__id=id)
-            # .only("id")
-            .first()
-        )
-        return Response({"user_type": "teacher", "teacher_id": teacher.id})
-    elif Student.objects.select_related("user").filter(user__id=id).exists():
-        student = (
-            Student.objects.select_related("user").filter(user__id=id)
-            # .only("id")
-            .first()
-        )
-        return Response({"user_type": "student", "student_id": student.id})
-    else:
-        return Response({"user_type": "user unknown"})
+from ..model import Announcement, Classroom, Notes, Semester, Student, Subject
 
 
 class StudentProfileViewSet(RetrieveModelMixin, GenericViewSet):

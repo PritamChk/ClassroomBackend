@@ -41,7 +41,6 @@ subject_notes_router = NestedDefaultRouter(
 )
 subject_notes_router.register("notes", NotesForStudentViewSet, basename="notes")
 
-# stud_urlpatterns = [path("user-type/<uuid:id>", user_category, name="user-category")]
 stud_urlpatterns = []
 
 stud_urlpatterns += (
