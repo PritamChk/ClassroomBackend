@@ -1,6 +1,6 @@
 from celery import shared_task
 from django.core.mail import send_mass_mail, send_mail
-from .models import AllowedTeacher
+from .model import AllowedTeacher
 import os
 from django.conf import settings
 import pandas as pd

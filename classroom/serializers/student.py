@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer as ms
-from classroom.models import Student, User
+from classroom.model import Student, User
 from .classroom import ClassroomReadForStudentSerializer
 from accounts.serializers import CurrentUserSerializer
 

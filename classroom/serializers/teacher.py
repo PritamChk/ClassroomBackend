@@ -3,7 +3,7 @@ from rest_framework.serializers import (
     IntegerField,
 )
 from accounts.serializers import CurrentUserSerializer
-from classroom.models import Classroom, Teacher, User
+from classroom.model import Classroom, Teacher, User
 
 
 class MinimalUserDetailsSerializer(ms):
