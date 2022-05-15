@@ -9,7 +9,7 @@ from rest_framework.mixins import (
     RetrieveModelMixin,
     DestroyModelMixin,
 )
-from classroom.models import (
+from classroom.models.models import (
     Announcement,
     Classroom,
     Notes,
