@@ -34,7 +34,7 @@ class College(models.Model):
 
 
 class AllowedTeacher(models.Model):
-    email = models.EmailField(_("Email Id"), max_length=255)
+    email = models.EmailField(_("Email Id"), max_length=255, unique=True)
     college = models.ForeignKey(
         "classroom.College", on_delete=models.CASCADE, related_name="allowed_teachers"
     )
