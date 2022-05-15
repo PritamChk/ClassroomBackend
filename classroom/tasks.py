@@ -7,7 +7,7 @@ import pandas as pd
 
 
 @shared_task
-def send_email_after_mass_profile_creation(subject: str, prompt: str, email_list):
+def send_email_after_bulk_object_creation(subject: str, prompt: str, email_list):
     """
     # It sends mass mail
         - takes 3 `parameter`

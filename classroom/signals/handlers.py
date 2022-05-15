@@ -2,7 +2,7 @@ import os
 from celery import shared_task
 from classroom.serializers import teacher
 from classroom.tasks import (
-    send_email_after_mass_profile_creation,
+    send_email_after_bulk_object_creation,
 )
 
 import pandas as pd
@@ -93,7 +93,7 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
         subject = "Create Your Student Account"
         prompt = "please use your following mail id to sign up in the Classroom[LMS]"
         try:
-            send_email_after_mass_profile_creation.delay(subject, prompt, email_list)
+            send_email_after_bulk_object_creation.delay(subject, prompt, email_list)
         except BadHeaderError:
             print("Could not able to sen emails to students")
         os.remove(file_abs_path)
@@ -154,7 +154,7 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
         subject = "Create Your Teacher Account"
         prompt = "please use your following mail id to sign up in the Classroom[LMS]"
         try:
-            send_email_after_mass_profile_creation.delay(subject, prompt, email_list)
+            send_email_after_bulk_object_creation.delay(subject, prompt, email_list)
         except BadHeaderError:
             print("Could not able to sen emails to students")
         os.remove(file_abs_path)
@@ -262,7 +262,7 @@ def create_allowed_teacher_for_classroom_level(
             "please use your following mail id to sign up/log in in the Classroom[LMS]"
         )
         try:
-            send_email_after_mass_profile_creation.delay(subject, prompt, email_list)
+            send_email_after_bulk_object_creation.delay(subject, prompt, email_list)
         except BadHeaderError:
             print("Could not able to sen emails to students")
         os.remove(file_abs_path)
