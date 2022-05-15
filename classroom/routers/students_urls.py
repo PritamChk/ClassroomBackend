@@ -9,7 +9,6 @@ from ..views.student_view import (
     SemesterForStudentViewSet,
     StudentProfileViewSet,
     SubjectsForStudentsViewSet,
-    user_category,
 )
 
 student_router = DefaultRouter()
@@ -42,8 +41,8 @@ subject_notes_router = NestedDefaultRouter(
 )
 subject_notes_router.register("notes", NotesForStudentViewSet, basename="notes")
 
-stud_urlpatterns = [path("user-type/<uuid:id>", user_category, name="user-category")]
-
+# stud_urlpatterns = [path("user-type/<uuid:id>", user_category, name="user-category")]
+stud_urlpatterns = []
 
 stud_urlpatterns += (
     student_router.urls
@@ -54,5 +53,5 @@ stud_urlpatterns += (
     + subject_notes_router.urls
 )
 
-for url in stud_urlpatterns:
-    cprint(url, "green")
+# for url in stud_urlpatterns:
+#     cprint(url, "green")
