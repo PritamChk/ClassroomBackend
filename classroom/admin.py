@@ -278,7 +278,8 @@ class AllowedTeacherClassroomLevelAdmin(admin.ModelAdmin):
     search_fields = ["email", "classroom"]
     list_filter = ("classroom",)
 
+
 @admin.register(CollegeDBA)
 class CollegeDBAAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'college')
-    list_filter = ('user', 'college')
+    list_display = ("id", "user", "college")
+    list_filter = ("user", "college")

@@ -41,3 +41,13 @@ class AllowedTeacher(models.Model):
 
     def __str__(self) -> str:
         return f"{self.email}"
+
+
+class AllowedCollegeDBA(models.Model):
+    email = models.EmailField(_("Email Id"), max_length=255, unique=True)
+    college = models.ForeignKey(
+        "classroom.College", on_delete=models.CASCADE, related_name="allowed_dbas"
+    )
+
+    def __str__(self) -> str:
+        return f"{self.email}"
