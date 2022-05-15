@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
+from classroom.models.college_dba import CollegeDBA
+
 from .model import (
     AllowedTeacherClassroomLevel,
     Announcement,
@@ -275,3 +277,8 @@ class AllowedTeacherClassroomLevelAdmin(admin.ModelAdmin):
     list_display_links = ["email"]
     search_fields = ["email", "classroom"]
     list_filter = ("classroom",)
+
+@admin.register(CollegeDBA)
+class CollegeDBAAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'college')
+    list_filter = ('user', 'college')
