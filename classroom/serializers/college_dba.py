@@ -1,4 +1,5 @@
 from django.db.transaction import atomic
+from numpy import source
 from rest_framework import serializers as _sz
 from rest_framework.exceptions import ValidationError as _error
 from rest_framework.serializers import ModelSerializer as _ms
@@ -16,6 +17,8 @@ class AllowedCollegeDBAReadSerializer(_ms):
 
 
 class AllowedCollegeDBACreateSerializer(_ms):
+    college = _sz.SlugField(source="college.slug")
+
     class Meta:
         model = AllowedCollegeDBA
         fields = ["id", "email", "college"]
@@ -24,10 +27,13 @@ class AllowedCollegeDBACreateSerializer(_ms):
 
 class CollegeCreateSerializer(_ms):
     allowed_dbas = AllowedCollegeDBACreateSerializer(many=True)
+    allowed_teacher_list = _sz.FileField(max_length=None, use_url=True, required=False)
 
     class Meta:
         model = College
         fields = [
+            "id",
+            "slug",
             "name",
             "city",
             "state",
@@ -35,6 +41,7 @@ class CollegeCreateSerializer(_ms):
             "allowed_teacher_list",
             "allowed_dbas",
         ]
+        read_only_fields = ["id", "slug"]
 
     # TODO:Transaction used
     @atomic
