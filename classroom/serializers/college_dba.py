@@ -17,12 +17,12 @@ class AllowedCollegeDBAReadSerializer(_ms):
 
 
 class AllowedCollegeDBACreateSerializer(_ms):
-    college = _sz.SlugField(source="college.slug")
+    college_slug = _sz.SlugField(source="college.slug", read_only=True)
 
     class Meta:
         model = AllowedCollegeDBA
-        fields = ["id", "email", "college"]
-        read_only_fields = ["id", "college"]
+        fields = ["id", "email", "college_slug"]
+        read_only_fields = ["id", "college_slug"]
 
 
 class CollegeCreateSerializer(_ms):
