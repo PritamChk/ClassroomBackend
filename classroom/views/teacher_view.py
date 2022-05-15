@@ -152,7 +152,7 @@ class TeacherNotesUploadViewSet(ModelViewSet):
         }
 
 
-# from rest_framework.parsers import FileUploadParser, JSONParser
+from rest_framework.parsers import FileUploadParser, JSONParser,FormParser
 
 
 class FileUploadDeleteViewSet(ModelViewSet):
@@ -160,7 +160,7 @@ class FileUploadDeleteViewSet(ModelViewSet):
     my_tags = ["[teacher] 6.2 upload/delete attached notes file"]
     serializer_class = NotesFileUploadByTeacherSerializer
     lookup_field = "title"
-    # parser_classes = [FileUploadParser, JSONParser]
+    parser_classes = [FormParser,FileUploadParser, JSONParser]
 
     def get_serializer_context(self):
         return {"notes_slug": self.kwargs.get("notes_slug")}
