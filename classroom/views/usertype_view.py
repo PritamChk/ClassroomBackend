@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from classroom.serializers.usertype import UserTypeSerializer
 
-
+# hello 
 class UserTypeAPIView(_rav):
     my_tags = ["auth [user category]"]
 
