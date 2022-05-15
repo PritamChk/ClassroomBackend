@@ -1,4 +1,4 @@
-from classroom.models.college import College, AllowedTeacher
+from classroom.models.college import College, AllowedTeacher, AllowedCollegeDBA
 from classroom.models.classroom import (
     Classroom,
     Semester,

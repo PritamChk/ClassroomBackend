@@ -6,11 +6,10 @@ class CollegeDBA(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name="college_dba"
     )
-    college = models.ForeignKey(
+    college = models.OneToOneField(
         "classroom.College",
         on_delete=models.CASCADE,
         related_name="college_dbas",
-        unique=True,
     )
 
     class Meta:
