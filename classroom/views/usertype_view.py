@@ -13,7 +13,7 @@ class UserTypeAPIView(_rav):
     my_tags = ["auth [user category]"]
 
     def get_serializer_class(self):
-        return UserTypeSerializer  # FIXME: Return Proper Serializer Class
+        return UserTypeSerializer
 
     def get(self, request, id, **kwargs):
         if Teacher.objects.select_related("user").filter(user__id=id).exists():
