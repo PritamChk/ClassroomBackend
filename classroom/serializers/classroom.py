@@ -6,7 +6,7 @@ from rest_framework.serializers import (
     FilePathField,
     FileField,
 )
-from classroom.models.models import (
+from classroom.models import (
     College,
     Classroom,
     Notes,

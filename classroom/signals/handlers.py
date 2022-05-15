@@ -6,7 +6,7 @@ from classroom.tasks import (
 )
 
 import pandas as pd
-from classroom.models.models import (
+from classroom.models import (
     AllowedStudents,
     AllowedTeacher,
     AllowedTeacherClassroomLevel,

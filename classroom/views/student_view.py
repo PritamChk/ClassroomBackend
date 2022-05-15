@@ -17,7 +17,7 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from ..models.models import Announcement, Classroom, Notes, Student, Subject, Teacher, Semester
+from ..models import Announcement, Classroom, Notes, Student, Subject, Teacher, Semester
 
 
 @api_view(["GET"])
