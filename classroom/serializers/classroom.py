@@ -276,7 +276,7 @@ class NotesFileUploadByTeacherSerializer(ms):
 
 
 class NotesCreateForTeacherSerializer(ms):  # Combine this with Student Notes Read
-    attached_files = NotesFileUploadByTeacherSerializer(many=True, required=False)
+    # attached_files = NotesFileUploadByTeacherSerializer(many=True, required=False)
 
     class Meta:
         model = Notes
@@ -288,7 +288,7 @@ class NotesCreateForTeacherSerializer(ms):  # Combine this with Student Notes Re
             "updated_at",
             "subject",
             "posted_by",
-            "attached_files",
+            # "attached_files",
         )
         read_only_fields = [
             "slug",
