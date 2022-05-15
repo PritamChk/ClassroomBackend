@@ -135,7 +135,7 @@ class Classroom(models.Model):
 
 class Semester(models.Model):
     classroom = models.ForeignKey(
-        'classroom.Classroom', on_delete=models.CASCADE, related_name="semesters"
+        "classroom.Classroom", on_delete=models.CASCADE, related_name="semesters"
     )
     sem_no = models.PositiveSmallIntegerField(
         _("Semester No"),

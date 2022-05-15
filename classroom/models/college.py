@@ -1,6 +1,7 @@
 from .imports import *
 from django.utils.translation import gettext_lazy as _
 
+
 class College(models.Model):
     slug = AutoSlugField(
         populate_from=["name", "state", "city"],
@@ -35,7 +36,7 @@ class College(models.Model):
 class AllowedTeacher(models.Model):
     email = models.EmailField(_("Email Id"), max_length=255)
     college = models.ForeignKey(
-        'classroom.College', on_delete=models.CASCADE, related_name="allowed_teachers"
+        "classroom.College", on_delete=models.CASCADE, related_name="allowed_teachers"
     )
 
     def __str__(self) -> str:
