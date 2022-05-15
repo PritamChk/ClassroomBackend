@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
+from classroom.models.college import AllowedCollegeDBA
 
 from classroom.models.college_dba import CollegeDBA
 
@@ -283,3 +284,9 @@ class AllowedTeacherClassroomLevelAdmin(admin.ModelAdmin):
 class CollegeDBAAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "college")
     list_filter = ("user", "college")
+
+
+@admin.register(AllowedCollegeDBA)
+class AllowedCollegeDBAAdmin(admin.ModelAdmin):
+    list_display = ("id", "email", "college")
+    list_filter = ("college",)
