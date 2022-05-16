@@ -17,6 +17,7 @@ class College(models.Model):
         upload_to=f"{settings.MEDIA_ROOT}/classroom/teachers/",
         # default=f"{settings.BASE_DIR}/{settings.MEDIA_ROOT}/classroom/teacher/no_file_of_teacher.csv",
         null=True,
+        max_length=500,
         blank=True,
         validators=[
             FileExtensionValidator(
