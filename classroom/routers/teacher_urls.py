@@ -64,5 +64,5 @@ teacher_urlpatterns += (
     + teacher_notes_file_upload.urls
 )
 
-for teacher_url in teacher_urlpatterns:
-    cprint(teacher_url, "yellow")
+# for teacher_url in teacher_urlpatterns:
+#     cprint(teacher_url, "yellow")
