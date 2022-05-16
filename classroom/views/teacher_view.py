@@ -152,7 +152,9 @@ class TeacherNotesUploadViewSet(ModelViewSet):
         }
 
 
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+from rest_framework.views import APIView
+from termcolor import cprint
 
 # TODO: link : https://stackoverflow.com/questions/34326150/multipartparsererror-invalid-boundary
 class FileUploadDeleteViewSet(ModelViewSet):
@@ -160,7 +162,11 @@ class FileUploadDeleteViewSet(ModelViewSet):
     my_tags = ["[teacher] 6.2 upload/delete attached notes file"]
     serializer_class = NotesFileUploadByTeacherSerializer
     lookup_field = "title"
-    parser_classes = [FormParser, MultiPartParser]
+    parser_classes = [
+        # FileUploadParser,
+        MultiPartParser,
+        FormParser,
+    ]
 
     def get_serializer_context(self):
         return {"notes_slug": self.kwargs.get("notes_slug")}
@@ -169,3 +175,8 @@ class FileUploadDeleteViewSet(ModelViewSet):
         return NotesAttachmentFile.objects.select_related("notes").filter(
             notes__slug=self.kwargs.get("notes_slug"),
         )
+
+    def create(self, request, *args, **kwargs):
+        file_obj = request.data.get("file")
+        cprint(file_obj, "red")
+        return super().create(request, *args, **kwargs)

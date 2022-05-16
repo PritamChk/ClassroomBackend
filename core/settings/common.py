@@ -184,6 +184,21 @@ REST_FRAMEWORK = {
 # ======== CUSTOM CONSTANTS --------------------------------------------------
 
 CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "filename",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "content-disposition",
+    "dnt",
+    "boundary",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
 
 
 AUTH_USER_MODEL = "accounts.BaseAccount"
