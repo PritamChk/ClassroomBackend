@@ -65,7 +65,7 @@ class CollegeCreateSerializer(_ms):
             allowed_dba_object_list = [
                 AllowedCollegeDBA(college=college, **email) for email in dba_mails
             ]
-            allowed_dbas_list = AllowedCollegeDBA.objects.bulk_create(
+            AllowedCollegeDBA.objects.bulk_create(
                 allowed_dba_object_list
             )
         except:
@@ -83,3 +83,24 @@ class CollegeCreateSerializer(_ms):
         send_email_after_bulk_object_creation.delay(subject, prompt, mail_list)
         self.instance = college
         return self.instance
+
+
+# from drf_writable_nested import WritableNestedModelSerializer as _wnms
+
+# class CollegeCreateSerializer(_wnms):
+#     allowed_dbas = AllowedCollegeDBACreateSerializer(many=True)
+#     allowed_teacher_list = _sz.FileField(max_length=None, use_url=True, required=False)
+
+#     class Meta:
+#         model = College
+#         fields = [
+#             "id",
+#             "slug",
+#             "name",
+#             "city",
+#             "state",
+#             "address",
+#             "allowed_teacher_list",
+#             "allowed_dbas",
+#         ]
+#         read_only_fields = ["id", "slug"]
