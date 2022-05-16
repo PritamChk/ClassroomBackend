@@ -254,6 +254,7 @@ class NotesFileUploadByTeacherSerializer(ms):
 
     def create(self, validated_data):
         notes_slug = self.context.get("notes_slug")
+        request = self.context.get("request")
         try:
             notes = Notes.objects.get(slug=notes_slug)
         except:

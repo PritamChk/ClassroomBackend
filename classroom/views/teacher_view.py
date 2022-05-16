@@ -1,3 +1,5 @@
+import os
+from django.conf import settings
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework import status
 from rest_framework.response import Response
@@ -163,20 +165,50 @@ class FileUploadDeleteViewSet(ModelViewSet):
     serializer_class = NotesFileUploadByTeacherSerializer
     lookup_field = "title"
     parser_classes = [
-        # FileUploadParser,
         MultiPartParser,
         FormParser,
     ]
 
     def get_serializer_context(self):
-        return {"notes_slug": self.kwargs.get("notes_slug")}
+        return {"notes_slug": self.kwargs.get("notes_slug"), "request": self.request}
 
     def get_queryset(self):
         return NotesAttachmentFile.objects.select_related("notes").filter(
             notes__slug=self.kwargs.get("notes_slug"),
         )
 
-    def create(self, request, *args, **kwargs):
-        file_obj = request.data.get("file")
-        cprint(file_obj, "red")
-        return super().create(request, *args, **kwargs)
+    # def create(self, request, *args, **kwargs):
+    #     file_obj = request.data.get("file")
+    #     cprint(file_obj, "green")
+    #     cprint(request.data, "green")
+    #     import pandas as pd
+
+    #     try:
+    #         data = self.request.FILES["file"]
+    #         # file = open(
+    #         #     os.path.join(
+    #         #         settings.BASE_DIR,
+    #         #         settings.MEDIA_ROOT,
+    #         #         "classroom",
+    #         #         "notes",
+    #         #         file_obj,
+    #         #     ),
+    #         #     "wb+",
+    #         # )
+    #         # for chunk in data.chunks():
+    #         #     file.write(chunk)
+    #         # with pd.ExcelWriter(
+    #         #     os.path.join(
+    #         #         settings.BASE_DIR,
+    #         #         settings.MEDIA_ROOT,
+    #         #         "classroom",
+    #         #         "notes",
+    #         #         file_obj,
+    #         #     ),
+    #         #     "w",
+    #         # ) as file:
+    #         #     file.write(data)
+    #         cprint(type(data), "red")
+    #     except:
+    #         cprint("file aseni", "red")
+    #     return super().create(request, *args, **kwargs)
