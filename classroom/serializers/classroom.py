@@ -244,8 +244,11 @@ class SubjectCreateByTeacherSerializer(ms):
         return self.instance
 
 
+from rest_framework import serializers as _sz
+
+
 class NotesFileUploadByTeacherSerializer(ms):
-    file_path = FileField(max_length=None, use_url=True, required=False)
+    file_path = FileField(max_length=None, use_url=True, required=True)
 
     class Meta:
         model = NotesAttachmentFile
@@ -254,7 +257,6 @@ class NotesFileUploadByTeacherSerializer(ms):
 
     def create(self, validated_data):
         notes_slug = self.context.get("notes_slug")
-        request = self.context.get("request")
         try:
             notes = Notes.objects.get(slug=notes_slug)
         except:
