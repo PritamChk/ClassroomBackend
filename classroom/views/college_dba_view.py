@@ -6,12 +6,9 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from classroom.models.college import College
 from classroom.serializers.college_dba import (
-    # CollegeCreate2Serializer,
-    # CollegeCreate3Serializer,
     CollegeCreateSerializer,
 )
 from termcolor import cprint
-from drf_yasg.utils import swagger_auto_schema
 
 
 class CollegeCreateViewSet(
@@ -38,3 +35,5 @@ class CollegeCreateViewSet(
 class DBAExistsView(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
+
+
