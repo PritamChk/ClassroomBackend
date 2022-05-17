@@ -147,7 +147,7 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
             )
             return None
         df_dict = df.to_dict("records")
-        print(df_dict)
+        # print(df_dict)
         list_of_teachers = [
             AllowedTeacher(college=instance, **args) for args in df.to_dict("records")
         ]
@@ -210,7 +210,7 @@ def create_allowed_teacher_for_classroom_level(
             )
             return None
         df_dict: list[dict] = df.to_dict("records")
-        print(df_dict)
+        # print(df_dict)
         college_allowed_teacher_list = list(
             AllowedTeacher.objects.select_related("college")
             .filter(college=instance.college)
@@ -512,7 +512,7 @@ def create_allowed_dba(sender, instance: College, created, **kwargs):
                 detail="Please give at least one mail-id in the fail "
             )
 
-        print(df_dict)
+        # print(df_dict)
         list_of_teachers = [
             AllowedCollegeDBA(college=instance, **args) for args in df.to_dict("records")
         ]
