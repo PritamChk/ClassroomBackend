@@ -178,37 +178,5 @@ class FileUploadDeleteViewSet(ModelViewSet):
         )
 
     # def create(self, request, *args, **kwargs):
-    #     file_obj = request.data.get("file")
-    #     cprint(file_obj, "green")
     #     cprint(request.data, "green")
-    #     import pandas as pd
-
-    #     try:
-    #         data = self.request.FILES["file"]
-    #         # file = open(
-    #         #     os.path.join(
-    #         #         settings.BASE_DIR,
-    #         #         settings.MEDIA_ROOT,
-    #         #         "classroom",
-    #         #         "notes",
-    #         #         file_obj,
-    #         #     ),
-    #         #     "wb+",
-    #         # )
-    #         # for chunk in data.chunks():
-    #         #     file.write(chunk)
-    #         # with pd.ExcelWriter(
-    #         #     os.path.join(
-    #         #         settings.BASE_DIR,
-    #         #         settings.MEDIA_ROOT,
-    #         #         "classroom",
-    #         #         "notes",
-    #         #         file_obj,
-    #         #     ),
-    #         #     "w",
-    #         # ) as file:
-    #         #     file.write(data)
-    #         cprint(type(data), "red")
-    #     except:
-    #         cprint("file aseni", "red")
     #     return super().create(request, *args, **kwargs)
