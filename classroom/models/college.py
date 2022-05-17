@@ -3,6 +3,11 @@ from django.utils.translation import gettext_lazy as _
 
 
 class College(models.Model):
+    """
+    ## College
+    `params`:  ('slug', 'name', 'city', 'state', 'address', 'allowed_teacher_list', 'allowed_dba_list')
+    """
+
     slug = AutoSlugField(
         populate_from=["name", "state", "city"],
         editable=True,
@@ -11,11 +16,9 @@ class College(models.Model):
     city = models.CharField(_("City"), max_length=255)
     state = models.CharField(_("State"), max_length=255)
     address = models.TextField(null=True, blank=True)
-    # TODO: send signal by college instead of Classroom
     allowed_teacher_list = models.FileField(
         _("Upload teacher List File(.csv/.xl)"),
         upload_to=f"{settings.MEDIA_ROOT}/classroom/teachers/",
-        # default=f"{settings.BASE_DIR}/{settings.MEDIA_ROOT}/classroom/teacher/no_file_of_teacher.csv",
         null=True,
         max_length=500,
         blank=True,
@@ -25,6 +28,22 @@ class College(models.Model):
                 message="Please Upload CSV/XLSX file only",
             )
         ],
+    )
+
+    allowed_dba_list = (
+        models.FileField(  # TODO: Allowed DBA Auto Create Signal by College
+            _("Upload teacher List File(.csv/.xl)"),
+            upload_to=f"{settings.MEDIA_ROOT}/college/dbas/%Y/%m/%d",
+            null=True,
+            max_length=500,
+            blank=True,
+            validators=[
+                FileExtensionValidator(
+                    allowed_extensions=["csv", "xlsx"],
+                    message="Please Upload CSV/XLSX file only",
+                )
+            ],
+        )
     )
 
     class Meta:

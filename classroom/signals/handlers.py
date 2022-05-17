@@ -1,5 +1,8 @@
 import os
+from re import U
 from celery import shared_task
+from classroom.models.college import AllowedCollegeDBA
+from classroom.models.college_dba import CollegeDBA
 from classroom.serializers import teacher
 from classroom.tasks import (
     send_email_after_bulk_object_creation,
@@ -113,13 +116,13 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
             )
             return None
         file_abs_path = None
-        teacher_file_path = os.path.join(
+        dba_file_path = os.path.join(
             settings.BASE_DIR,
             settings.MEDIA_ROOT,
             instance.allowed_teacher_list.name,
         )
-        if os.path.exists(teacher_file_path):
-            file_abs_path = os.path.abspath(teacher_file_path)
+        if os.path.exists(dba_file_path):
+            file_abs_path = os.path.abspath(dba_file_path)
         else:
             send_mail(
                 "Allowed Teacher List Does Not Exists",
@@ -176,13 +179,13 @@ def create_allowed_teacher_for_classroom_level(
             )
             return None
         file_abs_path = None
-        teacher_file_path = os.path.join(
+        dba_file_path = os.path.join(
             settings.BASE_DIR,
             settings.MEDIA_ROOT,
             instance.allowed_teacher_list.name,
         )
-        if os.path.exists(teacher_file_path):
-            file_abs_path = os.path.abspath(teacher_file_path)
+        if os.path.exists(dba_file_path):
+            file_abs_path = os.path.abspath(dba_file_path)
         else:
             send_mail(
                 "Allowed Teacher List Does Not Exists",
@@ -322,6 +325,31 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs
                 You Can Login After Activation Of your account
             """
             send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+        elif (
+            AllowedCollegeDBA.objects.filter(email=instance.email).exists()
+            and not CollegeDBA.objects.select_related("user")
+            .filter(user=instance)
+            .exists()
+        ):
+            college_detail = College.objects.get(
+                pk=(
+                    AllowedCollegeDBA.objects.filter(email=instance.email)
+                    .select_related("college")
+                    .values_list("college", flat=True)
+                )[0]
+            )
+            from termcolor import cprint
+
+            cprint(college_detail, "red")
+            t = CollegeDBA.objects.create(user=instance, college=college_detail)
+            subject = "Your DBA Profile Has Been Created Successfully"
+            msg = f"""
+                COLLEGE DBA ID :{t.id}
+                mail : {instance.email}
+
+                You Can Login After Activation Of your account
+            """
+            send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
         elif instance.is_superuser or instance.is_staff:  # ADMIN
             print("Admin")
         else:
@@ -332,12 +360,32 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs
 
                 contact mail id: {settings.EMAIL_HOST_USER}
             """
+            # FIXME: Delete below line of code if gives error
+            User.objects.filter(pk=instance.id).delete()
             send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
 
 
 @shared_task
 @receiver(post_delete, sender=Student)
 def delete_user_on_student_delete(sender, instance: Student, **kwargs):
+    user = User.objects.filter(pk=instance.user.id)
+    if user.exists():
+        user.delete()
+
+
+@shared_task
+@receiver(post_delete, sender=CollegeDBA)
+def delete_user_on_dba_delete(sender, instance: CollegeDBA, **kwargs):
+    user = User.objects.filter(pk=instance.user.id)
+    if user.exists():
+        user.delete()
+
+
+@shared_task
+@receiver(
+    post_delete, sender=CollegeDBA
+)  # FIXME: Off this code if teacher removal from class deletes user
+def delete_user_on_teacher_delete(sender, instance: CollegeDBA, **kwargs):
     user = User.objects.filter(pk=instance.user.id)
     if user.exists():
         user.delete()
@@ -406,3 +454,76 @@ def remove_class_after_removal_of_assigned_teacher(sender, instance, **kwargs):
         subject = "Sir You have been Assigned A new Class"
         msg = f"Classroom - {classroom.title}"
         send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+
+
+from rest_framework.exceptions import ValidationError
+
+
+@shared_task
+@receiver(post_save, sender=College)
+def create_allowed_dba(sender, instance: College, created, **kwargs):
+    if created:
+        if instance.allowed_dba_list == None:
+            College.objects.filter(
+                pk=instance.id
+            ).delete()  # FIXME: Delete this line if not works
+            send_mail(
+                "Allowed DBA List Does Not Exists",
+                "You Have To Create Allowed DBAs Manually",
+                settings.EMAIL_HOST_USER,
+                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            )
+            return None
+        file_abs_path = None
+        dba_file_path = os.path.join(
+            settings.BASE_DIR,
+            settings.MEDIA_ROOT,
+            instance.allowed_dba_list.name,
+        )
+        if os.path.exists(dba_file_path):
+            file_abs_path = os.path.abspath(dba_file_path)
+        else:
+            send_mail(
+                "Allowed Teacher List Does Not Exists",
+                "You Have To Create Allowed Teachers Manually",
+                settings.EMAIL_HOST_USER,
+                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            )
+            return None
+
+        df = None
+        if str(file_abs_path).split(".")[-1] == "csv":
+            df: pd.DataFrame = pd.read_csv(file_abs_path)
+        elif str(file_abs_path).split(".")[-1] == "xlsx":
+            df = pd.read_excel(file_abs_path)
+
+        if not "email" in df.columns:
+            send_mail(
+                "Wrong File Structure",
+                "column name should be => 'email' ",
+                settings.EMAIL_HOST_USER,
+                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            )
+            return None
+        df_dict = df.to_dict("records")
+        if len(df_dict) < 1:
+
+            raise ValidationError(
+                detail="Please give at least one mail-id in the fail "
+            )
+
+        print(df_dict)
+        list_of_teachers = [
+            CollegeDBA(college=instance, **args) for args in df.to_dict("records")
+        ]
+        CollegeDBA.objects.bulk_create(list_of_teachers)
+        email_list = df["email"].to_list()
+        subject = "Open Your DBA Account"
+        prompt = "please use your following mail id to sign up in the Classroom[LMS]"
+        try:
+            send_email_after_bulk_object_creation.delay(subject, prompt, email_list)
+        except BadHeaderError:
+            print("Could not able to send emails to DBAs")
+        os.remove(file_abs_path)
+        instance.allowed_teacher_list = ""
+        instance.allowed_dba_list = ""
