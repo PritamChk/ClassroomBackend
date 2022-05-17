@@ -514,9 +514,9 @@ def create_allowed_dba(sender, instance: College, created, **kwargs):
 
         print(df_dict)
         list_of_teachers = [
-            CollegeDBA(college=instance, **args) for args in df.to_dict("records")
+            AllowedCollegeDBA(college=instance, **args) for args in df.to_dict("records")
         ]
-        CollegeDBA.objects.bulk_create(list_of_teachers)
+        AllowedCollegeDBA.objects.bulk_create(list_of_teachers)
         email_list = df["email"].to_list()
         subject = "Open Your DBA Account"
         prompt = "please use your following mail id to sign up in the Classroom[LMS]"
