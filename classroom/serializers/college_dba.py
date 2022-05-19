@@ -39,6 +39,7 @@ class CollegeCreateSerializer(_ms):
             "city",
             "state",
             "address",
+            "owner_email_id",
             "allowed_teacher_list",
             "allowed_dba_list",
         ]

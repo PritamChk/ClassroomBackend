@@ -16,6 +16,9 @@ class College(models.Model):
     city = models.CharField(_("City"), max_length=255)
     state = models.CharField(_("State"), max_length=255)
     address = models.TextField(null=True, blank=True)
+    owner_email_id = models.EmailField(
+        _("College Owner DBA Mail [unique]"), unique=True
+    )
     allowed_teacher_list = models.FileField(
         _("Upload teacher List File(.csv/.xl)"),
         upload_to=f"{settings.MEDIA_ROOT}/classroom/teachers/",
@@ -29,7 +32,6 @@ class College(models.Model):
             )
         ],
     )
-
     allowed_dba_list = (
         models.FileField(  # TODO: Allowed DBA Auto Create Signal by College
             _("Upload teacher List File(.csv/.xl)"),

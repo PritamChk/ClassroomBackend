@@ -1,14 +1,8 @@
+import email
 import os
-from re import U
-from celery import shared_task
-from classroom.models.college import AllowedCollegeDBA
-from classroom.models.college_dba import CollegeDBA
-from classroom.serializers import teacher
-from classroom.tasks import (
-    send_email_after_bulk_object_creation,
-)
 
 import pandas as pd
+from celery import shared_task
 from classroom.model import (
     AllowedStudents,
     AllowedTeacher,
@@ -20,11 +14,16 @@ from classroom.model import (
     Teacher,
     User,
 )
+from classroom.models.college import AllowedCollegeDBA
+from classroom.models.college_dba import CollegeDBA
+from classroom.serializers import teacher
+from classroom.tasks import send_email_after_bulk_object_creation
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models.signals import post_delete, post_save, pre_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.http import BadHeaderError
+from rest_framework.exceptions import ValidationError
 
 
 @shared_task
@@ -331,17 +330,25 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs
             .filter(user=instance)
             .exists()
         ):
-            college_detail = College.objects.get(
+            from termcolor import cprint
+
+            # cprint("In DBA Creation", "red")
+            college_detail: College = College.objects.get(
                 pk=(
                     AllowedCollegeDBA.objects.filter(email=instance.email)
                     .select_related("college")
                     .values_list("college", flat=True)
                 )[0]
             )
-            from termcolor import cprint
 
-            cprint(college_detail, "red")
-            t = CollegeDBA.objects.create(user=instance, college=college_detail)
+            # cprint(college_detail, "red")
+            is_owner = False
+            if instance.email == college_detail.owner_email_id:
+                is_owner = True
+            # cprint(f"is owner --> [ {is_owner} ]", "red")
+            t: CollegeDBA = CollegeDBA.objects.create(
+                user=instance, college=college_detail, is_owner=is_owner
+            )
             subject = "Your DBA Profile Has Been Created Successfully"
             msg = f"""
                 COLLEGE DBA ID :{t.id}
@@ -383,9 +390,9 @@ def delete_user_on_dba_delete(sender, instance: CollegeDBA, **kwargs):
 
 @shared_task
 @receiver(
-    post_delete, sender=CollegeDBA
+    post_delete, sender=Teacher
 )  # FIXME: Off this code if teacher removal from class deletes user
-def delete_user_on_teacher_delete(sender, instance: CollegeDBA, **kwargs):
+def delete_user_on_teacher_delete(sender, instance: Teacher, **kwargs):
     user = User.objects.filter(pk=instance.user.id)
     if user.exists():
         user.delete()
@@ -456,13 +463,36 @@ def remove_class_after_removal_of_assigned_teacher(sender, instance, **kwargs):
         send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
 
 
-from rest_framework.exceptions import ValidationError
-
-
 @shared_task
 @receiver(post_save, sender=College)
 def create_allowed_dba(sender, instance: College, created, **kwargs):
     if created:
+        is_owner_of_college_exists = AllowedCollegeDBA.objects.filter(
+            email=instance.owner_email_id
+        ).exists()
+        if is_owner_of_college_exists:
+            from rest_framework import status
+
+            raise ValidationError(
+                detail=f"""
+                college owner {instance.owner_email_id} already associated with 
+                college - {instance.name}""",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        else:
+            AllowedCollegeDBA.objects.create(
+                college=instance, email=instance.owner_email_id
+            )
+            subject = f"Welcome to {instance.name}"
+            body = f"""
+                You are the owner admin of college {instance.name}
+                Now you can sign up with mail id - {instance.owner_email_id}
+                ----------------
+                NB: Only you will be able to add other DBAs or remove them    
+            """
+            send_mail(
+                subject, body, settings.EMAIL_HOST_USER, [instance.owner_email_id]
+            )
         if instance.allowed_dba_list == None:
             College.objects.filter(
                 pk=instance.id

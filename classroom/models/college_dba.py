@@ -3,10 +3,11 @@ from django.utils.translation import gettext_lazy as _
 
 
 class CollegeDBA(models.Model):
+    is_owner = models.BooleanField(_("Owner [✔/❌]"), default=False)
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name="college_dba"
     )
-    college = models.OneToOneField(
+    college = models.ForeignKey(
         "classroom.College",
         on_delete=models.CASCADE,
         related_name="college_dbas",
