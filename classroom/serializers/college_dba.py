@@ -4,7 +4,7 @@ from rest_framework import serializers as _sz
 from rest_framework.exceptions import ValidationError as _error
 from rest_framework.serializers import ModelSerializer as _ms
 from rest_framework import status
-from classroom.models.classroom import Classroom
+from classroom.models.classroom import AllowedTeacherClassroomLevel, Classroom
 from classroom.models.college import AllowedCollegeDBA, College
 from classroom.models.college_dba import CollegeDBA
 from classroom.serializers.classroom import CollegeReadSerializer
@@ -204,3 +204,21 @@ class ClassroomReadByDBASerializer(_ms):
 
     def get_teachers_count(self, obj: Classroom) -> int:
         return obj.teachers.count()
+
+
+class AllowedTeacherClassroomLevelCreateSerializer(_ms):
+    class Meta:
+        model = AllowedTeacherClassroomLevel
+        fields = ("id", "email", "classroom")
+        read_only_fields = ["id", "classroom"]
+
+    def create(self, validated_data):
+        classroom_slug = self.context.get("classroom_slug")
+        try:
+            classroom: Classroom = Classroom.objects.get(slug=classroom_slug)
+        except:
+            raise _error(f"No Classroom Found with slug : {classroom_slug}")
+        self.instance = AllowedTeacherClassroomLevel.objects.create(
+            classroom=classroom, **validated_data
+        )
+        return self.instance

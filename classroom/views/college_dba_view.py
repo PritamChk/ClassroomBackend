@@ -2,11 +2,13 @@ from rest_framework import viewsets as _vset
 from rest_framework import mixins as _mxn
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.parsers import MultiPartParser, FormParser
-from classroom.models.classroom import Classroom
+import classroom
+from classroom.models.classroom import AllowedTeacherClassroomLevel, Classroom
 from classroom.models.college import AllowedCollegeDBA, College
 from classroom.models.college_dba import CollegeDBA
 from classroom.serializers.college_dba import (
     AllowedCollegeDBACreateSerializer,
+    AllowedTeacherClassroomLevelCreateSerializer,
     ClassroomCreateByDBASerializer,
     ClassroomReadByDBASerializer,
     CollegeCreateSerializer,
@@ -106,3 +108,22 @@ class ManageClassroomByDBAViewSet(_vset.ModelViewSet):
 
     def get_serializer_context(self):
         return {"college_slug": self.kwargs.get("college_slug")}
+
+
+# TODO: # class TeacherManagementCollegeLevel
+class TeacherManagementClassroomLevel(
+    _mxn.RetrieveModelMixin,
+    _mxn.CreateModelMixin,
+    _mxn.DestroyModelMixin,
+    _vset.GenericViewSet,
+):
+    my_tags = ["[dba] 5. teacher management classroom level"]
+    serializer_class = AllowedTeacherClassroomLevelCreateSerializer
+
+    def get_queryset(self):
+        return AllowedTeacherClassroomLevel.objects.select_related("classroom").filter(
+            classroom__slug=self.kwargs.get("classroom_slug")
+        )
+
+    def get_serializer_context(self):
+        return {"classroom_slug": self.kwargs.get("classroom_slug")}

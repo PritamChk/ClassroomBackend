@@ -1,4 +1,3 @@
-import email
 import os
 
 import pandas as pd
@@ -20,10 +19,11 @@ from classroom.serializers import teacher
 from classroom.tasks import send_email_after_bulk_object_creation
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.http import BadHeaderError
 from rest_framework.exceptions import ValidationError
+from termcolor import cprint
 
 
 @shared_task
@@ -271,6 +271,22 @@ def create_allowed_teacher_for_classroom_level(
         Classroom.objects.update(allowed_teacher_list="")
 
 
+@receiver(post_save, sender=AllowedTeacherClassroomLevel)
+def create_allowed_teacher_for_classroom_level_with_check(
+    sender, instance: AllowedTeacherClassroomLevel, created, **kwargs
+):
+    if created:
+        is_email_in_allowed_teacher_list = AllowedTeacher.objects.filter(
+            email=instance.email
+        )
+        if not is_email_in_allowed_teacher_list.exists():
+            AllowedTeacherClassroomLevel.objects.filter(email=instance.email).delete()
+            cprint("this teacher email does not associated with any college", "red")
+            raise ValidationError(
+                "this teacher email does not associated with any college", code=400
+            )
+
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs):
     if created:
@@ -431,7 +447,9 @@ def assign_classroom_to_existing_teacher(
     )
     cprint(t, "red")
     if created:
-        classroom = Classroom.objects.get(pk=instance.classroom.id)
+        classroom: Classroom = Classroom.objects.select_related("college").get(
+            pk=instance.classroom.id
+        )
         cprint(classroom, "red")
         teacher_query = Teacher.objects.select_related("user").filter(
             user__email=instance.email
@@ -439,28 +457,43 @@ def assign_classroom_to_existing_teacher(
         cprint(str(teacher_query.exists()) + " -> " + instance.email, "blue")
         if teacher_query.exists():
             teacher = teacher_query.first()
-            classroom.teachers.add(teacher)
-            classroom.save(force_update=True)
+            from django.db import transaction
+
+            with transaction.atomic():
+                classroom.teachers.add(teacher)
+                classroom.save(force_update=True)
             for tchr in classroom.teachers.all():
                 cprint("Classrooms of teacher -> ", "cyan")
                 cprint(tchr, "cyan")
+            owner_mail_id = classroom.college.owner_email_id
+            cprint(f"owner mail id --> {owner_mail_id}", "red")
             subject = "Sir You have been Assigned A new Class"
             msg = f"Classroom - {classroom.title}"
-            send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+            send_mail(subject, msg, owner_mail_id, [instance.email])
 
 
 @shared_task
 @receiver(post_delete, sender=AllowedTeacherClassroomLevel)
-def remove_class_after_removal_of_assigned_teacher(sender, instance, **kwargs):
-    classroom = Classroom.objects.get(pk=instance.classroom.id)
+def remove_class_after_removal_of_assigned_teacher(
+    sender, instance: AllowedTeacherClassroomLevel, **kwargs
+):
+    """
+    this removes the classroom from the teacher if teacher
+    has been removed from allowed class room level
+    """
+    classroom: Classroom = Classroom.objects.select_related("college").get(
+        pk=instance.classroom.id
+    )
     teacher_query = Teacher.objects.select_related("user").filter(
         user__email=instance.email
     )
     if teacher_query.exists():
         teacher_query.first().classrooms.remove(classroom)
-        subject = "Sir You have been Assigned A new Class"
+        subject = "Sir You have been Removed From A Class"
         msg = f"Classroom - {classroom.title}"
-        send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+        owner_mail_id = classroom.college.owner_email_id
+        cprint(f"owner mail id --> {owner_mail_id}", "red")
+        send_mail(subject, msg, owner_mail_id, [instance.email])
 
 
 @shared_task
