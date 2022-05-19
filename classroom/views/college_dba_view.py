@@ -1,10 +1,15 @@
 from rest_framework import viewsets as _vset
 from rest_framework import mixins as _mxn
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import SAFE_METHODS
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from classroom.models.classroom import Classroom
 from classroom.models.college import AllowedCollegeDBA, College
 from classroom.models.college_dba import CollegeDBA
 from classroom.serializers.college_dba import (
     AllowedCollegeDBACreateSerializer,
+    ClassroomCreateByDBASerializer,
+    ClassroomReadByDBASerializer,
+    ClassroomUpdateByDBASerializer,
     CollegeCreateSerializer,
     CollegeDBAProfileSerializer,
     CollegeReadForDBASerializer,
@@ -73,6 +78,32 @@ class AddOrDeleteOtherDBAViewSet(_vset.ModelViewSet):
         return AllowedCollegeDBA.objects.select_related("college").filter(
             college__slug=self.kwargs.get("college_slug")
         )
+
+    def get_serializer_context(self):
+        return {"college_slug": self.kwargs.get("college_slug")}
+
+
+class ManageClassroomByDBAViewSet(_vset.ModelViewSet):
+    http_method_names = ["get", "post", "patch", "delete", "head", "options"]
+    my_tags = ["[dba] 4. classroom management"]
+    lookup_field = "slug"
+    parser_classes = [FormParser, MultiPartParser]
+
+    def get_queryset(self):
+        return (
+            Classroom.objects.prefetch_related("teachers")
+            .select_related("college")
+            .filter(college__slug=self.kwargs.get("college_slug"))
+        )
+
+    def get_serializer_class(self):
+        method = self.request.method
+        if method in SAFE_METHODS:
+            return ClassroomReadByDBASerializer
+        # elif method == "PATCH": #FIXME: NOT WORKING AS EXPECTED
+        #     ClassroomUpdateByDBASerializer
+        else:
+            return ClassroomCreateByDBASerializer
 
     def get_serializer_context(self):
         return {"college_slug": self.kwargs.get("college_slug")}

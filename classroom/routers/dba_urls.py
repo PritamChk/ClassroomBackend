@@ -4,6 +4,7 @@ from classroom.views.college_dba_view import (
     CollegeCreateViewSet,
     CollegeRetrieveForDBAViewSet,
     DBAProfileViewSet,
+    ManageClassroomByDBAViewSet,
 )
 from termcolor import cprint
 
@@ -27,12 +28,21 @@ create_other_dba_router.register(
     "manage-dba", AddOrDeleteOtherDBAViewSet, basename="manage_dba"
 )
 
+classroom_create_router = NestedDefaultRouter(
+    college_for_dba_router, "college-dba", lookup="college"
+)
+classroom_create_router.register(
+    "classroom", ManageClassroomByDBAViewSet, basename="classroom"
+)
+
+
 dba_urlpatterns = []
 dba_urlpatterns += (
     college_create_router.urls
     + dba_root_router.urls
     + college_for_dba_router.urls
     + create_other_dba_router.urls
+    + classroom_create_router.urls
 )
 
 cprint("-------------------------------------------", "green")
