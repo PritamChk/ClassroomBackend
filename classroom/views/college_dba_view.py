@@ -66,21 +66,16 @@ class AddOrDeleteOtherDBAViewSet(_vset.ModelViewSet):
     """
     # Only owner admin will be able to add/delete other DBAs for classroom management
     ---
-    > permissions will checked initially in frontend
+    > permissions will be checked initially in frontend
     """
 
     my_tags = ["[dba] 3. manage dbas by owner"]
     http_method_names = ["get", "post", "delete", "head", "options"]
     serializer_class = AllowedCollegeDBACreateSerializer
 
-    # def get_serializer(self, *args, **kwargs):
-    #     if self.request.method =="POST":
-    #         return AllowedCollegeDBACreateSerializer
-    #     return AllowedCollegeDBAReadSerializer
-
     def get_queryset(self):
         return AllowedCollegeDBA.objects.select_related("college").filter(
-            college=self.kwargs.get("college_slug")
+            college__slug=self.kwargs.get("college_slug")
         )
 
     def get_serializer_context(self):
