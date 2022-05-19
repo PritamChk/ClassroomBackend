@@ -1,7 +1,7 @@
 from rest_framework import viewsets as _vset
 from rest_framework import mixins as _mxn
 from rest_framework.permissions import SAFE_METHODS
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.parsers import MultiPartParser, FormParser
 from classroom.models.classroom import Classroom
 from classroom.models.college import AllowedCollegeDBA, College
 from classroom.models.college_dba import CollegeDBA
@@ -9,7 +9,6 @@ from classroom.serializers.college_dba import (
     AllowedCollegeDBACreateSerializer,
     ClassroomCreateByDBASerializer,
     ClassroomReadByDBASerializer,
-    ClassroomUpdateByDBASerializer,
     CollegeCreateSerializer,
     CollegeDBAProfileSerializer,
     CollegeReadForDBASerializer,
