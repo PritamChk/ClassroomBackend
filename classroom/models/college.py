@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 class College(models.Model):
     """
     # College
-    >  `params`:  
+    >  `params`:
     >  ('slug', 'name', 'city', 'state', 'address', 'allowed_teacher_list', 'allowed_dba_list','owner_email_id')
     """
 
@@ -35,7 +35,7 @@ class College(models.Model):
     )
     allowed_dba_list = (
         models.FileField(  # TODO: Allowed DBA Auto Create Signal by College
-            _("Upload teacher List File(.csv/.xl)"),
+            _("Upload DBA List File(.csv/.xl)"),
             upload_to=f"{settings.MEDIA_ROOT}/college/dbas/%Y/%m/%d",
             null=True,
             max_length=500,

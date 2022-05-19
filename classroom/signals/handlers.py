@@ -517,7 +517,7 @@ def create_allowed_dba(sender, instance: College, created, **kwargs):
                 "Allowed Teacher List Does Not Exists",
                 "You Have To Create Allowed Teachers Manually",
                 settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+                [instance.owner_email_id],
             )
             return None
 
@@ -532,7 +532,7 @@ def create_allowed_dba(sender, instance: College, created, **kwargs):
                 "Wrong File Structure",
                 "column name should be => 'email' ",
                 settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+                [instance.owner_email_id],  # FIXME: Send mail to session dba
             )
             return None
         df_dict = df.to_dict("records")

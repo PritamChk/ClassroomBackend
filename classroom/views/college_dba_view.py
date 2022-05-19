@@ -4,11 +4,14 @@ from rest_framework import views as _vws
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
-from classroom.models.college import College
+from classroom.models.college import AllowedCollegeDBA, College
 from classroom.models.college_dba import CollegeDBA
 from classroom.serializers.college_dba import (
+    AllowedCollegeDBACreateSerializer,
+    AllowedCollegeDBAReadSerializer,
     CollegeCreateSerializer,
     CollegeDBAProfileSerializer,
+    CollegeReadForDBASerializer,
 )
 from termcolor import cprint
 
@@ -48,3 +51,37 @@ class DBAProfileViewSet(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
         return CollegeDBA.objects.select_related("user", "college").filter(
             pk=self.kwargs.get("pk")
         )
+
+
+class CollegeRetrieveForDBAViewSet(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
+    swagger_schema = None
+    serializer_class = CollegeReadForDBASerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        return College.objects.all()
+
+
+class AddOrDeleteOtherDBAViewSet(_vset.ModelViewSet):
+    """
+    # Only owner admin will be able to add/delete other DBAs for classroom management
+    ---
+    > permissions will checked initially in frontend
+    """
+
+    my_tags = ["[dba] 3. manage dbas by owner"]
+    http_method_names = ["get", "post", "delete", "head", "options"]
+    serializer_class = AllowedCollegeDBACreateSerializer
+
+    # def get_serializer(self, *args, **kwargs):
+    #     if self.request.method =="POST":
+    #         return AllowedCollegeDBACreateSerializer
+    #     return AllowedCollegeDBAReadSerializer
+
+    def get_queryset(self):
+        return AllowedCollegeDBA.objects.select_related("college").filter(
+            college=self.kwargs.get("college_slug")
+        )
+
+    def get_serializer_context(self):
+        return {"college_slug": self.kwargs.get("college_slug")}
