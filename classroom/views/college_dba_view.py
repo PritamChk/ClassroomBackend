@@ -1,14 +1,10 @@
 from rest_framework import viewsets as _vset
 from rest_framework import mixins as _mxn
-from rest_framework import views as _vws
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser
 from classroom.models.college import AllowedCollegeDBA, College
 from classroom.models.college_dba import CollegeDBA
 from classroom.serializers.college_dba import (
     AllowedCollegeDBACreateSerializer,
-    AllowedCollegeDBAReadSerializer,
     CollegeCreateSerializer,
     CollegeDBAProfileSerializer,
     CollegeReadForDBASerializer,
