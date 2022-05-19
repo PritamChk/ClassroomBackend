@@ -117,6 +117,7 @@ class ManageClassroomByDBAViewSet(_vset.ModelViewSet):
 
 # TODO: # class TeacherManagementCollegeLevel
 class TeacherManagementClassroomLevel(
+    _mxn.ListModelMixin,
     _mxn.RetrieveModelMixin,
     _mxn.CreateModelMixin,
     _mxn.DestroyModelMixin,
@@ -140,6 +141,7 @@ class TeacherManagementClassroomLevel(
 
 
 class AllowedStudentManagementClassroomLevel(
+    _mxn.ListModelMixin,
     _mxn.RetrieveModelMixin,
     _mxn.CreateModelMixin,
     _mxn.DestroyModelMixin,
