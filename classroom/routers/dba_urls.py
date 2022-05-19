@@ -40,9 +40,17 @@ allowed_teacher_classlevel_router = NestedDefaultRouter(
     classroom_create_router, "classroom", lookup="classroom"
 )
 allowed_teacher_classlevel_router.register(
-    "add-teacher-to-class",
+    "manage-teacher",
     TeacherManagementClassroomLevel,
     basename="teacher_classroom",
+)
+allowed_student_classlevel_router = NestedDefaultRouter(
+    classroom_create_router, "classroom", lookup="classroom"
+)
+allowed_student_classlevel_router.register(
+    "manage-student",
+    TeacherManagementClassroomLevel,
+    basename="student_classroom",
 )
 
 
@@ -54,6 +62,7 @@ dba_urlpatterns += (
     + create_other_dba_router.urls
     + classroom_create_router.urls
     + allowed_teacher_classlevel_router.urls
+    + allowed_student_classlevel_router.urls
 )
 
 cprint("-------------------------------------------", "green")

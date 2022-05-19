@@ -3,11 +3,16 @@ from rest_framework import mixins as _mxn
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.parsers import MultiPartParser, FormParser
 import classroom
-from classroom.models.classroom import AllowedTeacherClassroomLevel, Classroom
+from classroom.models.classroom import (
+    AllowedStudents,
+    AllowedTeacherClassroomLevel,
+    Classroom,
+)
 from classroom.models.college import AllowedCollegeDBA, College
 from classroom.models.college_dba import CollegeDBA
 from classroom.serializers.college_dba import (
     AllowedCollegeDBACreateSerializer,
+    AllowedStudentCreateSerializer,
     AllowedTeacherClassroomLevelCreateSerializer,
     ClassroomCreateByDBASerializer,
     ClassroomReadByDBASerializer,
@@ -117,11 +122,38 @@ class TeacherManagementClassroomLevel(
     _mxn.DestroyModelMixin,
     _vset.GenericViewSet,
 ):
-    my_tags = ["[dba] 5. teacher management classroom level"]
+    """
+    # This end point is to add teachers to classroom or remove them from that classroom
+    - Please let me know if Get method doesn't work
+    """
+
+    my_tags = ["[dba] 5. teacher/student management classroom level"]
     serializer_class = AllowedTeacherClassroomLevelCreateSerializer
 
     def get_queryset(self):
         return AllowedTeacherClassroomLevel.objects.select_related("classroom").filter(
+            classroom__slug=self.kwargs.get("classroom_slug")
+        )
+
+    def get_serializer_context(self):
+        return {"classroom_slug": self.kwargs.get("classroom_slug")}
+
+
+class AllowedStudentManagementClassroomLevel(
+    _mxn.RetrieveModelMixin,
+    _mxn.CreateModelMixin,
+    _mxn.DestroyModelMixin,
+    _vset.GenericViewSet,
+):
+    """
+    # This end point is to add allowed students to classroom or remove them from that classroom
+    """
+
+    my_tags = ["[dba] 6. student management classroom level"]
+    serializer_class = AllowedStudentCreateSerializer
+
+    def get_queryset(self):
+        return AllowedStudents.objects.select_related("classroom").filter(
             classroom__slug=self.kwargs.get("classroom_slug")
         )
 
