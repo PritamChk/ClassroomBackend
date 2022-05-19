@@ -53,4 +53,4 @@ class CollegeDBAProfileSerializer(_sz.ModelSerializer):
 
     class Meta:
         model = CollegeDBA
-        fields = ("dba_id", "user", "college")
+        fields = ("dba_id", "is_owner", "user", "college")
