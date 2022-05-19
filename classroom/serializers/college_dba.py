@@ -7,6 +7,7 @@ from rest_framework.status import HTTP_409_CONFLICT, HTTP_412_PRECONDITION_FAILE
 
 from classroom.models.college import AllowedCollegeDBA, College
 from classroom.models.college_dba import CollegeDBA
+from classroom.serializers.classroom import CollegeReadSerializer
 from classroom.serializers.teacher import MinimalUserDetailsSerializer
 
 
@@ -44,9 +45,11 @@ class CollegeCreateSerializer(_ms):
         read_only_fields = ["slug"]
 
 
-class CollegeDBAProfile(_sz.ModelSerializer):
+class CollegeDBAProfileSerializer(_sz.ModelSerializer):
+    dba_id = _sz.IntegerField(source="id", read_only=True)
     user = MinimalUserDetailsSerializer()
-    college = College
+    college = CollegeReadSerializer()
+
     class Meta:
         model = CollegeDBA
-        fields = ('user', 'college')
+        fields = ("dba_id", "user", "college")

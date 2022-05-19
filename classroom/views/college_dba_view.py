@@ -5,8 +5,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from classroom.models.college import College
+from classroom.models.college_dba import CollegeDBA
 from classroom.serializers.college_dba import (
     CollegeCreateSerializer,
+    CollegeDBAProfileSerializer,
 )
 from termcolor import cprint
 
@@ -18,7 +20,7 @@ class CollegeCreateViewSet(
     _vset.GenericViewSet,
 ):
     http_method_names = ["get", "post", "patch", "head", "options"]
-    my_tags = ["[college dba] - create/update college"]
+    my_tags = ["[dba] 1. create/update college"]
     parser_classes = [FormParser, MultiPartParser]
     queryset = College.objects.prefetch_related("allowed_dbas").all()
     serializer_class = CollegeCreateSerializer
@@ -32,8 +34,17 @@ class CollegeCreateViewSet(
         return super().create(request, *args, **kwargs)
 
 
-class DBAExistsView(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
+class DBAProfileViewSet(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
+    """
+    # Get DBA Profile Details
+    ---
+        - all minimal user details will be sent along with college details
+    """
 
+    my_tags = ["[dba] 2. profile"]
+    serializer_class = CollegeDBAProfileSerializer
 
+    def get_queryset(self):
+        return CollegeDBA.objects.select_related("user", "college").filter(
+            pk=self.kwargs.get("pk")
+        )
