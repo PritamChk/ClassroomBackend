@@ -4,8 +4,9 @@ from django.utils.translation import gettext_lazy as _
 
 class College(models.Model):
     """
-    ## College
-    `params`:  ('slug', 'name', 'city', 'state', 'address', 'allowed_teacher_list', 'allowed_dba_list')
+    # College
+    >  `params`:  
+    >  ('slug', 'name', 'city', 'state', 'address', 'allowed_teacher_list', 'allowed_dba_list','owner_email_id')
     """
 
     slug = AutoSlugField(
