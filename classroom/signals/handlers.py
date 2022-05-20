@@ -23,6 +23,8 @@ from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.http import BadHeaderError
 from rest_framework.exceptions import ValidationError
+from rest_framework import status
+from rest_framework.response import Response
 from termcolor import cprint
 
 
@@ -176,6 +178,26 @@ def send_mail_after_create_allowed_teacher(
             send_mail(subject, prompt, college.owner_email_id, [instance.email])
         except BadHeaderError:
             cprint("Could not able to sen emails to students", "red")
+
+
+@receiver(post_delete, sender=AllowedTeacher)
+def remove_teacher_profile_after_allowed_teacher_deletion(
+    sender, instance: AllowedTeacher, **kwargs
+):
+    try:
+        teacher_profile: Teacher = Teacher.objects.select_related("user").get(
+            user__email=instance.email
+        )
+        teacher_profile.delete()
+        return Response(
+            data={"massage": f"{instance.email} has been successfully removed."},
+            status=status.HTTP_202_ACCEPTED,
+        )
+    except:
+        raise ValidationError(
+            "Either teacher profile does not exists or couldn't able to delete that",
+            code=status.HTTP_302_FOUND,
+        )
 
 
 @shared_task
