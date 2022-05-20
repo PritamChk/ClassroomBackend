@@ -163,6 +163,21 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
         College.objects.update(allowed_teacher_list="")
 
 
+@receiver(post_save, sender=AllowedTeacher)
+def send_mail_after_create_allowed_teacher(
+    sender, instance: AllowedTeacher, created, **kwargs
+):
+    if created:
+        college: College = College.objects.get(pk=instance.college)
+        # email_list = df["email"].to_list()
+        subject = "Create Your Teacher Account"
+        prompt = f"please use your following mail id - {instance.email} \n to sign up in the Classroom[LMS]"
+        try:
+            send_mail(subject, prompt, college.owner_email_id, [instance.email])
+        except BadHeaderError:
+            cprint("Could not able to sen emails to students", "red")
+
+
 @shared_task
 @receiver(post_save, sender=Classroom)
 def create_allowed_teacher_for_classroom_level(
