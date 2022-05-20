@@ -11,7 +11,7 @@ class Classroom(models.Model):
             "section",
             "start_year",
             "end_year",
-            "college",
+            "college__name",
         ],
     )
     title = models.CharField(_("Classroom Name"), max_length=255, null=True, blank=True)

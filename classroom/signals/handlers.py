@@ -19,7 +19,7 @@ from .teacher_classroom_handlers import (
 from .user_handlers import (
     delete_user_on_dba_delete,
     delete_user_on_student_delete,
-    delete_user_on_teacher_delete, #FIXME: not working
+    delete_user_on_teacher_delete,  # FIXME: not working
 )
 
 # @shared_task
