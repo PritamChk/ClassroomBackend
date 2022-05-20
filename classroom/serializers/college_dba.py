@@ -9,7 +9,7 @@ from classroom.models.classroom import (
     AllowedTeacherClassroomLevel,
     Classroom,
 )
-from classroom.models.college import AllowedCollegeDBA, College
+from classroom.models.college import AllowedCollegeDBA, AllowedTeacher, College
 from classroom.models.college_dba import CollegeDBA
 from classroom.serializers.classroom import CollegeReadSerializer
 from classroom.serializers.teacher import MinimalUserDetailsSerializer
@@ -208,6 +208,22 @@ class ClassroomReadByDBASerializer(_ms):
 
     def get_teachers_count(self, obj: Classroom) -> int:
         return obj.teachers.count()
+
+
+class AllowedTeacherCollegeLevelCreateSerializer(_ms):
+    class Meta:
+        model = AllowedTeacher
+        fields = ("id", "email", "college")
+        read_only_fields = ["id", "college"]
+
+    def create(self, validated_data):
+        college_slug = self.context.get("college_slug")
+        try:
+            college: College = College.objects.get(slug=college_slug)
+        except:
+            raise _error(f"No College Found with slug : {college_slug}")
+        self.instance = AllowedTeacher.objects.create(college=college, **validated_data)
+        return self.instance
 
 
 class AllowedTeacherClassroomLevelCreateSerializer(_ms):

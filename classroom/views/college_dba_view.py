@@ -8,12 +8,13 @@ from classroom.models.classroom import (
     AllowedTeacherClassroomLevel,
     Classroom,
 )
-from classroom.models.college import AllowedCollegeDBA, College
+from classroom.models.college import AllowedCollegeDBA, AllowedTeacher, College
 from classroom.models.college_dba import CollegeDBA
 from classroom.serializers.college_dba import (
     AllowedCollegeDBACreateSerializer,
     AllowedStudentCreateSerializer,
     AllowedTeacherClassroomLevelCreateSerializer,
+    AllowedTeacherCollegeLevelCreateSerializer,
     ClassroomCreateByDBASerializer,
     ClassroomReadByDBASerializer,
     CollegeCreateSerializer,
@@ -62,6 +63,7 @@ class DBAProfileViewSet(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
 
 class CollegeRetrieveForDBAViewSet(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
     swagger_schema = None
+    my_tags = ["[dba] - college retrieve"]
     serializer_class = CollegeReadForDBASerializer
     lookup_field = "slug"
 
@@ -115,7 +117,29 @@ class ManageClassroomByDBAViewSet(_vset.ModelViewSet):
         return {"college_slug": self.kwargs.get("college_slug")}
 
 
-# TODO: # class TeacherManagementCollegeLevel
+class TeacherManagementCollegeLevel(
+    _mxn.ListModelMixin,
+    _mxn.RetrieveModelMixin,
+    _mxn.CreateModelMixin,
+    _mxn.DestroyModelMixin,
+    _vset.GenericViewSet,
+):
+    """
+    # This end point is to add teachers to college or remove them from that classroom
+    """
+
+    my_tags = ["[dba] 5. teacher management college level"]
+    serializer_class = AllowedTeacherCollegeLevelCreateSerializer
+
+    def get_queryset(self):
+        return AllowedTeacher.objects.select_related("college").filter(
+            college__slug=self.kwargs.get("college_slug")
+        )
+
+    def get_serializer_context(self):
+        return {"college_slug": self.kwargs.get("college_slug")}
+
+
 class TeacherManagementClassroomLevel(
     _mxn.ListModelMixin,
     _mxn.RetrieveModelMixin,
@@ -128,7 +152,7 @@ class TeacherManagementClassroomLevel(
     - Please let me know if Get method doesn't work
     """
 
-    my_tags = ["[dba] 5. teacher/student management classroom level"]
+    my_tags = ["[dba] 6. teacher/student management classroom level"]
     serializer_class = AllowedTeacherClassroomLevelCreateSerializer
 
     def get_queryset(self):

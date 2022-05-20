@@ -6,6 +6,7 @@ from classroom.views.college_dba_view import (
     DBAProfileViewSet,
     ManageClassroomByDBAViewSet,
     TeacherManagementClassroomLevel,
+    TeacherManagementCollegeLevel,
 )
 from termcolor import cprint
 
@@ -36,6 +37,13 @@ classroom_create_router.register(
     "classroom", ManageClassroomByDBAViewSet, basename="classroom"
 )
 
+allowed_teacher_college_router = NestedDefaultRouter(
+    college_for_dba_router, "college-dba", lookup="college"
+)
+allowed_teacher_college_router.register(
+    "manage-teacher-college", TeacherManagementCollegeLevel, basename="teacher"
+)
+
 allowed_teacher_classlevel_router = NestedDefaultRouter(
     classroom_create_router, "classroom", lookup="classroom"
 )
@@ -61,6 +69,7 @@ dba_urlpatterns += (
     + college_for_dba_router.urls
     + create_other_dba_router.urls
     + classroom_create_router.urls
+    + allowed_teacher_college_router.urls
     + allowed_teacher_classlevel_router.urls
     + allowed_student_classlevel_router.urls
 )

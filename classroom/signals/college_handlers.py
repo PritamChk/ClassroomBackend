@@ -66,7 +66,7 @@ def send_mail_after_create_allowed_teacher(
     sender, instance: AllowedTeacher, created, **kwargs
 ):
     if created:
-        college: College = College.objects.get(pk=instance.college)
+        college: College = College.objects.get(pk=instance.college.id)
         subject = "Create Your Teacher Account"
         prompt = f"please use your following mail id - {instance.email} \n to sign up in the Classroom[LMS]"
         try:
