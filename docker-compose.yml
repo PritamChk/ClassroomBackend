@@ -3,7 +3,6 @@ services:
   web:
     build: .
     command: ./wait-for-it.sh mysql:3306 -- ./docker-entrypoint.sh
-    # command: ./docker-entrypoint.sh
     ports:
       - 8000:8000
     depends_on:
@@ -13,10 +12,12 @@ services:
       - celery
       - smtp4dev
     restart: on-failure
+    container_name: classroom_api
     volumes:
       - .:/app
   mysql:
     image: mysql:8.0
+    container_name: mysql
     ports:
       - 3306:3306
     restart: always
@@ -27,18 +28,9 @@ services:
       - MYSQL_ROOT_PASSWORD=Abcd_1234
     volumes:
       - mysqldata:/var/lib/mysql    
-  # postgres:
-  #   image: postgres
-  #   ports:
-  #     - 5432:5432
-  #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
-  #   environment:
-  #     - POSTGRES_DB=classroom
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=postgres 
   redis:
     image: redis:6.2-alpine
+    container_name: redis
     ports:
       - 6379:6379
     restart: always
@@ -46,18 +38,24 @@ services:
       - redisdata:/data
   smtp4dev:
     image: rnwood/smtp4dev
+    container_name: email
     ports:
       - 5000:80
       - 25:25
     restart: always
   celery:
     build: .
-    # command: celery -A core worker --loglevel=info
     command: celery -A core worker -l info -P eventlet -E
     depends_on:
       - redis
+    container_name: celery
     volumes:
       - .:/app
+volumes:
+  mysqldata:
+  redisdata:    
+  # pgdata:
+
   # celery-beat:
   #   build: .
   #   command: celery -A storefront beat --loglevel=info
@@ -87,7 +85,13 @@ services:
   #   tty: true
   #   volumes:
   #     - .:/app
-volumes:
-  mysqldata:
-  # pgdata:
-  redisdata:    
+  # postgres:
+  #   image: postgres
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_DB=classroom
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres 
