@@ -20,6 +20,19 @@ class College(models.Model):
     owner_email_id = models.EmailField(
         _("College Owner DBA Mail [unique]"), unique=True
     )
+    stream_list = models.FileField(
+        _("Upload Stream List File(.csv/.xl)"),
+        upload_to="college/streams/",
+        null=True,
+        max_length=500,
+        blank=True,
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["csv", "xlsx"],
+                message="Please Upload CSV/XLSX file only",
+            )
+        ],
+    )
     allowed_teacher_list = models.FileField(
         _("Upload teacher List File(.csv/.xl)"),
         upload_to="classroom/teachers/",
@@ -74,3 +87,17 @@ class AllowedCollegeDBA(models.Model):
 
     def __str__(self) -> str:
         return f"{self.email}"
+
+
+class Stream(models.Model):
+    title = models.CharField(max_length=255)
+    college = models.ForeignKey(
+        "classroom.College", on_delete=models.CASCADE, related_name="streams"
+    )
+    dba = models.ForeignKey(
+        "classroom.CollegeDBA",
+        on_delete=models.CASCADE,
+        related_name="streams",
+        null=True,
+        blank=True,
+    )

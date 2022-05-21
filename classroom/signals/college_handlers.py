@@ -1,3 +1,4 @@
+from classroom.models.college import Stream
 from .common_imports import *
 
 # @shared_task
@@ -13,19 +14,19 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
             )
             return None
         file_abs_path = None
-        dba_file_path = os.path.join(
+        teacher_file_path = os.path.join(
             settings.BASE_DIR,
             settings.MEDIA_ROOT,
             instance.allowed_teacher_list.name,
         )
-        if os.path.exists(dba_file_path):
-            file_abs_path = os.path.abspath(dba_file_path)
+        if os.path.exists(teacher_file_path):
+            file_abs_path = os.path.abspath(teacher_file_path)
         else:
             send_mail(
                 "Allowed Teacher List Does Not Exists",
                 "You Have To Create Allowed Teachers Manually",
                 settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+                [instance.owner_email_id],  # FIXME: Send mail to session dba
             )
             return None
 
@@ -34,6 +35,11 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
             df: pd.DataFrame = pd.read_csv(file_abs_path)
         elif str(file_abs_path).split(".")[-1] == "xlsx":
             df = pd.read_excel(file_abs_path)
+        else:
+            raise ValidationError(
+                f"{instance.stream_list.name} is not of type xlsx or csv",
+                code=status.HTTP_412_PRECONDITION_FAILED,
+            )
 
         if not "email" in df.columns:
             send_mail(
@@ -43,13 +49,17 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
                 ["dba@admin.com"],  # FIXME: Send mail to session dba
             )
             return None
-        df_dict = df.to_dict("records")
-        # print(df_dict)
-        list_of_teachers = [
+        list_of_streams = [
             AllowedTeacher(college=instance, **args) for args in df.to_dict("records")
         ]
-        AllowedTeacher.objects.bulk_create(list_of_teachers)
-        # create_bulk_allowed_teacher.delay(df_dict, instance)
+        try:
+            with atomic():
+                AllowedTeacher.objects.bulk_create(list_of_streams)
+        except:
+            raise ValidationError(
+                detail="Bulk Allowed Teacher Insertion Failed Due to unknown reason",
+                code=status.HTTP_304_NOT_MODIFIED,
+            )
         email_list = df["email"].to_list()
         subject = "Create Your Teacher Account"
         prompt = "please use your following mail id to sign up in the Classroom[LMS]"
@@ -97,3 +107,72 @@ def remove_teacher_profile_after_allowed_teacher_deletion(
             "Either teacher profile does not exists or couldn't able to delete that",
             code=status.HTTP_302_FOUND,
         )
+
+
+@receiver(post_save, sender=College)
+def create_streams_from_file(sender, instance: College, created, **kwargs):
+    if created:
+        if instance.stream_list == None:
+            send_mail(
+                "Allowed Stream List Does Not Exists",
+                "You Have To Create Streams Manually",
+                settings.EMAIL_HOST_USER,
+                [instance.owner_email_id],  # FIXME: Send mail to session dba
+            )
+            raise ValidationError(
+                detail="Stream List Not Found", code=status.HTTP_404_NOT_FOUND
+            )
+        file_abs_path = None
+        stream_file_path = os.path.join(
+            settings.BASE_DIR,
+            settings.MEDIA_ROOT,
+            instance.stream_list.name,
+        )
+        if os.path.exists(stream_file_path):
+            file_abs_path = os.path.abspath(stream_file_path)
+        else:
+            send_mail(
+                "Allowed Stream List Does Not Exists",
+                "You Have To Create Streams Manually",
+                settings.EMAIL_HOST_USER,
+                [instance.owner_email_id],  # FIXME: Send mail to session dba
+            )
+            raise ValidationError(
+                detail="Stream List Not Found", code=status.HTTP_404_NOT_FOUND
+            )
+
+        df = None
+        if str(file_abs_path).split(".")[-1] == "csv":
+            df: pd.DataFrame = pd.read_csv(file_abs_path)
+        elif str(file_abs_path).split(".")[-1] == "xlsx":
+            df = pd.read_excel(file_abs_path)
+        else:
+            raise ValidationError(
+                f"{instance.stream_list.name} is not of type xlsx or csv",
+                code=status.HTTP_412_PRECONDITION_FAILED,
+            )
+
+        if not "streams" in df.columns:
+            send_mail(
+                "Wrong File Structure",
+                "column name should be => 'streams' ",
+                settings.EMAIL_HOST_USER,
+                [instance.owner_email_id],  # FIXME: Send mail to session dba
+            )
+            raise ValidationError(
+                "column name should be => 'streams' without quotation",
+                code=status.HTTP_302_FOUND,
+            )
+        list_of_streams = [
+            Stream(college=instance, **args) for args in df.to_dict("records")
+        ]
+        try:
+            with atomic():
+                Stream.objects.bulk_create(list_of_streams)
+        except:
+            raise ValidationError(
+                detail="Bulk Stream Create Failed Due to unknown reason",
+                code=status.HTTP_304_NOT_MODIFIED,
+            )
+        os.remove(file_abs_path)
+        College.objects.update(stream_list="")
