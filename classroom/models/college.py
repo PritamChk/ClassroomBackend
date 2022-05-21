@@ -101,3 +101,9 @@ class Stream(models.Model):
         null=True,
         blank=True,
     )
+
+    class Meta:
+        ordering = ["college__name", "title"]
+
+    def __str__(self) -> str:
+        return f"{self.title} || Clg: {self.college.name}"

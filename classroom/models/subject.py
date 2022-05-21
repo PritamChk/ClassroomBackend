@@ -25,7 +25,7 @@ class Subject(models.Model):
         (PROJECT, _("Project")),
     ]
     CP_ONE = 1
-    CP_TEN = 15
+    CP_TEN = 20
     CP_CHOICE = [(i, _(str(i))) for i in range(CP_ONE, CP_TEN + 1)]
     # ----------------------------------------------
     slug = AutoSlugField(

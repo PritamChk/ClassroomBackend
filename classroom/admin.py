@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from classroom.models.college import AllowedCollegeDBA
+from classroom.models.college import AllowedCollegeDBA, Stream
 
 from classroom.models.college_dba import CollegeDBA
 
@@ -47,6 +47,17 @@ class CollegeAdmin(admin.ModelAdmin):
     list_display_links = ["slug", "name"]
     list_filter = ["city", "state"]
     readonly_fields = ["slug"]
+
+
+@admin.register(Stream)
+class StreamAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "college", "dba")
+    autocomplete_fields = ["college"]
+    list_filter = ["college", "dba"]
+    list_display_links = ["title", "college"]
+    list_filter = ("college", "dba")
+    list_select_related = ["college", "dba"]
+    search_fields = ["title"]
 
 
 @admin.register(AllowedTeacher)
@@ -261,6 +272,7 @@ class NotesAdmin(admin.ModelAdmin):
     list_display_links = ["slug", "title"]
     list_filter = ("created_at", "updated_at", "subject", "posted_by")
     search_fields = ("slug",)
+    autocomplete_fields = ["posted_by", "subject"]
     date_hierarchy = "created_at"
 
 
@@ -278,15 +290,20 @@ class AllowedTeacherClassroomLevelAdmin(admin.ModelAdmin):
     list_display_links = ["email"]
     search_fields = ["email", "classroom"]
     list_filter = ("classroom",)
+    autocomplete_fields = ["classroom"]
 
 
 @admin.register(CollegeDBA)
 class CollegeDBAAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "college")
     list_filter = ("user", "college")
+    search_fields = ["user", "college"]
+    autocomplete_fields = ["college"]
 
 
 @admin.register(AllowedCollegeDBA)
 class AllowedCollegeDBAAdmin(admin.ModelAdmin):
     list_display = ("id", "email", "college")
     list_filter = ("college",)
+    search_fields = ["email", "college"]
+    autocomplete_fields = ["college"]
