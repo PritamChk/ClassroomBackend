@@ -7,8 +7,8 @@ WORKDIR /app
 # Required to install mysqlclient with Pip
 # RUN apt-get update \
 #   && apt-get install python3-dev default-libmysqlclient-dev gcc -y
-RUN apt-get update \
-  && apt-get install python-dev default-libmysqlclient-dev gcc -y
+# RUN apt-get update \
+#   && apt-get install python-dev default-libmysqlclient-dev gcc -y
 
 # RUN apk update \
 #     && apk add --virtual build-deps gcc python3-dev musl-dev \

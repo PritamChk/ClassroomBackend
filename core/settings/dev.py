@@ -7,29 +7,29 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "Not Exists")
 DEBUG = True
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        # "NAME": os.getenv(
-        #     "DB_NAME",
-        #     "classroom",
-        # ),
-        "NAME": "classroom",
-        # "USER": os.getenv("DB_USER", "pritam"),
-        "USER": "root",
-        # "PASSWORD": os.getenv("DB_USER_PASSWORD", "Abcd_1234"),
-        "PASSWORD": "Abcd_1234",
-        # "HOST": "localhost",
-        "HOST": "mysql",
-        "PORT": "3306",
-    }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': os.environ.get('POSTGRES_NAME','classroom'),
-    #     'USER': os.environ.get('POSTGRES_USER','postgres'),
-    #     'PASSWORD': os.environ.get('POSTGRES_PASSWORD','postgres'),
-    #     'HOST': 'postgres',
-    #     'PORT': 5432,
+    # "default": {
+    #     "ENGINE": "django.db.backends.mysql",
+    #     # "NAME": os.getenv(
+    #     #     "DB_NAME",
+    #     #     "classroom",
+    #     # ),
+    #     "NAME": "classroom",
+    #     # "USER": os.getenv("DB_USER", "pritam"),
+    #     "USER": "root",
+    #     # "PASSWORD": os.getenv("DB_USER_PASSWORD", "Abcd_1234"),
+    #     "PASSWORD": "Abcd_1234",
+    #     # "HOST": "localhost",
+    #     "HOST": "mysql",
+    #     "PORT": "3306",
     # }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_NAME','classroom'),
+        'USER': os.environ.get('POSTGRES_USER','postgres'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD','postgres'),
+        'HOST': 'postgres',
+        'PORT': 5432,
+    }
 }
 
 DEV_APPS = [
