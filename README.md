@@ -95,3 +95,19 @@ heroku config:set VARIABLE_NAME='value'
 - #### step 1: `git remote -vv`
 - #### step 2: `git branch`
 - #### step 3: push branch to heroku `git push heroku main`
+
+# Docker Build & Start
+
+```bash
+docker-compose up --build
+```
+
+```docker
+docker-compose run web python manage.py createsuperuser
+```
+
+---
+
+```bash
+docker-compose up
+```

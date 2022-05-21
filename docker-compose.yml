@@ -7,20 +7,31 @@ services:
       - 8000:8000
     depends_on:
       - redis
-      - mysql
+      # - mysql
+      - postgres
     restart: on-failure
     volumes:
       - .:/app
-  mysql:
-    image: mysql:8.0
+  # mysql:
+  #   image: mysql:8.0
+  #   ports:
+  #     - 3306:3306
+  #   restart: always
+  #   environment:
+  #     - MYSQL_DATABASE=classroom
+  #     - MYSQL_ROOT_PASSWORD=Abcd_1234
+  #   volumes:
+  #     - mysqldata:/var/lib/mysql    
+  postgres:
+    image: postgres
     ports:
-      - 3306:3306
-    restart: always
-    environment:
-      - MYSQL_DATABASE=classroom
-      - MYSQL_ROOT_PASSWORD=Abcd_1234
+      - 5432:5432
     volumes:
-      - mysqldata:/var/lib/mysql     
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=classroom
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres 
   redis:
     image: redis:6.2-alpine
     ports:
@@ -72,6 +83,6 @@ services:
   #   volumes:
   #     - .:/app
 volumes:
-  mysqldata:
+  # mysqldata:
   pgdata:
   redisdata:    
