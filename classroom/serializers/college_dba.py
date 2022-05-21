@@ -93,11 +93,25 @@ class CollegeCreateSerializer(_ms):
 
 
 class StreamReadWriteSerializer(_ms):
-    stream_id = _sz.IntegerField(source="Stream.id", read_only=True)
+    stream_id = _sz.IntegerField(source="id", read_only=True)
+    # dba_id = _sz.IntegerField(source="dba.id")
+    dba_name = _sz.CharField(source="dba.user.first_name", read_only=True)
+    dba_email = _sz.EmailField(source="dba.user.email", read_only=True)
+    college_slug = _sz.SlugField(source="college.slug", read_only=True)
+    college_name = _sz.CharField(source="college.name", read_only=True)
 
     class Meta:
         model = Stream
-        fields = ("stream_id", "title", "college", "dba")
+        fields = (
+            "stream_id",
+            "title",
+            "college_slug",
+            "college_name",
+            "dba",
+            "dba_name",
+            "dba_email",
+        )
+        read_only_fields = ["stream_id", "college_slug", "college_name"]
 
     def create(self, validated_data):
         college_slug = self.context.get("college_slug")
@@ -109,7 +123,7 @@ class StreamReadWriteSerializer(_ms):
                 code=status.HTTP_404_NOT_FOUND,
             )
         try:
-            self.instance = Stream(college=college, **validated_data)
+            self.instance = Stream.objects.create(college=college, **validated_data)
         except:
             title = validated_data.get("title", "No title Found")
             raise _error(

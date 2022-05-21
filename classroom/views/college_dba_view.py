@@ -2,13 +2,12 @@ from rest_framework import viewsets as _vset
 from rest_framework import mixins as _mxn
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.parsers import MultiPartParser, FormParser
-import classroom
 from classroom.models.classroom import (
     AllowedStudents,
     AllowedTeacherClassroomLevel,
     Classroom,
 )
-from classroom.models.college import AllowedCollegeDBA, AllowedTeacher, College
+from classroom.models.college import AllowedCollegeDBA, AllowedTeacher, College, Stream
 from classroom.models.college_dba import CollegeDBA
 from classroom.serializers.college_dba import (
     AllowedCollegeDBACreateSerializer,
@@ -20,6 +19,8 @@ from classroom.serializers.college_dba import (
     CollegeCreateSerializer,
     CollegeDBAProfileSerializer,
     CollegeReadForDBASerializer,
+    StreamReadWriteSerializer,
+    StreamUpdateSerializer,
 )
 from termcolor import cprint
 
@@ -45,6 +46,25 @@ class CollegeCreateViewSet(
         return super().create(request, *args, **kwargs)
 
 
+class StreamManagementViewSet(_vset.ModelViewSet):
+    http_method_names = ["get", "post", "patch", "delete", "options", "head"]
+    my_tags = ["[dba] 2. streams management"]
+
+    def get_queryset(self):
+        return Stream.objects.select_related("college", "dba","dba__user").filter(
+            college__slug=self.kwargs.get("college_slug")
+        )
+
+    def get_serializer_class(self):
+        method = self.request.method
+        if method == "PATCH":
+            return StreamUpdateSerializer
+        return StreamReadWriteSerializer
+
+    def get_serializer_context(self):
+        return {"college_slug": self.kwargs.get("college_slug")}
+
+
 class DBAProfileViewSet(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
     """
     # Get DBA Profile Details
@@ -52,7 +72,7 @@ class DBAProfileViewSet(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
         - all minimal user details will be sent along with college details
     """
 
-    my_tags = ["[dba] 2. profile"]
+    my_tags = ["[dba] 3. profile"]
     serializer_class = CollegeDBAProfileSerializer
 
     def get_queryset(self):
@@ -78,7 +98,7 @@ class AddOrDeleteOtherDBAViewSet(_vset.ModelViewSet):
     > permissions will be checked initially in frontend
     """
 
-    my_tags = ["[dba] 3. manage dbas by owner"]
+    my_tags = ["[dba] 4. manage dbas by owner"]
     http_method_names = ["get", "post", "delete", "head", "options"]
     serializer_class = AllowedCollegeDBACreateSerializer
 
@@ -93,7 +113,7 @@ class AddOrDeleteOtherDBAViewSet(_vset.ModelViewSet):
 
 class ManageClassroomByDBAViewSet(_vset.ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
-    my_tags = ["[dba] 4. classroom management"]
+    my_tags = ["[dba] 5. classroom management"]
     lookup_field = "slug"
     parser_classes = [FormParser, MultiPartParser]
 
@@ -128,7 +148,7 @@ class TeacherManagementCollegeLevel(
     # This end point is to add teachers to college or remove them from that classroom
     """
 
-    my_tags = ["[dba] 5. teacher management college level"]
+    my_tags = ["[dba] 6. teacher management college level"]
     serializer_class = AllowedTeacherCollegeLevelCreateSerializer
 
     def get_queryset(self):
@@ -152,7 +172,7 @@ class TeacherManagementClassroomLevel(
     - Please let me know if Get method doesn't work
     """
 
-    my_tags = ["[dba] 6. teacher/student management classroom level"]
+    my_tags = ["[dba] 7. teacher/student management classroom level"]
     serializer_class = AllowedTeacherClassroomLevelCreateSerializer
 
     def get_queryset(self):
@@ -175,7 +195,7 @@ class AllowedStudentManagementClassroomLevel(
     # This end point is to add allowed students to classroom or remove them from that classroom
     """
 
-    my_tags = ["[dba] 6. student management classroom level"]
+    my_tags = ["[dba] 7. student management classroom level"]
     serializer_class = AllowedStudentCreateSerializer
 
     def get_queryset(self):

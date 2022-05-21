@@ -5,6 +5,7 @@ from classroom.views.college_dba_view import (
     CollegeRetrieveForDBAViewSet,
     DBAProfileViewSet,
     ManageClassroomByDBAViewSet,
+    StreamManagementViewSet,
     TeacherManagementClassroomLevel,
     TeacherManagementCollegeLevel,
 )
@@ -22,6 +23,16 @@ college_for_dba_router = DefaultRouter()
 college_for_dba_router.register(
     "college-dba", CollegeRetrieveForDBAViewSet, basename="college"
 )
+
+college_for_stream = DefaultRouter()
+college_for_stream.register(
+    "college-streams", CollegeRetrieveForDBAViewSet, basename="college"
+)
+
+stream_router = NestedDefaultRouter(
+    college_for_stream, "college-streams", lookup="college"
+)
+stream_router.register("stream", StreamManagementViewSet, basename="stream")
 
 create_other_dba_router = NestedDefaultRouter(
     college_for_dba_router, "college-dba", lookup="college"
@@ -65,6 +76,7 @@ allowed_student_classlevel_router.register(
 dba_urlpatterns = []
 dba_urlpatterns += (
     college_create_router.urls
+    + stream_router.urls
     + dba_root_router.urls
     + college_for_dba_router.urls
     + create_other_dba_router.urls
