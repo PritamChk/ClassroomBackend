@@ -22,7 +22,7 @@ class College(models.Model):
     )
     allowed_teacher_list = models.FileField(
         _("Upload teacher List File(.csv/.xl)"),
-        upload_to=f"{settings.MEDIA_ROOT}/classroom/teachers/",
+        upload_to="classroom/teachers/",
         null=True,
         max_length=500,
         blank=True,
@@ -36,7 +36,7 @@ class College(models.Model):
     allowed_dba_list = (
         models.FileField(  # TODO: Allowed DBA Auto Create Signal by College
             _("Upload DBA List File(.csv/.xl)"),
-            upload_to=f"{settings.MEDIA_ROOT}/college/dbas/%Y/%m/%d",
+            upload_to="college/dbas/%Y/%m/%d",
             null=True,
             max_length=500,
             blank=True,

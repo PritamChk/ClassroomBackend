@@ -9,13 +9,17 @@ DEBUG = True
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv(
-            "DB_NAME",
-            "classroom",
-        ),
-        "USER": os.getenv("DB_USER", "pritam"),
-        "PASSWORD": os.getenv("DB_USER_PASSWORD", "Abcd_1234"),
-        "HOST": "localhost",
+        # "NAME": os.getenv(
+        #     "DB_NAME",
+        #     "classroom",
+        # ),
+        "NAME": "classroom",
+        # "USER": os.getenv("DB_USER", "pritam"),
+        "USER": "root",
+        # "PASSWORD": os.getenv("DB_USER_PASSWORD", "Abcd_1234"),
+        "PASSWORD": "Abcd_1234",
+        # "HOST": "localhost",
+        "HOST": "mysql",
         "PORT": "3306",
     }
 }
@@ -36,10 +40,14 @@ INTERNAL_IPS = [
 # TODO: FAKE-MAIL Comment this in production
 # TODO:Mail Settings for Fake Mail
 EMAIL_BACKEND = EMAIL_CREDS.EMAIL_BACKEND
-EMAIL_HOST = "localhost"
-EMAIL_PORT = 2525
+# EMAIL_HOST = "localhost"
+EMAIL_HOST = "smtp4dev"
+EMAIL_PORT = 25
 EMAIL_HOST_USER = "classroom@lms.com"
 EMAIL_HOST_PASSWORD = ""
-DEFAULT_FROM_EMAIL = "classroom@lms.com"
+# DEFAULT_FROM_EMAIL = "classroom@lms.com"
 
-CELERY_BROKER_URL = "redis://localhost:6379/1"
+# CELERY_BROKER_URL = "redis://localhost:6379/1"
+CELERY_BROKER_URL = "redis://redis:6379/1"
+
+DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda request: True}

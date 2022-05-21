@@ -41,7 +41,7 @@ class NotesAttachmentFile(models.Model):
         null=True,
         blank=True,
         max_length=400,
-        upload_to=f"{settings.MEDIA_ROOT}/classroom/notes/%Y/%m/%d",
+        upload_to=f"classroom/notes/%Y/%m/%d",
         validators=[
             FileExtensionValidator(
                 allowed_extensions=["xlsx", "pdf", "doc"],

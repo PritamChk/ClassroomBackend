@@ -86,7 +86,7 @@ class Classroom(models.Model):
         _("Upload Student List File(.csv/xl)"),
         null=True,
         blank=True,
-        upload_to=f"{settings.MEDIA_ROOT}/classroom/students/",
+        upload_to=f"classroom/students/",
         validators=[
             FileExtensionValidator(
                 allowed_extensions=["csv", "xlsx"],
@@ -100,7 +100,7 @@ class Classroom(models.Model):
     # TODO: use this to add teachers in classrooms and vice-versa
     allowed_teacher_list = models.FileField(
         _("Upload Teacher List File(.csv/xl)"),
-        upload_to=f"{settings.MEDIA_ROOT}/classroom/teachers/",
+        upload_to=f"classroom/teachers/",
         null=True,
         blank=True,
         validators=[
