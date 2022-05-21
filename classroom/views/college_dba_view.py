@@ -51,7 +51,7 @@ class StreamManagementViewSet(_vset.ModelViewSet):
     my_tags = ["[dba] 2. streams management"]
 
     def get_queryset(self):
-        return Stream.objects.select_related("college", "dba","dba__user").filter(
+        return Stream.objects.select_related("college", "dba", "dba__user").filter(
             college__slug=self.kwargs.get("college_slug")
         )
 
@@ -118,6 +118,7 @@ class ManageClassroomByDBAViewSet(_vset.ModelViewSet):
     parser_classes = [FormParser, MultiPartParser]
 
     def get_queryset(self):
+        # TODO: filter classes w.r.t stream for a dba
         return (
             Classroom.objects.prefetch_related("teachers")
             .select_related("college")
