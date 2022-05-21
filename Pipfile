@@ -38,16 +38,26 @@ python_version = "3.10"
 allow_prereleases = true
 
 [scripts]
-dev = "py manage.py runserver 8000"
-serve = "waitress-serve --listen=*:9000 core.wsgi:application"
-db-update = "py manage.py makemigrations"
-db-apply = "py manage.py migrate"
-db_clear = "py manage.py reset_db"
-deploy = "git push heroku main"
-smtp = "docker run -it -p 5000:80 -p 2525:25 rnwood/smtp4dev"
-make-admin = "py manage.py createsuperuser"
-admin-code = 'py manage.py admin_generator classroom'
-redis = "docker run -d -p 6379:6379 redis"
-celery = "celery -A core worker -l info -P eventlet -E"
-cmd = "py manage.py shell_plus"
-lint = "black ./"
+# dev = "py manage.py runserver 8000"
+# serve = "waitress-serve --listen=*:9000 core.wsgi:application"
+# db-update = "py manage.py makemigrations"
+# db-apply = "py manage.py migrate"
+# db_clear = "py manage.py reset_db"
+# deploy = "git push heroku main"
+# smtp = "docker run -it -p 5000:80 -p 2525:25 rnwood/smtp4dev"
+# make-admin = "py manage.py createsuperuser"
+# admin-code = 'py manage.py admin_generator classroom'
+# redis = "docker run -d -p 6379:6379 redis"
+# celery = "celery -A core worker -l info -P eventlet -E"
+# cmd = "py manage.py shell_plus"
+# lint = "black ./"
+dev = "docker-compose up -d"
+stop = 'docker-compose down'
+db-update = "docker-compose run web python manage.py makemigrations"
+db-apply = "docker-compose run web python manage.py migrate"
+db_clear = "docker-compose run web python manage.py reset_db"
+make-admin = "docker-compose run web python manage.py createsuperuser"
+admin-code = 'docker-compose run web python manage.py admin_generator classroom'
+cmd = "docker-compose run web python manage.py shell_plus"
+lint = "docker-compose run web black ./"
+

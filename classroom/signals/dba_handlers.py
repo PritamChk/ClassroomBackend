@@ -88,7 +88,9 @@ def create_allowed_dba(sender, instance: College, created, **kwargs):
             AllowedCollegeDBA.objects.bulk_create(list_of_teachers)
             email_list = df["email"].to_list()
             subject = "Open Your DBA Account"
-            prompt = "please use your following mail id to sign up in the Classroom[LMS]"
+            prompt = (
+                "please use your following mail id to sign up in the Classroom[LMS]"
+            )
             try:
                 send_email_after_bulk_object_creation.delay(subject, prompt, email_list)
             except BadHeaderError:
