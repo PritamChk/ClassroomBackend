@@ -1,11 +1,14 @@
 FROM python:3.10.4
 
 ENV PYTHONUNBUFFERED=1
+RUN mkdir /app
 WORKDIR /app
 
 # Required to install mysqlclient with Pip
+# RUN apt-get update \
+#   && apt-get install python3-dev default-libmysqlclient-dev gcc -y
 RUN apt-get update \
-  && apt-get install python3-dev default-libmysqlclient-dev gcc -y
+  && apt-get install python-dev default-libmysqlclient-dev gcc -y
 
 # RUN apk update \
 #     && apk add --virtual build-deps gcc python3-dev musl-dev \
@@ -24,10 +27,8 @@ RUN pipenv install --system --dev --verbose --skip-lock
 # Copy the application files into the image
 COPY . /app/
 
-# RUN python3 manage.py runserver 0.0.0.0:8000
-# RUN python manage.py makemigrations
-# RUN python manage.py migrate
 # Expose port 8000 on the container
 EXPOSE 8000
+EXPOSE 3306
 
 # RUN apk del build-deps
