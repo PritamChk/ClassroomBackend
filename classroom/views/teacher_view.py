@@ -20,11 +20,13 @@ from classroom.model import (
     Subject,
     Teacher,
 )
-from classroom.models.assignment import Assignment
+from classroom.models.assignment import Assignment, AssignmentSubmission
 from classroom.serializers.classroom import (
     AnnouncementsPostOrUpdateSerializer,
     AnnouncementsReadSerializer,
     AssignmentPostByTeacherSerializer,
+    AssignmentSubmissionEvaluationByTeacher,
+    AssignmentSubmissionEvaluationReadByTeacher,
     ClassroomReadForStudentSerializer,
     ClassroomReadForTeacherSerializer,
     NotesFileReadByStudentSerializer,
@@ -187,7 +189,7 @@ class FileUploadDeleteViewSet(ModelViewSet):
 class AssignmentPostViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete", "options", "head"]
     my_tags = ["[teacher] 7. assignment"]
-    serializer_class = AssignmentPostByTeacherSerializer
+    # serializer_class = AssignmentPostByTeacherSerializer
     parser_classes = [
         MultiPartParser,
         FormParser,
@@ -196,4 +198,21 @@ class AssignmentPostViewSet(ModelViewSet):
     def get_queryset(self):
         return Assignment.objects.select_related("subject").filter(
             subject__slug=self.kwargs.get("subject_slug")
+        )
+
+
+class AssignmentEvaluationViewSet(ModelViewSet):
+    http_method_names = ["get", "patch", "options", "head"]
+    my_tags = ["[teacher] 8. assignment evaluation"]
+    serializer_class = AssignmentSubmissionEvaluationByTeacher
+
+    def get_serializer_class(self):
+        method = self.request.method
+        if method in SAFE_METHODS:
+            return AssignmentSubmissionEvaluationReadByTeacher
+        return AssignmentSubmissionEvaluationByTeacher
+
+    def get_queryset(self):
+        return AssignmentSubmission.objects.select_related("assignment").filter(
+            assignment__id=self.kwargs.get("assignment_pk")
         )

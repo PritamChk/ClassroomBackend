@@ -16,8 +16,12 @@ from classroom.model import (
     Teacher,
 )
 from django.shortcuts import get_object_or_404
-from classroom.models.assignment import Assignment
-from classroom.serializers.teacher import (
+from classroom.models.assignment import Assignment, AssignmentSubmission
+from classroom.models.imports import User
+from classroom.models.student import Student
+
+# from .student import StudentReadSerializer
+from .teacher import (
     MinimalTeacherDetailsSerializer,
     MinimalUserDetailsSerializer,
     TeacherReadForSubjectSerializer,
@@ -363,3 +367,112 @@ class AssignmentPostByTeacherSerializer(ms):
             "created_at",
         )
         read_only_fields = ["id", "created_at"]
+
+
+# StudentReadSerializer
+
+
+class AssignmentSubmissionReadByStudent(ms):
+    submitted_file = FileField(max_length=None, use_url=True, required=False)
+
+    class Meta:
+        model = AssignmentSubmission
+        fields = (
+            "id",
+            "answer_section",
+            "submitted_file",
+            "is_submitted",
+            "submission_date",
+            "submission_time",
+            "score",
+            "has_scored",
+            "remarks",
+            "assignment",
+            # "submitted_by",
+            # "scored_by",
+        )
+        read_only_fields = [
+            "id",
+            "submission_date",
+            "submission_time",
+            "score",
+            "has_scored",
+            "remarks",
+            "assignment",
+        ]
+
+
+class StudentUserReadForAssignmentSerializer(ms):
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "contact_no", "email")
+
+
+class StudentReadForAssignmentSerializer(ms):
+    """
+    Returns Student ID & User Profile
+    """
+
+    user = StudentUserReadForAssignmentSerializer()
+
+    class Meta:
+        model = Student
+        fields = ("id", "university_roll", "user")
+        read_only_fields = ("id", "university_roll", "user")
+
+
+class AssignmentSubmissionEvaluationReadByTeacher(ms):
+    # submitted_file = FileField(
+    #     max_length=None, use_url=True, read_only=True, required=False
+    # )
+    submitted_by = StudentReadForAssignmentSerializer(read_only=True)
+
+    class Meta:
+        model = AssignmentSubmission
+        fields = (
+            "id",
+            "submitted_by",
+            "answer_section",
+            "submitted_file",
+            "is_submitted",
+            "submission_date",
+            "submission_time",
+            "has_scored",
+            "score",
+            "remarks",
+        )
+        read_only_fields = [
+            "id",
+            "submission_date",
+            "submission_time",
+            "answer_section",
+            "submitted_file",
+            "is_submitted",
+            "submitted_by",
+        ]
+
+
+class AssignmentSubmissionEvaluationByTeacher(ms):
+    class Meta:
+        model = AssignmentSubmission
+        fields = (
+            "id",
+            "submitted_by",
+            "answer_section",
+            "submitted_file",
+            "is_submitted",
+            "submission_date",
+            "submission_time",
+            "has_scored",
+            "score",
+            "remarks",
+        )
+        read_only_fields = [
+            "id",
+            "submission_date",
+            "submission_time",
+            "answer_section",
+            "submitted_file",
+            "is_submitted",
+            "submitted_by",
+        ]
