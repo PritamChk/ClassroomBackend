@@ -366,7 +366,7 @@ class SubmittedAssignmentAdmin(admin.ModelAdmin):
     list_editable = ["is_submitted", "score", "has_scored", "remarks"]
     list_select_related = ["submitted_by"]
     list_display_links = ["id", "assignment", "submission_date"]
-    list_per_page: int = 10
+    list_per_page: int = 3
     list_filter = (
         "assignment",
         "submitted_by",

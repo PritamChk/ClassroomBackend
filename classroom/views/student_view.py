@@ -1,4 +1,4 @@
-from classroom.models.assignment import Assignment
+from classroom.models.assignment import Assignment, AssignmentSubmission
 from classroom.serializers.classroom import (
     AnnouncementsReadSerializer,
     ClassroomReadForStudentSerializer,
@@ -8,6 +8,8 @@ from classroom.serializers.classroom import (
 )
 from classroom.serializers.student import (
     AssignmentReadByStudentSerializer,
+    AssignmentSubmissionReadByStudent,
+    AssignmentSubmissionWriteByStudent,
     StudentReadSerializer,
 )
 from rest_framework.mixins import (
@@ -16,7 +18,7 @@ from rest_framework.mixins import (
     CreateModelMixin,
     DestroyModelMixin,
 )
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.parsers import FormParser, MultiPartParser
 from ..model import Announcement, Classroom, Notes, Semester, Student, Subject
 
@@ -126,3 +128,34 @@ class AssignmentViewForStudentViewSet(
         return Assignment.objects.select_related("subject").filter(
             subject__slug=self.kwargs.get("subject_slug")
         )
+
+
+class AssignmentSubmissionByStudentViewSet(ModelViewSet):
+    http_method_names = ["get", "post", "delete", "head", "options"]
+    my_tags = ["[student] 7. assignment submission"]
+    serializer_class = AssignmentSubmissionWriteByStudent
+    parser_classes = [
+        FormParser,
+        MultiPartParser,
+    ]
+
+    def get_queryset(self):
+        # TODO:Dynamically find student id before submission
+        student: Student = Student.objects.select_related("user").get(
+            user__id=self.request.user.id
+        )
+        return AssignmentSubmission.objects.filter(
+            assignment__id=self.kwargs.get("assignment_pk"), submitted_by=student.id
+        )
+
+    def get_serializer_context(self):
+        return {
+            "assignment_pk": self.kwargs.get("assignment_pk"),
+            "user_id": self.request.user.id,
+        }
+
+    def get_serializer_class(self):
+        method = self.request.method
+        if method == "POST":
+            return AssignmentSubmissionWriteByStudent
+        return AssignmentSubmissionReadByStudent

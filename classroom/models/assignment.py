@@ -117,4 +117,4 @@ class AssignmentSubmission(models.Model):
         ordering = ["-submission_date", "-submission_time", "-score"]
 
     def __str__(self) -> str:
-        return self.submitted_by
+        return f"{self.submitted_by}"

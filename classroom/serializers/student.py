@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer as ms
+from rest_framework.serializers import ModelSerializer as ms, FileField
 from classroom.model import Student, User
 from classroom.models.assignment import Assignment, AssignmentSubmission
 from .classroom import ClassroomReadForStudentSerializer
@@ -50,6 +50,8 @@ class AssignmentReadByStudentSerializer(ms):
 
 # ---------------Assignment Submission Serializers ---------------
 class AssignmentSubmissionReadByStudent(ms):
+    submitted_file = FileField(max_length=None, use_url=True, required=False)
+
     class Meta:
         model = AssignmentSubmission
         fields = (
@@ -62,13 +64,24 @@ class AssignmentSubmissionReadByStudent(ms):
             "score",
             "has_scored",
             "remarks",
-            # "assignment",
+            "assignment",
             # "submitted_by",
             # "scored_by",
         )
+        read_only_fields = [
+            "id",
+            "submission_date",
+            "submission_time",
+            "score",
+            "has_scored",
+            "remarks",
+            "assignment",
+        ]
 
 
 class AssignmentSubmissionWriteByStudent(ms):
+    submitted_file = FileField(max_length=None, use_url=True, required=False)
+
     class Meta:
         model = AssignmentSubmission
         fields = (
@@ -85,17 +98,39 @@ class AssignmentSubmissionWriteByStudent(ms):
             # "remarks",
             # "scored_by",
         )
-        read_only_fields = ["id", "submission_date", "submission_time", "has_scored"]
+        read_only_fields = [
+            "id",
+            "submission_date",
+            "submission_time",
+            "has_scored",
+            "submitted_by",
+        ]
 
     def create(self, validated_data):
         assignment_pk = self.context.get("assignment_pk")
+        submitted_by = self.context.get("user_id")
         try:
             assignment = Assignment.objects.get(id=assignment_pk)
         except:
             raise ValidationError("Assignment Not Found", code=code.HTTP_404_NOT_FOUND)
         try:
+            student: Student = Student.objects.select_related("user").get(
+                user__id=submitted_by
+            )
+        except:
+            raise ValidationError(
+                "Student Profile Not Found", code=code.HTTP_404_NOT_FOUND
+            )
+        if AssignmentSubmission.objects.filter(
+            assignment=assignment, submitted_by=student
+        ).exists():
+            raise ValidationError(
+                "1 Submission Allowed Per Student", code=code.HTTP_400_BAD_REQUEST
+            )
+
+        try:
             self.instance = AssignmentSubmission.objects.create(
-                assignment=assignment, **validated_data
+                assignment=assignment, submitted_by=student, **validated_data
             )
         except:
             raise ValidationError(
