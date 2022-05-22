@@ -60,7 +60,7 @@ class Assignment(models.Model):
         return self.description[:30]
 
 
-class SubmittedAssignment(models.Model):
+class AssignmentSubmission(models.Model):
     # FK to assignment
     assignment = models.ForeignKey(
         "classroom.Assignment", on_delete=models.CASCADE, related_name="submissions"
