@@ -42,7 +42,7 @@ class StudentProfileViewSet(RetrieveModelMixin, GenericViewSet):
 class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
     """
     This view is used by student only
-    student can only retrive but won't be able to see the other classrooms
+    student can only retrieve but won't be able to see the other classrooms
     """
 
     my_tags = ["[student] -. classroom"]
