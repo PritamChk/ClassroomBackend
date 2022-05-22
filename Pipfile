@@ -40,7 +40,7 @@ allow_prereleases = true
 [scripts]
 dev = "docker-compose up -d"
 dev-show = "docker-compose up"
-logs = 'docker-compose logs web'
+logs = 'docker-compose logs -f web'
 stop = 'docker-compose down'
 db-update = "docker-compose run web python manage.py makemigrations"
 db-apply = "docker-compose run web python manage.py migrate"
