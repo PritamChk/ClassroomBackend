@@ -53,11 +53,13 @@ class BaseAccountAdmin(UserAdmin):
         "email",
         "first_name",
         "last_name",
+        "is_active",
         "contact_no",
         "is_superuser",
         "is_staff",
-        "is_active",
     ]
+    list_display_links = ["email", "first_name"]
+    list_editable = ["is_active"]
     search_fields = ["email", "first_name", "last_name", "contact_no"]
     actions = ["make_users_active", "make_users_inactive"]
 
