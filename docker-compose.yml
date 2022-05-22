@@ -6,8 +6,7 @@ services:
     ports:
       - 8000:8000
     depends_on:
-      - postgres
-      - mysql
+      # - mysql
       - redis
       - celery
       - smtp4dev
@@ -51,20 +50,10 @@ services:
     container_name: celery
     volumes:
       - .:/app
-  postgres:
-    image: postgres
-    ports:
-      - 5432:5432
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=classroom
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres 
 volumes:
   mysqldata:
   redisdata:    
-  pgdata:
+  # pgdata:
 
   # celery-beat:
   #   build: .
