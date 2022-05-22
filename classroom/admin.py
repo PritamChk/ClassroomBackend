@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
+from classroom.models.assignment import Assignment, AssignmentSubmission
 from classroom.models.college import AllowedCollegeDBA, Stream
 
 from classroom.models.college_dba import CollegeDBA
@@ -43,6 +44,7 @@ class CollegeAdmin(admin.ModelAdmin):
         "city",
         "state",
     )
+    list_per_page: int = 15
     inlines = [AllowedTeacherInline]
     list_display_links = ["slug", "name"]
     list_filter = ["city", "state"]
@@ -67,6 +69,7 @@ class AllowedTeacherAdmin(admin.ModelAdmin):
     list_select_related = ["college"]
     autocomplete_fields = ["college"]
     list_filter = ["college"]
+    list_per_page: int = 10
     search_fields = [
         "email",
         "college__name__icontains",
@@ -94,6 +97,7 @@ class TeacherAdmin(admin.ModelAdmin):
         "college",
         "classrooms",
     ]
+    list_per_page: int = 10
 
 
 @admin.register(Classroom)
@@ -139,6 +143,7 @@ class ClassroomAdmin(admin.ModelAdmin):
     list_prefetch_related = ["teachers__id"]
     autocomplete_fields = ["college", "teachers"]
     date_hierarchy = "created_at"
+    list_per_page: int = 15
 
     def get_teachers(self, obj):
         return "\n".join([t.user.email for t in obj.teachers.all()])
@@ -156,6 +161,7 @@ class SemesterAdmin(admin.ModelAdmin):
         "classroom__level__icontains",
         "classroom__stream__icontains",
     ]
+    list_per_page: int = 16
 
 
 @admin.register(Student)
@@ -189,6 +195,7 @@ class StudentAdmin(admin.ModelAdmin):
     list_select_related = ["user", "classroom", "classroom__college"]
     list_display_links = ["user", "first_name"]
     readonly_fields = ["university_roll"]
+    list_per_page: int = 10
 
 
 @admin.register(AllowedStudents)
@@ -200,6 +207,7 @@ class AllowedStudentsAdmin(admin.ModelAdmin):
     list_select_related = ["classroom"]
     autocomplete_fields = ["classroom"]
     search_fields = ["university_roll", "email"]
+    list_per_page: int = 10
 
 
 @admin.register(Subject)
@@ -221,6 +229,7 @@ class SubjectAdmin(admin.ModelAdmin):
         "semester__classroom__title",
         "credit_points",
     )
+    list_per_page: int = 10
     search_fields = (
         "slug",
         "subject_code__istartswith",
@@ -244,6 +253,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
         "posted_by",
     )
     list_filter = ("created_at", "updated_at", "subject", "posted_by")
+    list_per_page: int = 10
     list_select_related = ["subject", "posted_by"]
     date_hierarchy = "created_at"
     autocomplete_fields = ["subject", "posted_by"]
@@ -270,6 +280,7 @@ class NotesAdmin(admin.ModelAdmin):
         "posted_by",
     )
     list_display_links = ["slug", "title"]
+    list_per_page: int = 10
     list_filter = ("created_at", "updated_at", "subject", "posted_by")
     search_fields = ("slug",)
     autocomplete_fields = ["posted_by", "subject"]
@@ -282,6 +293,7 @@ class NotesAttachmentFileAdmin(admin.ModelAdmin):
     list_display_links = ["title"]
     list_filter = ("created_at", "notes")
     date_hierarchy = "created_at"
+    list_per_page: int = 10
 
 
 @admin.register(AllowedTeacherClassroomLevel)
@@ -291,6 +303,7 @@ class AllowedTeacherClassroomLevelAdmin(admin.ModelAdmin):
     search_fields = ["email", "classroom"]
     list_filter = ("classroom",)
     autocomplete_fields = ["classroom"]
+    list_per_page: int = 10
 
 
 @admin.register(CollegeDBA)
@@ -299,6 +312,7 @@ class CollegeDBAAdmin(admin.ModelAdmin):
     list_filter = ("user", "college")
     search_fields = ["user", "college"]
     autocomplete_fields = ["college"]
+    list_per_page: int = 10
 
 
 @admin.register(AllowedCollegeDBA)
@@ -307,3 +321,57 @@ class AllowedCollegeDBAAdmin(admin.ModelAdmin):
     list_filter = ("college",)
     search_fields = ["email", "college"]
     autocomplete_fields = ["college"]
+    list_per_page: int = 10
+
+
+@admin.register(Assignment)
+class AssignmentAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "title",
+        "description",
+        "alloted_marks",
+        "attached_pdf",
+        "due_date",
+        "due_time",
+        "subject",
+        "given_by",
+        "created_at",
+    )
+    list_display_links = ["id", "title"]
+    list_editable = ["alloted_marks", "due_date", "due_time"]
+    list_select_related = ["subject", "given_by"]
+    search_fields = ["title"]
+    autocomplete_fields = ["given_by", "subject"]
+    list_filter = ("due_date", "subject", "given_by", "created_at")
+    list_per_page: int = 10
+
+
+@admin.register(AssignmentSubmission)
+class SubmittedAssignmentAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "assignment",
+        "submitted_by",
+        "answer_section",
+        "submitted_file",
+        "is_submitted",
+        "submission_date",
+        "submission_time",
+        "score",
+        "has_scored",
+        "remarks",
+        "scored_by",
+    )
+    list_editable = ["is_submitted", "score", "has_scored", "remarks"]
+    list_select_related = ["scored_by", "submitted_by"]
+    list_display_links = ["id", "assignment", "submission_date"]
+    list_per_page: int = 10
+    list_filter = (
+        "assignment",
+        "submitted_by",
+        "is_submitted",
+        "submission_date",
+        "has_scored",
+        "scored_by",
+    )
