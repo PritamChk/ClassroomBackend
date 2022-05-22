@@ -76,6 +76,8 @@ class CollegeReadForDBASerializer(_ms):
 
 class CollegeCreateSerializer(_ms):
     allowed_teacher_list = _sz.FileField(max_length=None, use_url=True, required=False)
+    allowed_dba_list = _sz.FileField(max_length=None, use_url=True, required=False)
+    stream_list = _sz.FileField(max_length=None, use_url=True, required=False)
 
     class Meta:
         model = College
@@ -86,6 +88,7 @@ class CollegeCreateSerializer(_ms):
             "state",
             "address",
             "owner_email_id",
+            "stream_list",
             "allowed_teacher_list",
             "allowed_dba_list",
         ]

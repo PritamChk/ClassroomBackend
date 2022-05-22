@@ -1,3 +1,4 @@
+from requests import request
 from rest_framework import viewsets as _vset
 from rest_framework import mixins as _mxn
 from rest_framework.permissions import SAFE_METHODS
@@ -9,6 +10,7 @@ from classroom.models.classroom import (
 )
 from classroom.models.college import AllowedCollegeDBA, AllowedTeacher, College, Stream
 from classroom.models.college_dba import CollegeDBA
+from classroom.models.imports import User
 from classroom.serializers.college_dba import (
     AllowedCollegeDBACreateSerializer,
     AllowedStudentCreateSerializer,
@@ -119,11 +121,31 @@ class ManageClassroomByDBAViewSet(_vset.ModelViewSet):
 
     def get_queryset(self):
         # TODO: filter classes w.r.t stream for a dba
-        return (
-            Classroom.objects.prefetch_related("teachers")
-            .select_related("college")
-            .filter(college__slug=self.kwargs.get("college_slug"))
-        )
+        is_dba = User.objects.select_related("dba").filter(id=self.request.user.id)
+        if is_dba.exists():
+            dba: CollegeDBA = CollegeDBA.objects.select_related("user").get(
+                user__id=self.request.user.id
+            )
+            if dba.is_owner:
+                return (
+                    Classroom.objects.prefetch_related("teachers")
+                    .select_related("college")
+                    .filter(college__slug=self.kwargs.get("college_slug"))
+                )
+            else:
+                streams = (
+                    Stream.objects.select_related("dba")
+                    .values_list("title", flat=True)
+                    .filter(dba=dba.id)
+                )
+                return (
+                    Classroom.objects.prefetch_related("teachers")
+                    .select_related("college")
+                    .filter(
+                        college__slug=self.kwargs.get("college_slug"),
+                        stream__in=streams,
+                    )
+                )
 
     def get_serializer_class(self):
         method = self.request.method

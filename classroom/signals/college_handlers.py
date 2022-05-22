@@ -120,7 +120,8 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
                 [instance.owner_email_id],  # FIXME: Send mail to session dba
             )
             raise ValidationError(
-                detail="Stream List Not Found", code=status.HTTP_404_NOT_FOUND
+                detail="Stream List Not Found,Stream have to added manually",
+                code=status.HTTP_206_PARTIAL_CONTENT,
             )
         file_abs_path = None
         stream_file_path = os.path.join(
@@ -138,7 +139,8 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
                 [instance.owner_email_id],  # FIXME: Send mail to session dba
             )
             raise ValidationError(
-                detail="Stream List Not Found", code=status.HTTP_404_NOT_FOUND
+                detail="Stream List Not Found,Stream have to added manually",
+                code=status.HTTP_206_PARTIAL_CONTENT,
             )
 
         df = None
@@ -148,11 +150,11 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
             df = pd.read_excel(file_abs_path)
         else:
             raise ValidationError(
-                f"{instance.stream_list.name} is not of type xlsx or csv",
-                code=status.HTTP_412_PRECONDITION_FAILED,
+                f"{instance.stream_list.name} is not of type xlsx or csv,Stream have to added manually",
+                code=status.HTTP_206_PARTIAL_CONTENT,
             )
 
-        if not "streams" in df.columns:
+        if not "title" in df.columns:
             send_mail(
                 "Wrong File Structure",
                 "column name should be => 'streams' ",
@@ -160,8 +162,12 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
                 [instance.owner_email_id],  # FIXME: Send mail to session dba
             )
             raise ValidationError(
-                "column name should be => 'streams' without quotation",
-                code=status.HTTP_302_FOUND,
+                """
+                column name should be => 'streams' without quotation,
+                Auto Stream Creation Failed, 
+                Streams have to added manually
+                """,
+                code=status.HTTP_206_PARTIAL_CONTENT,
             )
         list_of_streams = [
             Stream(college=instance, **args) for args in df.to_dict("records")
@@ -171,8 +177,8 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
                 Stream.objects.bulk_create(list_of_streams)
         except:
             raise ValidationError(
-                detail="Bulk Stream Create Failed Due to unknown reason",
-                code=status.HTTP_304_NOT_MODIFIED,
+                detail="Bulk Stream Create Failed Due to unknown reason,Stream have to added manually",
+                code=status.HTTP_206_PARTIAL_CONTENT,
             )
         os.remove(file_abs_path)
         College.objects.update(stream_list="")
