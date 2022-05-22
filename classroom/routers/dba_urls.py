@@ -86,8 +86,8 @@ dba_urlpatterns += (
     + allowed_student_classlevel_router.urls
 )
 
-cprint("-------------------------------------------", "green")
-cprint("DBA URLs -", "green")
-cprint("-------------------------------------------", "green")
-for url in dba_urlpatterns:
-    cprint(url, "green")
+# cprint("-------------------------------------------", "green")
+# cprint("DBA URLs -", "green")
+# cprint("-------------------------------------------", "green")
+# for url in dba_urlpatterns:
+#     cprint(url, "green")

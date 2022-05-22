@@ -1,3 +1,4 @@
+from classroom.models.assignment import Assignment
 from classroom.serializers.classroom import (
     AnnouncementsReadSerializer,
     ClassroomReadForStudentSerializer,
@@ -5,11 +6,18 @@ from classroom.serializers.classroom import (
     SemesterReadSerializer,
     SubjectReadSerializer,
 )
-from classroom.serializers.student import StudentReadSerializer
-from rest_framework.decorators import api_view
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from classroom.serializers.student import (
+    AssignmentReadByStudentSerializer,
+    StudentReadSerializer,
+)
+from rest_framework.mixins import (
+    ListModelMixin,
+    RetrieveModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
+)
 from rest_framework.viewsets import GenericViewSet
-
+from rest_framework.parsers import FormParser, MultiPartParser
 from ..model import Announcement, Classroom, Notes, Semester, Student, Subject
 
 
@@ -107,3 +115,14 @@ class NotesForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet)
 
 
 # TODO: Add Assignment View
+class AssignmentViewForStudentViewSet(
+    ListModelMixin, RetrieveModelMixin, GenericViewSet
+):
+    my_tags = ["[student] 6. assignments/subject"]
+    serializer_class = AssignmentReadByStudentSerializer
+    # parser_classes = [FormParser,MultiPartParser]
+
+    def get_queryset(self):
+        return Assignment.objects.select_related("subject").filter(
+            subject__slug=self.kwargs.get("subject_slug")
+        )

@@ -4,6 +4,7 @@ from termcolor import cprint
 
 from ..views.student_view import (
     AnnouncementForStudentsViewSet,
+    AssignmentViewForStudentViewSet,
     ClassroomForStudentViewSet,
     NotesForStudentViewSet,
     SemesterForStudentViewSet,
@@ -41,6 +42,13 @@ subject_notes_router = NestedDefaultRouter(
 )
 subject_notes_router.register("notes", NotesForStudentViewSet, basename="notes")
 
+subject_assignment_router = NestedDefaultRouter(
+    sem_subjects_router, "subject", lookup="subject"
+)
+subject_assignment_router.register(
+    "assignment", AssignmentViewForStudentViewSet, basename="assignment"
+)
+
 stud_urlpatterns = []
 
 stud_urlpatterns += (
@@ -50,7 +58,11 @@ stud_urlpatterns += (
     + sem_subjects_router.urls
     + subject_announcement_router.urls
     + subject_notes_router.urls
+    + subject_assignment_router.urls
 )
 
-# for url in stud_urlpatterns:
-#     cprint(url, "green")
+cprint("-------------------------------------------", "green")
+cprint("Student URLs -", "green")
+cprint("-------------------------------------------", "green")
+for url in stud_urlpatterns:
+    cprint(url, "cyan")
