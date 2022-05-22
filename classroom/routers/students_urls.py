@@ -70,8 +70,8 @@ stud_urlpatterns += (
     + assignment_submission_router.urls
 )
 
-cprint("-------------------------------------------", "green")
-cprint("Student URLs -", "green")
-cprint("-------------------------------------------", "green")
-for url in stud_urlpatterns:
-    cprint(url, "cyan")
+# cprint("-------------------------------------------", "green")
+# cprint("Student URLs -", "green")
+# cprint("-------------------------------------------", "green")
+# for url in stud_urlpatterns:
+#     cprint(url, "cyan")

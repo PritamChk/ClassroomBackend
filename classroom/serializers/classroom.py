@@ -1,9 +1,8 @@
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT
 from rest_framework.serializers import (
     ModelSerializer as ms,
     SlugField,
-    FilePathField,
     FileField,
 )
 from classroom.model import (
@@ -17,6 +16,7 @@ from classroom.model import (
     Teacher,
 )
 from django.shortcuts import get_object_or_404
+from classroom.models.assignment import Assignment
 from classroom.serializers.teacher import (
     MinimalTeacherDetailsSerializer,
     MinimalUserDetailsSerializer,
@@ -347,3 +347,19 @@ class NotesUpdateForTeacherSerializer(ms):  # Combine this with Student Notes Re
             "created_at",
             "updated_at",
         ]
+
+
+class AssignmentPostByTeacherSerializer(ms):
+    class Meta:
+        model = Assignment
+        fields = (
+            "id",
+            "title",
+            "description",
+            "alloted_marks",
+            "attached_pdf",
+            "due_date",
+            "due_time",
+            "created_at",
+        )
+        read_only_fields = ["id", "created_at"]

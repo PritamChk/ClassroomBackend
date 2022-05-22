@@ -20,9 +20,11 @@ from classroom.model import (
     Subject,
     Teacher,
 )
+from classroom.models.assignment import Assignment
 from classroom.serializers.classroom import (
     AnnouncementsPostOrUpdateSerializer,
     AnnouncementsReadSerializer,
+    AssignmentPostByTeacherSerializer,
     ClassroomReadForStudentSerializer,
     ClassroomReadForTeacherSerializer,
     NotesFileReadByStudentSerializer,
@@ -180,3 +182,18 @@ class FileUploadDeleteViewSet(ModelViewSet):
     # def create(self, request, *args, **kwargs):
     #     cprint(request.data, "green")
     #     return super().create(request, *args, **kwargs)
+
+
+class AssignmentPostViewSet(ModelViewSet):
+    http_method_names = ["get", "post", "patch", "delete", "options", "head"]
+    my_tags = ["[teacher] 7. assignment"]
+    serializer_class = AssignmentPostByTeacherSerializer
+    parser_classes = [
+        MultiPartParser,
+        FormParser,
+    ]
+
+    def get_queryset(self):
+        return Assignment.objects.select_related("subject").filter(
+            subject__slug=self.kwargs.get("subject_slug")
+        )

@@ -1,7 +1,4 @@
-from rest_framework.serializers import (
-    ModelSerializer as ms,
-    IntegerField,
-)
+from rest_framework.serializers import ModelSerializer as ms, IntegerField, FileField
 from accounts.serializers import CurrentUserSerializer
 from classroom.model import Classroom, Teacher, User
 

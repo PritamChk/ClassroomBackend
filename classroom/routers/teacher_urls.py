@@ -4,6 +4,7 @@ from termcolor import cprint
 
 from classroom.views.teacher_view import (
     AnnouncementPostByTeacherViewSet,
+    AssignmentPostViewSet,
     ClassroomsForTeacherViewSet,
     FileUploadDeleteViewSet,
     SemesterForTeacherViewSet,
@@ -52,6 +53,12 @@ teacher_notes_file_upload = NestedDefaultRouter(
 teacher_notes_file_upload.register(
     "notes-files", FileUploadDeleteViewSet, basename="notes_files"
 )
+teacher_assignment_router = NestedDefaultRouter(
+    teacher_subject_sub_urls, "subject", lookup="subject"
+)
+teacher_assignment_router.register(
+    "assignment", AssignmentPostViewSet, basename="assignment"
+)
 
 teacher_urlpatterns = []
 teacher_urlpatterns += (
@@ -62,7 +69,11 @@ teacher_urlpatterns += (
     + teacher_subject_announcement.urls
     + teacher_subject_notes.urls
     + teacher_notes_file_upload.urls
+    + teacher_assignment_router.urls
 )
 
-# for teacher_url in teacher_urlpatterns:
-#     cprint(teacher_url, "yellow")
+cprint("-------------------------------------------", "red")
+cprint("Teacher URLs -", "red")
+cprint("-------------------------------------------", "red")
+for url in teacher_urlpatterns:
+    cprint(url, "red")
