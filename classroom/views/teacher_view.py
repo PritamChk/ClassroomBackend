@@ -32,7 +32,7 @@ from classroom.serializers.classroom import (
     NotesUpdateForTeacherSerializer,
     SemesterReadSerializer,
     SubjectCreateByTeacherSerializer,
-    SubjectRetriveForTeacherSerializer,
+    SubjectRetrieveForTeacherSerializer,
 )
 
 from classroom.serializers.teacher import TeacherProfileSerializer
@@ -79,10 +79,10 @@ class SubjectForTeacherViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         if self.request.method == "GET":
-            return SubjectRetriveForTeacherSerializer
+            return SubjectRetrieveForTeacherSerializer
         elif self.request.method == "POST":
             return SubjectCreateByTeacherSerializer
-        return SubjectRetriveForTeacherSerializer
+        return SubjectRetrieveForTeacherSerializer
 
     def get_queryset(self):
         return (

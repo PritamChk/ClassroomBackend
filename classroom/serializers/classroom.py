@@ -185,7 +185,7 @@ class NotesReadForStudentSerializer(ms):
         # depth = 1
 
 
-class SubjectRetriveForTeacherSerializer(ms):
+class SubjectRetrieveForTeacherSerializer(ms):
     class Meta:
         model = Subject
         fields = [
