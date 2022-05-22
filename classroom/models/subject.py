@@ -34,7 +34,8 @@ class Subject(models.Model):
             "semester__sem_no",
             "subject_type",
             "credit_points",
-            "created_by",
+            "created_by__user__first_name",
+            "created_by__user__last_name",
         ]
     )
     subject_code = models.CharField(max_length=20)
