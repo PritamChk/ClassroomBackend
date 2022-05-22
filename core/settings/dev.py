@@ -6,6 +6,8 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "Not Exists")
 # TODO: Make this false in production
 DEBUG = True
 
+ALLOWED_HOSTS = ["*", "localhost"]
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
