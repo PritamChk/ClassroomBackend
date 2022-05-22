@@ -335,15 +335,15 @@ class AssignmentAdmin(admin.ModelAdmin):
         "due_date",
         "due_time",
         "subject",
-        "given_by",
+        # "given_by",
         "created_at",
     )
     list_display_links = ["id", "title"]
     list_editable = ["alloted_marks", "due_date", "due_time"]
-    list_select_related = ["subject", "given_by"]
+    list_select_related = ["subject"]
     search_fields = ["title"]
-    autocomplete_fields = ["given_by", "subject"]
-    list_filter = ("due_date", "subject", "given_by", "created_at")
+    autocomplete_fields = ["subject"]
+    list_filter = ("due_date", "subject", "created_at")
     list_per_page: int = 10
 
 
@@ -361,10 +361,10 @@ class SubmittedAssignmentAdmin(admin.ModelAdmin):
         "score",
         "has_scored",
         "remarks",
-        "scored_by",
+        # "scored_by",
     )
     list_editable = ["is_submitted", "score", "has_scored", "remarks"]
-    list_select_related = ["scored_by", "submitted_by"]
+    list_select_related = ["submitted_by"]
     list_display_links = ["id", "assignment", "submission_date"]
     list_per_page: int = 10
     list_filter = (
@@ -373,5 +373,5 @@ class SubmittedAssignmentAdmin(admin.ModelAdmin):
         "is_submitted",
         "submission_date",
         "has_scored",
-        "scored_by",
+        # "scored_by",
     )

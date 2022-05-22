@@ -36,12 +36,12 @@ class Assignment(models.Model):
     subject = models.ForeignKey(
         "classroom.Subject", on_delete=models.CASCADE, related_name="assignments"
     )
-    given_by = models.ForeignKey(
-        "classroom.Teacher",
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="assignments_given",
-    )
+    # given_by = models.ForeignKey(
+    #     "classroom.Teacher",
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     related_name="assignments_given",
+    # )
 
     created_at = models.DateTimeField(
         _("Created At "), auto_now_add=True, editable=False
@@ -104,13 +104,13 @@ class AssignmentSubmission(models.Model):
     )
     has_scored = models.BooleanField(_("Scored by teacher : "), default=False)
     remarks = models.TextField(_("remarks"), blank=True, null=True, max_length=400)
-    scored_by = models.ForeignKey(
-        "classroom.Teacher",
-        on_delete=models.SET_NULL,
-        related_name="scored_assignments",
-        blank=True,
-        null=True,
-    )
+    # scored_by = models.ForeignKey(
+    #     "classroom.Teacher",
+    #     on_delete=models.SET_NULL,
+    #     related_name="scored_assignments",
+    #     blank=True,
+    #     null=True,
+    # )
 
     class Meta:
         unique_together = [["assignment", "submitted_by"]]
