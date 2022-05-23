@@ -63,7 +63,7 @@ class College(models.Model):
     )
 
     class Meta:
-        ordering = ["name", "city", "state"]
+        ordering = ["name", "city"]
 
     def __str__(self) -> str:
         return f"{self.name} - {self.city}"
