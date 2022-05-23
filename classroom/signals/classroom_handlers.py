@@ -4,6 +4,9 @@ from .common_imports import *
 @receiver(post_save, sender=Classroom)
 def create_sems_for_new_classroom(sender, instance: Classroom, **kwargs):
     if kwargs.get("created"):
+        if instance.end_year-instance.start_year>=2:
+            instance.no_of_semesters=(instance.end_year-instance.start_year)*2
+            instance.save(force_update=True)
         sems = [
             Semester(
                 classroom=instance,
