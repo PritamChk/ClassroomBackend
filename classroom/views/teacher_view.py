@@ -189,7 +189,7 @@ class FileUploadDeleteViewSet(ModelViewSet):
 class AssignmentPostViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete", "options", "head"]
     my_tags = ["[teacher] 7. assignment"]
-    # serializer_class = AssignmentPostByTeacherSerializer
+    serializer_class = AssignmentPostByTeacherSerializer
     parser_classes = [
         MultiPartParser,
         FormParser,
