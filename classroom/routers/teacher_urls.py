@@ -81,8 +81,8 @@ teacher_urlpatterns += (
     + teacher_assignment_evaluation_router.urls
 )
 
-cprint("-------------------------------------------", "red")
-cprint("Teacher URLs -", "red")
-cprint("-------------------------------------------", "red")
-for url in teacher_urlpatterns:
-    cprint(url, "red")
+# cprint("-------------------------------------------", "red")
+# cprint("Teacher URLs -", "red")
+# cprint("-------------------------------------------", "red")
+# for url in teacher_urlpatterns:
+#     cprint(url, "red")
