@@ -10,7 +10,7 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
                 "Allowed Teacher List Does Not Exists",
                 "You Have To Create Allowed Teachers Manually",
                 settings.EMAIL_HOST_USER,
-                [instance.owner_email_id],  
+                [instance.owner_email_id],
             )
             return None
         file_abs_path = None
@@ -26,7 +26,7 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
                 "Allowed Teacher List Does Not Exists",
                 "You Have To Create Allowed Teachers Manually",
                 settings.EMAIL_HOST_USER,
-                [instance.owner_email_id],  # FIXME: Send mail to session dba
+                [instance.owner_email_id],
             )
             return None
 
@@ -36,6 +36,7 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
         elif str(file_abs_path).split(".")[-1] == "xlsx":
             df = pd.read_excel(file_abs_path)
         else:
+            # FIXME: delete college instance & add proper message
             raise ValidationError(
                 f"{instance.stream_list.name} is not of type xlsx or csv",
                 code=status.HTTP_412_PRECONDITION_FAILED,
@@ -44,17 +45,18 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
         if not "email" in df.columns:
             send_mail(
                 "Wrong File Structure",
-                "column name should be => 'email' ",
+                """column name should be => 'email',allowed teacher creation skipped.
+                   You have to create teachers manually. """,
                 settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+                [instance.owner_email_id],
             )
             return None
-        list_of_streams = [
-            AllowedTeacher(college=instance, **args) for args in df.to_dict("records")
-        ]
         try:
+            list_of_allowed_teacher = [
+                AllowedTeacher(college=instance, **args) for args in df.to_dict("records")
+            ]
             with atomic():
-                AllowedTeacher.objects.bulk_create(list_of_streams)
+                AllowedTeacher.objects.bulk_create(list_of_allowed_teacher)
         except:
             raise ValidationError(
                 detail="Bulk Allowed Teacher Insertion Failed Due to unknown reason",
