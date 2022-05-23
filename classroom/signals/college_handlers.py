@@ -10,7 +10,7 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
                 "Allowed Teacher List Does Not Exists",
                 "You Have To Create Allowed Teachers Manually",
                 settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+                [instance.owner_email_id],  
             )
             return None
         file_abs_path = None
