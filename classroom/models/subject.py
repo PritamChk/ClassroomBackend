@@ -53,7 +53,7 @@ class Subject(models.Model):
     )
 
     class Meta:
-        ordering = ["-created_at", "title", "-credit_points"]
+        ordering = ["subject_code", "title", "-subject_type"]
 
     def __str__(self) -> str:
         return f"{self.title} - {self.subject_code}"
