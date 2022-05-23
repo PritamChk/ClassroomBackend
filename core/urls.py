@@ -13,12 +13,12 @@ from drf_yasg import openapi
 schema_view = get_schema_view(
     openapi.Info(
         title="Classroom(LMS) API",
-        default_version="0.1.0",
+        default_version="1.0.0",
         description="""
         ## This is the **`Classroom API`** documentation
         
         > - ### Here all the api routes are grouped by tags
-        > - ### First Migration done
+        > - ### Classroom, Teachers, DBA, Students, Routers configured
         """,
         contact=openapi.Contact(email="django.dev.tmsl@gmail.com"),
     ),
