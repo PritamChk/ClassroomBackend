@@ -15,10 +15,8 @@ class BaseAccountManager(BaseUserManager):
             raise ValueError(_("The First Name must be set"))
         if not last_name:
             raise ValueError(_("The Last Name must be set"))
-        if not first_name:
-            raise ValueError(_("The First Name must be set"))
-        if not last_name:
-            raise ValueError(_("The Last Name must be set"))
+        if not password:
+            raise ValueError(_("The Password must be set"))
         email = self.normalize_email(email)
         user = self.model(
             email=email,
