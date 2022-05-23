@@ -4,6 +4,9 @@ from .common_imports import *
 # @shared_task
 @receiver(post_save, sender=College)
 def create_allowed_teacher(sender, instance: College, created, **kwargs):
+    """
+    at the time of college creation: reads teacher list from the excel or csv file and creates bulk allowed teacher and send bulk mail
+    """
     if created:
         if instance.allowed_teacher_list == None:
             send_mail(
@@ -77,6 +80,13 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
 def send_mail_after_create_allowed_teacher(
     sender, instance: AllowedTeacher, created, **kwargs
 ):
+    """Send mails to manually added allowed teachers
+
+    Args:
+        sender (AllowedTeacher): This func. triggers when college DBA manually adds teacher to college
+        instance (AllowedTeacher): 
+        created (bool):
+    """
     if created:
         college: College = College.objects.get(pk=instance.college.id)
         subject = "Create Your Teacher Account"
@@ -91,6 +101,16 @@ def send_mail_after_create_allowed_teacher(
 def remove_teacher_profile_after_allowed_teacher_deletion(
     sender, instance: AllowedTeacher, **kwargs
 ):
+    """remove teacher profile after allowed teacher deletion
+
+    Args:
+        sender (AllowedTeacher): when allowed teacher is removed from the college
+        instance (AllowedTeacher): 
+
+    Raises:
+        ValidationError: when there no teacher profile exists or tries to delete wrong teacher profile
+
+    """
     try:
         teacher_profile = Teacher.objects.select_related("user").filter(
             user__email=instance.email
@@ -113,6 +133,8 @@ def remove_teacher_profile_after_allowed_teacher_deletion(
 
 @receiver(post_save, sender=College)
 def create_streams_from_file(sender, instance: College, created, **kwargs):
+    """ Reads stream titles from the given stream file and streams in a bulk
+    """
     if created:
         if instance.stream_list == None:
             send_mail(
