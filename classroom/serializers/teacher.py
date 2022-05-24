@@ -53,3 +53,13 @@ class TeacherProfileSerializer(ms):
     class Meta:
         model = Teacher
         fields = ["teacher_id", "user", "classroom_list"]
+
+
+class TeacherProfileForDBASerializer(ms):
+    user = MinimalUserDetailsSerializer()
+    teacher_id = IntegerField(source="id")
+    # classroom_list = TeacherClassroomsGetSerializer(many=True, source="classrooms")
+
+    class Meta:
+        model = Teacher
+        fields = ["teacher_id", "user"]

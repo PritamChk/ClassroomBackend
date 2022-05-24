@@ -1,3 +1,4 @@
+from classroom.models.college import Stream
 from .common_imports import *
 
 
@@ -79,6 +80,10 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs
             t: CollegeDBA = CollegeDBA.objects.create(
                 user=instance, college=college_detail, is_owner=is_owner
             )
+            if is_owner:
+                Stream.objects.select_related("college").filter(
+                    college__id=college_detail.id
+                ).update(dba=t)
             subject = "Your DBA Profile Has Been Created Successfully"
             msg = f"""
                 COLLEGE DBA ID :{t.id}

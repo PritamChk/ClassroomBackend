@@ -12,10 +12,19 @@ from classroom.views.teacher_view import (
     SubjectForTeacherViewSet,
     TeacherNotesUploadViewSet,
     TeacherProfileViewSet,
+    TeacherProfilesForDBAViewSet,
 )
+from .dba_urls import college_create_router
 
 teacher_router = DefaultRouter()
 teacher_router.register("teacher", TeacherProfileViewSet, basename="teacher")
+
+all_teacher_profiles_for_dba_router = NestedDefaultRouter(
+    college_create_router, "college-create", lookup="college"
+)
+all_teacher_profiles_for_dba_router.register(
+    "teacher-profiles", TeacherProfilesForDBAViewSet, basename="teachers"
+)
 
 teacher_classrooms = NestedDefaultRouter(teacher_router, "teacher", lookup="teacher")
 teacher_classrooms.register(
@@ -79,6 +88,7 @@ teacher_urlpatterns += (
     + teacher_notes_file_upload.urls
     + teacher_assignment_router.urls
     + teacher_assignment_evaluation_router.urls
+    + all_teacher_profiles_for_dba_router.urls
 )
 
 # cprint("-------------------------------------------", "red")

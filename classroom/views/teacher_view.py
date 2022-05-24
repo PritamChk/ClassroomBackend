@@ -39,10 +39,13 @@ from classroom.serializers.classroom import (
     SubjectRetrieveForTeacherSerializer,
 )
 
-from classroom.serializers.teacher import TeacherProfileSerializer
+from classroom.serializers.teacher import (
+    TeacherProfileForDBASerializer,
+    TeacherProfileSerializer,
+)
 
 
-class TeacherProfileViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+class TeacherProfileViewSet(RetrieveModelMixin, GenericViewSet):
     my_tags = ["[teacher] 1. profile"]
     serializer_class = TeacherProfileSerializer
 
@@ -51,6 +54,18 @@ class TeacherProfileViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             Teacher.objects.select_related("user").prefetch_related("classrooms")
             # .filter(user__id=self.request.user.id) #TODO:This will work after permission applied
             .filter(id=self.kwargs.get("pk"))
+        )
+
+
+class TeacherProfilesForDBAViewSet(ListModelMixin, GenericViewSet):
+    my_tags = ["[teacher] 1. profile"]
+    serializer_class = TeacherProfileForDBASerializer
+
+    def get_queryset(self):
+        return (
+            Teacher.objects.select_related("user", "college")
+            # .filter(user__id=self.request.user.id) #TODO:This will work after permission applied
+            .filter(college__slug=self.kwargs.get("college_slug"))
         )
 
 
