@@ -4,17 +4,23 @@ from .common_imports import *
 # @shared_task
 @receiver(post_delete, sender=Student)
 def delete_user_on_student_delete(sender, instance: Student, **kwargs):
-    user = User.objects.filter(pk=instance.user.id)
-    if user.exists():
-        user.delete()
+    try:
+        user = User.objects.filter(pk=instance.user.id)
+        if user.exists():
+            user.delete()
+    except:
+        pass
 
 
 # @shared_task
 @receiver(post_delete, sender=CollegeDBA)
 def delete_user_on_dba_delete(sender, instance: CollegeDBA, **kwargs):
-    user = User.objects.filter(pk=instance.user.id)
-    if user.exists():
-        user.delete()
+    try:
+        user = User.objects.filter(pk=instance.user.id)
+        if user.exists():
+            user.delete()
+    except:
+        pass
 
 
 # @shared_task
@@ -27,5 +33,5 @@ def delete_user_on_teacher_delete(sender, instance: Teacher, **kwargs):
             user = User.objects.filter(pk=instance.user.id)
             if user.exists():
                 user.delete()
-    except: 
+    except:
         pass
