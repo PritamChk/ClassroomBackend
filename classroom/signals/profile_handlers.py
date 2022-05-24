@@ -92,14 +92,13 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs
         else:
             subject = "Profile Creation Failed"
             msg = f"""
-                You have not been assigned any class, but your account has been created.
-                So to create a profile contact ADMIN
+                You have not been assigned any profile for any college
 
                 contact mail id: {settings.EMAIL_HOST_USER}
             """
             # FIXME: Delete below line of code if gives error
             send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
-            User.objects.filter(pk=instance.id).delete()
+            # User.objects.filter(pk=instance.id).delete()
             raise ValidationError(
                 "Profile creation failed, as you have no profile attached with any college",
                 code=status.HTTP_401_UNAUTHORIZED,
