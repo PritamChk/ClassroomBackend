@@ -67,7 +67,9 @@ class StreamManagementViewSet(_vset.ModelViewSet):
         return {"college_slug": self.kwargs.get("college_slug")}
 
 
-class DBAProfileViewSet(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
+class DBAProfileViewSet(
+    _mxn.ListModelMixin, _mxn.RetrieveModelMixin, _vset.GenericViewSet
+):
     """
     # Get DBA Profile Details
     ---

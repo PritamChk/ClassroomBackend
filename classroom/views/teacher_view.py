@@ -42,7 +42,7 @@ from classroom.serializers.classroom import (
 from classroom.serializers.teacher import TeacherProfileSerializer
 
 
-class TeacherProfileViewSet(RetrieveModelMixin, GenericViewSet):
+class TeacherProfileViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     my_tags = ["[teacher] 1. profile"]
     serializer_class = TeacherProfileSerializer
 

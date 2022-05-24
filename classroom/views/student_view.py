@@ -23,7 +23,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from ..model import Announcement, Classroom, Notes, Semester, Student, Subject
 
 
-class StudentProfileViewSet(RetrieveModelMixin, GenericViewSet):
+class StudentProfileViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     """
     Student End point will return student profile details along with classroom details
     """
