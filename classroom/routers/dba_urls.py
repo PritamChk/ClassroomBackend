@@ -1,6 +1,7 @@
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 from classroom.views.college_dba_view import (
     AddOrDeleteOtherDBAViewSet,
+    AllDbaProfiles,
     CollegeCreateViewSet,
     CollegeRetrieveForDBAViewSet,
     DBAProfileViewSet,
@@ -15,6 +16,11 @@ college_create_router = DefaultRouter()
 college_create_router.register(
     "college-create", CollegeCreateViewSet, basename="college"
 )
+
+all_dbas_router = NestedDefaultRouter(
+    college_create_router, "college-create", lookup="college"
+)
+all_dbas_router.register("dbas", AllDbaProfiles, basename="dbas")
 
 dba_root_router = DefaultRouter()
 dba_root_router.register("dba", DBAProfileViewSet, basename="dba")
@@ -84,6 +90,7 @@ dba_urlpatterns += (
     + allowed_teacher_college_router.urls
     + allowed_teacher_classlevel_router.urls
     + allowed_student_classlevel_router.urls
+    + all_dbas_router.urls
 )
 
 # cprint("-------------------------------------------", "green")

@@ -38,6 +38,12 @@ class CollegeCreateViewSet(
     parser_classes = [FormParser, MultiPartParser]
     queryset = College.objects.prefetch_related("allowed_dbas").all()
     serializer_class = CollegeCreateSerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        return College.objects.prefetch_related("allowed_dbas").filter(
+            slug=self.kwargs.get("slug")
+        )
 
     def get_serializer_context(self):
         return {"request": self.request}
@@ -67,9 +73,22 @@ class StreamManagementViewSet(_vset.ModelViewSet):
         return {"college_slug": self.kwargs.get("college_slug")}
 
 
-class DBAProfileViewSet(
-    _mxn.ListModelMixin, _mxn.RetrieveModelMixin, _vset.GenericViewSet
-):
+class AllDbaProfiles(_mxn.ListModelMixin, _vset.GenericViewSet):
+    """
+    # Get DBA Profiles Details for particular college
+    ---
+    """
+
+    my_tags = ["[dba] 3. profile"]
+    serializer_class = CollegeDBAProfileSerializer
+
+    def get_queryset(self):
+        return CollegeDBA.objects.select_related("user", "college").filter(
+            college__slug=self.kwargs.get("college_slug")
+        )
+
+
+class DBAProfileViewSet(_mxn.RetrieveModelMixin, _vset.GenericViewSet):
     """
     # Get DBA Profile Details
     ---
