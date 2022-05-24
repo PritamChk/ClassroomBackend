@@ -98,5 +98,9 @@ def create_profile(sender, instance: settings.AUTH_USER_MODEL, created, **kwargs
                 contact mail id: {settings.EMAIL_HOST_USER}
             """
             # FIXME: Delete below line of code if gives error
-            User.objects.filter(pk=instance.id).delete()
             send_mail(subject, msg, settings.EMAIL_HOST_USER, [instance.email])
+            User.objects.filter(pk=instance.id).delete()
+            raise ValidationError(
+                "Profile creation failed, as you have no profile attached with any college",
+                code=status.HTTP_401_UNAUTHORIZED,
+            )
