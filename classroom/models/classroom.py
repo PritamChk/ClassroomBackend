@@ -130,7 +130,7 @@ class Classroom(models.Model):
         ]
 
     def __str__(self) -> str:
-        return self.title
+        return self.id
 
 
 class Semester(models.Model):
