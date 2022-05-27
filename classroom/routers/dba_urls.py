@@ -2,6 +2,7 @@ from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 from classroom.views.college_dba_view import (
     AddOrDeleteOtherDBAViewSet,
     AllDbaProfiles,
+    AllowedStudentManagementClassroomLevel,
     CollegeCreateViewSet,
     CollegeRetrieveForDBAViewSet,
     DBAProfileViewSet,
@@ -74,7 +75,7 @@ allowed_student_classlevel_router = NestedDefaultRouter(
 )
 allowed_student_classlevel_router.register(
     "manage-student",
-    TeacherManagementClassroomLevel,
+    AllowedStudentManagementClassroomLevel,
     basename="student_classroom",
 )
 

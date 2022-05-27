@@ -302,7 +302,7 @@ class AllowedTeacherClassroomLevelCreateSerializer(_ms):
 class AllowedStudentCreateSerializer(_ms):
     class Meta:
         model = AllowedStudents
-        fields = ["id", "email", "classroom"]
+        fields = ["id", "university_roll", "email", "classroom"]
         read_only_fields = ["id", "classroom"]
 
     def create(self, validated_data):

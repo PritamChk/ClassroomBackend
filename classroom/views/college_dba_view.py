@@ -219,7 +219,7 @@ class TeacherManagementClassroomLevel(
     - Please let me know if Get method doesn't work
     """
 
-    my_tags = ["[dba] 7. teacher/student management classroom level"]
+    my_tags = ["[dba] 7. teacher management classroom level"]
     serializer_class = AllowedTeacherClassroomLevelCreateSerializer
 
     def get_queryset(self):
@@ -242,7 +242,7 @@ class AllowedStudentManagementClassroomLevel(
     # This end point is to add allowed students to classroom or remove them from that classroom
     """
 
-    my_tags = ["[dba] 7. student management classroom level"]
+    my_tags = ["[dba] 8. student management classroom level"]
     serializer_class = AllowedStudentCreateSerializer
 
     def get_queryset(self):
