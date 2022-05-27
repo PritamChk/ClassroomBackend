@@ -4,8 +4,8 @@ from .common_imports import *
 @receiver(post_save, sender=Classroom)
 def create_sems_for_new_classroom(sender, instance: Classroom, **kwargs):
     if kwargs.get("created"):
-        if instance.end_year-instance.start_year>=2:
-            instance.no_of_semesters=(instance.end_year-instance.start_year)*2
+        if instance.end_year - instance.start_year >= 2:
+            instance.no_of_semesters = (instance.end_year - instance.start_year) * 2
             instance.save(force_update=True)
         sems = [
             Semester(
@@ -201,3 +201,10 @@ def create_allowed_teacher_for_classroom_level_with_check(
             raise ValidationError(
                 "this teacher email does not associated with any college", code=400
             )
+        college: Classroom = Classroom.objects.get(pk=instance.classroom)
+        subject = f"Teacher Account Associated With Classroom-{college.title}"
+        prompt = f"""
+            please use your following mail id to sign up
+            /log in in the Classroom[LMS]
+                - {instance.email} 
+            """
