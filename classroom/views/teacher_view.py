@@ -27,6 +27,7 @@ from classroom.serializers.classroom import (
     AssignmentPostByTeacherSerializer,
     AssignmentSubmissionEvaluationByTeacher,
     AssignmentSubmissionEvaluationReadByTeacher,
+    AssignmentUpdateByTeacherSerializer,
     ClassroomReadForStudentSerializer,
     ClassroomReadForTeacherSerializer,
     NotesFileReadByStudentSerializer,
@@ -214,8 +215,15 @@ class AssignmentPostViewSet(ModelViewSet):
         return Assignment.objects.select_related("subject").filter(
             subject__slug=self.kwargs.get("subject_slug")
         )
+
     def get_serializer_context(self):
-        return {'subject_slug':self.kwargs.get("subject_slug")}
+        return {"subject_slug": self.kwargs.get("subject_slug")}
+
+    def get_serializer_class(self):
+        method = self.request.method
+        if method == "PATCH":
+            return AssignmentUpdateByTeacherSerializer
+        return AssignmentPostByTeacherSerializer
 
 
 class AssignmentEvaluationViewSet(ModelViewSet):
