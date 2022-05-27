@@ -214,6 +214,8 @@ class AssignmentPostViewSet(ModelViewSet):
         return Assignment.objects.select_related("subject").filter(
             subject__slug=self.kwargs.get("subject_slug")
         )
+    def get_serializer_context(self):
+        return {'subject_slug':self.kwargs.get("subject_slug")}
 
 
 class AssignmentEvaluationViewSet(ModelViewSet):

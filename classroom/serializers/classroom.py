@@ -16,6 +16,7 @@ from classroom.model import (
     Teacher,
 )
 from django.shortcuts import get_object_or_404
+from classroom.models import subject
 from classroom.models.assignment import Assignment, AssignmentSubmission
 from classroom.models.imports import User
 from classroom.models.student import Student
@@ -354,6 +355,8 @@ class NotesUpdateForTeacherSerializer(ms):  # Combine this with Student Notes Re
 
 
 class AssignmentPostByTeacherSerializer(ms):
+    subject = _sz.SlugField(source="subject.slug", read_only=True)
+    attached_pdf = FileField(max_length=None, use_url=True, required=True)
     class Meta:
         model = Assignment
         fields = (
@@ -364,9 +367,38 @@ class AssignmentPostByTeacherSerializer(ms):
             "attached_pdf",
             "due_date",
             "due_time",
+            "subject",
             "created_at",
         )
-        read_only_fields = ["id", "created_at"]
+        read_only_fields = ["id", "created_at", "subject"]
+
+    def create(self, validated_data):
+
+        # created_by = self.context.get("teacher_pk")
+        subject_slug = self.context.get("subject_slug")
+        try:
+            subject = Subject.objects.get(slug=subject_slug)
+        except:
+            raise NotFound(
+                detail=f"subject_slug - {subject_slug} does not exists",
+                code=HTTP_404_NOT_FOUND,
+            )
+        # try:
+        #     teacher = Teacher.objects.get(pk=created_by)
+        # except:
+        #     raise NotFound(
+        #         detail=f"Teacher with id - {created_by} does not exists",
+        #         code=HTTP_404_NOT_FOUND,
+        #     )
+        try:
+            self.instance = Assignment.objects.create(subject=subject, **validated_data)
+        except:
+            raise ValidationError(
+                detail=f"Assignment Creation failed",
+                code=HTTP_204_NO_CONTENT,
+            )
+
+        return self.instance
 
 
 # StudentReadSerializer
