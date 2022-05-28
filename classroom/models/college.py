@@ -104,6 +104,7 @@ class Stream(models.Model):
 
     class Meta:
         ordering = ["college__name", "title"]
+        unique_together = ["title", "dba"]
 
     def __str__(self) -> str:
         return f"{self.title} || Clg: {self.college.name}"
