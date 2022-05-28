@@ -357,6 +357,7 @@ class NotesUpdateForTeacherSerializer(ms):  # Combine this with Student Notes Re
 class AssignmentPostByTeacherSerializer(ms):
     subject = _sz.SlugField(source="subject.slug", read_only=True)
     attached_pdf = FileField(max_length=None, use_url=True, required=True)
+
     class Meta:
         model = Assignment
         fields = (
@@ -400,6 +401,7 @@ class AssignmentPostByTeacherSerializer(ms):
 
         return self.instance
 
+
 class AssignmentUpdateByTeacherSerializer(ms):
     subject = _sz.SlugField(source="subject.slug", read_only=True)
     # attached_pdf = FileField(max_length=None, use_url=True, required=True)
@@ -417,6 +419,7 @@ class AssignmentUpdateByTeacherSerializer(ms):
             "created_at",
         )
         read_only_fields = ["id", "created_at", "subject"]
+
 
 # StudentReadSerializer
 

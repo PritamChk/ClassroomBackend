@@ -56,7 +56,8 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
             return None
         try:
             list_of_allowed_teacher = [
-                AllowedTeacher(college=instance, **args) for args in df.to_dict("records")
+                AllowedTeacher(college=instance, **args)
+                for args in df.to_dict("records")
             ]
             with atomic():
                 AllowedTeacher.objects.bulk_create(list_of_allowed_teacher)
@@ -84,7 +85,7 @@ def send_mail_after_create_allowed_teacher(
 
     Args:
         sender (AllowedTeacher): This func. triggers when college DBA manually adds teacher to college
-        instance (AllowedTeacher): 
+        instance (AllowedTeacher):
         created (bool):
     """
     if created:
@@ -105,7 +106,7 @@ def remove_teacher_profile_after_allowed_teacher_deletion(
 
     Args:
         sender (AllowedTeacher): when allowed teacher is removed from the college
-        instance (AllowedTeacher): 
+        instance (AllowedTeacher):
 
     Raises:
         ValidationError: when there no teacher profile exists or tries to delete wrong teacher profile
@@ -133,8 +134,7 @@ def remove_teacher_profile_after_allowed_teacher_deletion(
 
 @receiver(post_save, sender=College)
 def create_streams_from_file(sender, instance: College, created, **kwargs):
-    """ Reads stream titles from the given stream file and streams in a bulk
-    """
+    """Reads stream titles from the given stream file and streams in a bulk"""
     if created:
         if instance.stream_list == None:
             send_mail(
