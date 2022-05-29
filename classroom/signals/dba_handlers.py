@@ -96,3 +96,20 @@ def create_allowed_dba(sender, instance: College, created, **kwargs):
         os.remove(file_abs_path)
         instance.allowed_teacher_list = ""
         instance.allowed_dba_list = ""
+
+
+@receiver(post_delete, sender=AllowedCollegeDBA)
+def delete_dba_account_on_deletion_of_allowed_cllg_dba(
+    sender, instance: AllowedCollegeDBA, **kwargs
+):
+    try:
+        college_dba = CollegeDBA.objects.select_related("user").filter(
+            user__email=instance.email
+        )
+        if college_dba.exists():
+            try:
+                college_dba.delete()
+            except:
+                pass
+    except:
+        pass
