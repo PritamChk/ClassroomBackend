@@ -171,7 +171,7 @@ class AllowedTeacherClassroomLevel(models.Model):
 
 
 class AllowedStudents(models.Model):
-    email = models.EmailField(_("Email Id"), max_length=255)
+    email = models.EmailField(_("Email Id"), max_length=255, unique=True)
     university_roll = models.PositiveBigIntegerField(
         _("University Roll"),
         help_text="Your University Roll No - (e.g. - 13071020030)",
@@ -181,11 +181,6 @@ class AllowedStudents(models.Model):
     )
 
     class Meta:
-        unique_together = [
-            ("university_roll", "classroom"),
-            ("university_roll", "email"),
-            ("classroom", "email"),
-        ]
         ordering = ["university_roll"]
         verbose_name_plural = "Allowed Students"
 
