@@ -201,7 +201,7 @@ def create_allowed_teacher_for_classroom_level_with_check(
             raise ValidationError(
                 "this teacher email does not associated with any college", code=400
             )
-        college: Classroom = Classroom.objects.get(pk=instance.classroom)
+        college: Classroom = Classroom.objects.get(pk=instance.classroom.id)
         subject = f"Teacher Account Associated With Classroom-{college.title}"
         prompt = f"""
             please use your following mail id to sign up
