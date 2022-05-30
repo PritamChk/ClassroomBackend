@@ -206,3 +206,151 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
             )
         os.remove(file_abs_path)
         College.objects.update(stream_list="")
+
+
+# @receiver(pre_save, sender=College)
+# def validate_all_file_formats_and_data(sender, instance: College, **kwargs):
+#     """
+#     checks teacher , dba and stream list files if they are in correct format
+#     """
+#     # 1. check streams first
+#     # if instance.stream_list == None:
+#     #     raise ValidationError(
+#     #         detail="Stream List Not Found",
+#     #         code=status.HTTP_404_NOT_FOUND,
+#     #     )
+#     # file_abs_path = None
+#     # stream_file_path = os.path.join(
+#     #     settings.BASE_DIR,
+#     #     settings.MEDIA_ROOT,
+#     #     instance.stream_list.name,
+#     # )
+#     # if os.path.exists(stream_file_path):
+#     #     file_abs_path = os.path.abspath(stream_file_path)
+#     # else:
+#     #     raise ValidationError(
+#     #         detail="Stream List Not Found, Or Corrupted",
+#     #         code=status.HTTP_404_NOT_FOUND,
+#     #     )
+
+#     df = None
+#     if str(file_abs_path).split(".")[-1] == "csv":
+#         df: pd.DataFrame = pd.read_csv(file_abs_path)
+#     elif str(file_abs_path).split(".")[-1] == "xlsx":
+#         df = pd.read_excel(file_abs_path)
+#     else:
+#         raise ValidationError(
+#             f"{instance.stream_list.name} is not of type xlsx or csv,Stream have to added manually",
+#             code=status.HTTP_400_BAD_REQUEST,
+#         )
+
+#     if not "title" in df.columns:
+#         raise ValidationError(
+#             """
+#             column name should be => 'streams' without quotation,
+#             Auto Stream Creation Failed, 
+#             """,
+#             code=status.HTTP_404_NOT_FOUND,
+#         )
+#     # - end of check for stream
+
+#     # 2. check teacher
+#     # if instance.allowed_teacher_list == None:
+#     #     raise ValidationError(
+#     #         detail="Teacher List Not Found",
+#     #         code=status.HTTP_404_NOT_FOUND,
+#     #     )
+#     # file_abs_path = None
+#     # teacher_file_path = os.path.join(
+#     #     settings.BASE_DIR,
+#     #     settings.MEDIA_ROOT,
+#     #     instance.allowed_teacher_list.name,
+#     # )
+#     # if os.path.exists(teacher_file_path):
+#     #     file_abs_path = os.path.abspath(teacher_file_path)
+#     # else:
+#     #     raise ValidationError(
+#     #         detail="Teacher List Not Found Or Corrupted",
+#     #         code=status.HTTP_404_NOT_FOUND,
+#     #     )
+
+#     df = None
+#     if str(file_abs_path).split(".")[-1] == "csv":
+#         df: pd.DataFrame = pd.read_csv(file_abs_path)
+#     elif str(file_abs_path).split(".")[-1] == "xlsx":
+#         df = pd.read_excel(file_abs_path)
+#     else:
+#         # FIXME: delete college instance & add proper message
+#         raise ValidationError(
+#             f"{instance.allowed_teacher_list.name} is not of type xlsx or csv",
+#             code=status.HTTP_400_BAD_REQUEST,
+#         )
+
+#     if not "email" in df.columns:
+#         raise ValidationError(
+#             """
+#             column name should be => 'email' without quotation and small letters,
+#             Auto Teacher Creation Failed, 
+#             """,
+#             code=status.HTTP_404_NOT_FOUND,
+#         )
+#     # - end of check for teacher
+#     # 3. check dba
+#     # is_owner_of_college_exists = AllowedCollegeDBA.objects.filter(
+#     #     email=instance.owner_email_id
+#     # ).exists()
+#     # if is_owner_of_college_exists:
+#     #     # from rest_framework import status
+
+#     #     raise ValidationError(
+#     #         detail=f"""
+#     #         college owner {instance.owner_email_id} already associated with 
+#     #         college - {instance.name}""",
+#     #         code=status.HTTP_400_BAD_REQUEST,
+#     #     )
+
+#     if instance.allowed_dba_list == None:
+#         raise ValidationError(
+#             detail="Admin List Not Found",
+#             code=status.HTTP_404_NOT_FOUND,
+#         )
+#     file_abs_path = None
+#     dba_file_path = os.path.join(
+#         settings.BASE_DIR,
+#         settings.MEDIA_ROOT,
+#         instance.allowed_dba_list.name,
+#     )
+#     if os.path.exists(dba_file_path):
+#         file_abs_path = os.path.abspath(dba_file_path)
+#     else:
+#         raise ValidationError(
+#             detail="Admin List Not Found or Corrupted",
+#             code=status.HTTP_404_NOT_FOUND,
+#         )
+
+#     df = None
+#     if str(file_abs_path).split(".")[-1] == "csv":
+#         df: pd.DataFrame = pd.read_csv(file_abs_path)
+#     elif str(file_abs_path).split(".")[-1] == "xlsx":
+#         df = pd.read_excel(file_abs_path)
+#     else:
+#         raise ValidationError(
+#             f"Admin File - [{instance.allowed_dba_list.name}] not of type -> xlsx or csv, Please Upload proper file"
+#         )
+
+#     if not "email" in df.columns:
+#         raise ValidationError(
+#             """
+#             Wrong File Structure,
+#             column name should be => 'email' without the quot 
+#             """,
+#             code=status.HTTP_400_BAD_REQUEST,
+#         )
+#     df_dict = df.to_dict("records")
+#     if len(df_dict) < 1:
+
+#         raise ValidationError(
+#             detail="Please give at least one mail-id in the file ",
+#             code=status.HTTP_400_BAD_REQUEST,
+#         )
+#     # - end of check for dba
