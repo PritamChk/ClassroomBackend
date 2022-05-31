@@ -36,7 +36,7 @@ class CollegeReadSerializer(ms):
 
 
 class SemesterReadSerializer(ms):
-    classroom__slug = SlugField(source="classroom.slug")
+    classroom__slug = SlugField(source="classroom.slug", read_only=True)
 
     class Meta:
         model = Semester
@@ -46,7 +46,7 @@ class SemesterReadSerializer(ms):
             "sem_no",
             "is_current_sem",
         ]
-        select_related_fields = ["classroom"]
+        read_only_fields = ["classroom__slug", "sem_no", "id"]
 
 
 class ClassroomReadForStudentSerializer(ms):
