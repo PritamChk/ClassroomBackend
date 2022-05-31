@@ -15,6 +15,7 @@ from classroom.serializers.student import (
 from rest_framework.mixins import (
     ListModelMixin,
     RetrieveModelMixin,
+    UpdateModelMixin,
     CreateModelMixin,
     DestroyModelMixin,
 )
@@ -61,7 +62,10 @@ class ClassroomForStudentViewSet(RetrieveModelMixin, GenericViewSet):
         return classroom
 
 
-class SemesterForStudentViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+class SemesterForStudentViewSet(
+    ListModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet
+):
+    http_method_names = ["get", "patch", "head", "options"]
     my_tags = ["[student] 2. semester"]
     serializer_class = SemesterReadSerializer
     # lookup_field = 'id'
