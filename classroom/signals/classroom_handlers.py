@@ -3,7 +3,8 @@ from .common_imports import *
 
 def delete_classroom_on_some_failure(id):
     try:
-        College.objects.filter(id=id).delete()
+        Classroom.objects.filter(id=id).delete()
+        cprint(f"classroom not found with id -> {id} ", "red")
     except:
         cprint("classroom not found", "red")
 
