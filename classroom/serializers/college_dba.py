@@ -192,14 +192,14 @@ class ClassroomCreateByDBASerializer(_ms):
                 code=status.HTTP_404_NOT_FOUND,
             )
 
-        try:
-            self.instance = Classroom.objects.create(college=college, **validated_data)
-        except:
-            # dba_email = validated_data.get("email", "No Email Found")
-            raise _error(
-                f"Could not able to create classroom due to some unknown reason",
-                code=status.HTTP_204_NO_CONTENT,
-            )
+        # try:
+        self.instance = Classroom.objects.create(college=college, **validated_data)
+        # except:
+        # dba_email = validated_data.get("email", "No Email Found")
+        # raise _error(
+        #     f"Could not able to create classroom due to some unknown reason",
+        #     code=status.HTTP_204_NO_CONTENT,
+        # )
         return self.instance
 
 
