@@ -341,3 +341,28 @@ def create_allowed_teacher_for_classroom_level_with_check(
                 - {instance.email} 
             """
         send_mail(subject, prompt, classroom.college.owner_email_id, [instance.email])
+
+
+@receiver(post_save, sender=AllowedStudents)
+def send_mail_to_new_allowed_student(
+    sender, instance: AllowedStudents, created, **kwargs
+):
+    subject = f"Welcome to Classroom - {instance.classroom.title}"
+    body = f"""
+        Welcome - {instance.email}
+        University Roll - {instance.university_roll}
+        Please Sign Up to join the classroom
+        & update your contact number after login
+    """
+    try:
+        college: College = College.objects.prefetch_related("classrooms").get(
+            classrooms=instance.classroom
+        )
+        send_mail(subject, body, college.owner_email_id, [instance.email])
+    except:
+        cprint(
+            f"{instance.email} - did not received any confirmation mail from classroom admin",
+            "red",
+        )
+
+    # pass
