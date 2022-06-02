@@ -1,5 +1,13 @@
 from .common_imports import *
 
+
+def delete_classroom_on_some_failure(id):
+    try:
+        College.objects.filter(id=id).delete()
+    except:
+        cprint("classroom not found", "red")
+
+
 # @shared_task
 @receiver(post_save, sender=Classroom)
 def create_sems_for_new_classroom(sender, instance: Classroom, **kwargs):
@@ -23,13 +31,25 @@ def create_sems_for_new_classroom(sender, instance: Classroom, **kwargs):
 def create_allowed_students(sender, instance: Classroom, created, **kwargs):
     if created:
         if instance.allowed_student_list == None:
-            send_mail(
-                "Allowed Student List Does Not Exists",
-                "You Have To Create Allowed Students Manually",
-                settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            # try:
+            #     College.objects.filter(id=instance.id).delete()
+            # except:
+            #     pass
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                """
+                Allowed Student List Does Not Exists
+                Classroom Creation Failed
+                """,
+                code=status.HTTP_404_NOT_FOUND,
             )
-            return None
+            # send_mail(
+            #     "Allowed Student List Does Not Exists",
+            #     "You Have To Create Allowed Students Manually",
+            #     settings.EMAIL_HOST_USER,
+            #     ["dba@admin.com"],  # FIXME: Send mail to session dba
+            # )
+            # return None
         file_abs_path = None
         student_file_path = os.path.join(
             settings.BASE_DIR,
@@ -39,13 +59,18 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
         if os.path.exists(student_file_path):
             file_abs_path = os.path.abspath(student_file_path)
         else:
-            send_mail(
-                "Allowed Student List Does Not Exists",
-                "You Have To Create Allowed Students Manually",
-                settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            # try:
+            #     College.objects.filter(id=instance.id).delete()
+            # except:
+            #     pass
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                """
+                Allowed Student List Does Not Exists
+                Classroom Creation Failed
+                """,
+                code=status.HTTP_404_NOT_FOUND,
             )
-            return None
 
         df = None
         if str(file_abs_path).split(".")[-1] == "csv":
@@ -53,16 +78,35 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
         elif str(file_abs_path).split(".")[-1] == "xlsx":
             df = pd.read_excel(file_abs_path)
 
+        if len(df.columns) != 2:
+            # try:
+            #     College.objects.filter(id=instance.id).delete()
+            # except:
+            #     pass
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                """
+                Classroom Creation Failed.
+                Student List should contain 2 columns namely : university_roll & email
+                """,
+                code=status.HTTP_400_BAD_REQUEST,
+            )
         if not (
             "university_roll" in df.columns and "email" in df.columns
         ):  # TODO:check col name case insensitive
-            send_mail(
-                "Wrong File Structure",
-                "column name should be => 'university_roll' | 'email' ",
-                settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            # try:
+            #     College.objects.filter(id=instance.id).delete()
+            # except:
+            #     pass
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                """
+                Allowed Student List should contain only two columns
+                i.e - university_roll & email
+                """,
+                code=status.HTTP_400_BAD_REQUEST,
             )
-            return None
+
         list_of_students = [
             AllowedStudents(classroom=instance, **args)
             for args in df.to_dict("records")
@@ -70,13 +114,16 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
         try:
             AllowedStudents.objects.bulk_create(list_of_students)
         except:
-            from rest_framework.exceptions import NotAcceptable
-
-            raise NotAcceptable(
+            # try:
+            #     College.objects.filter(id=instance.id).delete()
+            # except:
+            #     pass
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
                 """Bulk Student Creation Failed, 
-                                May be you are trying to add 
-                                same student to another class
-                                """,
+                    May be you are trying to add 
+                    same student to another class
+                """,
                 code=status.HTTP_400_BAD_REQUEST,
             )
         email_list = df["email"].to_list()
@@ -85,7 +132,7 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
         try:
             send_email_after_bulk_object_creation.delay(subject, prompt, email_list)
         except BadHeaderError:
-            print("Could not able to sen emails to students")
+            cprint("Could not able to sen emails to students", "blue")
         os.remove(file_abs_path)
         Classroom.objects.update(allowed_student_list="")
 
@@ -97,13 +144,18 @@ def create_allowed_teacher_for_classroom_level(
 ):
     if created:
         if instance.allowed_teacher_list == None:
-            send_mail(
-                "Allowed Teacher List Does Not Exists",
-                "You Have To Create Allowed Teachers Manually",
-                settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            # try:
+            #     College.objects.filter(id=instance.id).delete()
+            # except:
+            #     pass
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                """
+                Allowed Teacher List Does Not Exists
+                Classroom Creation Failed
+                """,
+                code=status.HTTP_404_NOT_FOUND,
             )
-            return None
         file_abs_path = None
         dba_file_path = os.path.join(
             settings.BASE_DIR,
@@ -113,28 +165,56 @@ def create_allowed_teacher_for_classroom_level(
         if os.path.exists(dba_file_path):
             file_abs_path = os.path.abspath(dba_file_path)
         else:
-            send_mail(
-                "Allowed Teacher List Does Not Exists",
-                "You Have To Create Allowed Teachers Manually",
-                settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            # try:
+            #     College.objects.filter(id=instance.id).delete()
+            # except:
+            #     pass
+            delete_classroom_on_some_failure(instance.id)
+            # finally:
+            raise ValidationError(
+                """
+                Allowed Teacher List Does Not Exists
+                Classroom Creation Failed
+                """,
+                code=status.HTTP_404_NOT_FOUND,
             )
-            return None
 
         df = None
         if str(file_abs_path).split(".")[-1] == "csv":
             df: pd.DataFrame = pd.read_csv(file_abs_path)
         elif str(file_abs_path).split(".")[-1] == "xlsx":
             df = pd.read_excel(file_abs_path)
-
-        if not "email" in df.columns:
-            send_mail(
-                "Wrong File Structure",
-                "column name should be => 'email' ",
-                settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+        else:
+            # try:
+            #     College.objects.filter(id=instance.id).delete()
+            # except:
+            #     pass
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                """
+                only XL or CSV file format supported.
+            """,
+                code=status.HTTP_400_BAD_REQUEST,
             )
-            return None
+
+        if len(df.columns) != 1:
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                f"""
+                Allowed Teacher List Should contain only one column named : email
+                Classroom Creation Failed
+                """,
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if not "email" in df.columns:
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                """
+                Allowed Teacher List Does Not Contain Column Name : email
+                Allowed Teacher Creation Failed
+                """,
+                code=status.HTTP_400_BAD_REQUEST,
+            )
         df_dict: list[dict] = df.to_dict("records")
         # print(df_dict)
         college_allowed_teacher_list = list(
@@ -181,12 +261,13 @@ def create_allowed_teacher_for_classroom_level(
                 Rejected teacher list : {rejected_teacher_mails}
                 """,
                 settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],
+                ["tmsl@owner.com"],
                 "",
             )
         try:
             AllowedTeacherClassroomLevel.objects.bulk_create(list_of_teachers)
         except:
+            delete_classroom_on_some_failure(instance.id)
             ValidationError(
                 "Bulk Allowed Teacher Add for Classroom Failed",
                 code=status.HTTP_400_BAD_REQUEST,
@@ -199,7 +280,7 @@ def create_allowed_teacher_for_classroom_level(
         try:
             send_email_after_bulk_object_creation.delay(subject, prompt, email_list)
         except BadHeaderError:
-            print("Could not able to sen emails to students")
+            cprint("Could not able to send emails to students", "red")
         os.remove(file_abs_path)
         Classroom.objects.update(allowed_teacher_list="")
 
@@ -213,16 +294,21 @@ def create_allowed_teacher_for_classroom_level_with_check(
             email=instance.email
         )
         if not is_email_in_allowed_teacher_list.exists():
-            AllowedTeacherClassroomLevel.objects.filter(email=instance.email).delete()
-            cprint("this teacher email does not associated with any college", "red")
+            try:
+                AllowedTeacherClassroomLevel.objects.filter(
+                    email=instance.email
+                ).delete()
+            except:
+                cprint("this teacher email does not associated with any college", "red")
             raise ValidationError(
-                "this teacher email does not associated with any college", code=400
+                "this teacher email does not associated with any college",
+                code=status.HTTP_400_BAD_REQUEST,
             )
-        college: Classroom = Classroom.objects.get(pk=instance.classroom.id)
-        subject = f"Teacher Account Associated With Classroom-{college.title}"
+        classroom: Classroom = Classroom.objects.get(pk=instance.classroom.id)
+        subject = f"Teacher Account Associated With Classroom-{classroom.title}"
         prompt = f"""
             please use your following mail id to sign up
             /log in in the Classroom[LMS]
                 - {instance.email} 
             """
-        send_mail(subject, prompt, settings.EMAIL_HOST_USER, [instance.email])
+        send_mail(subject, prompt, classroom.college.owner_email_id, [instance.email])
