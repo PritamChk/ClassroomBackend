@@ -1,6 +1,11 @@
 from classroom.models.college import Stream
 from .common_imports import *
 
+
+def delete_college_on_any_failure(id):
+    pass
+
+
 # @shared_task
 @receiver(post_save, sender=College)
 def create_allowed_teacher(sender, instance: College, created, **kwargs):
@@ -248,7 +253,7 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
 #         raise ValidationError(
 #             """
 #             column name should be => 'streams' without quotation,
-#             Auto Stream Creation Failed, 
+#             Auto Stream Creation Failed,
 #             """,
 #             code=status.HTTP_404_NOT_FOUND,
 #         )
@@ -290,7 +295,7 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
 #         raise ValidationError(
 #             """
 #             column name should be => 'email' without quotation and small letters,
-#             Auto Teacher Creation Failed, 
+#             Auto Teacher Creation Failed,
 #             """,
 #             code=status.HTTP_404_NOT_FOUND,
 #         )
@@ -304,7 +309,7 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
 
 #     #     raise ValidationError(
 #     #         detail=f"""
-#     #         college owner {instance.owner_email_id} already associated with 
+#     #         college owner {instance.owner_email_id} already associated with
 #     #         college - {instance.name}""",
 #     #         code=status.HTTP_400_BAD_REQUEST,
 #     #     )
@@ -342,7 +347,7 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
 #         raise ValidationError(
 #             """
 #             Wrong File Structure,
-#             column name should be => 'email' without the quot 
+#             column name should be => 'email' without the quot
 #             """,
 #             code=status.HTTP_400_BAD_REQUEST,
 #         )
