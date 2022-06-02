@@ -197,7 +197,7 @@ class ClassroomCreateByDBASerializer(_ms):
         except:
             # dba_email = validated_data.get("email", "No Email Found")
             raise _error(
-                f"Could not able to classroom",
+                f"Could not able to create classroom due to some unknown reason",
                 code=status.HTTP_204_NO_CONTENT,
             )
         return self.instance
