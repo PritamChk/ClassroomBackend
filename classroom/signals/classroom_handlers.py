@@ -23,7 +23,14 @@ def create_sems_for_new_classroom(sender, instance: Classroom, **kwargs):
             )
             for i in range(instance.no_of_semesters)
         ]
-        Semester.objects.bulk_create(sems)
+        try:
+            Semester.objects.bulk_create(sems)
+        except:
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                "Classroom Sem creation Failed Due To Unknown Reason",
+                code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 # @shared_task
@@ -88,6 +95,19 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
                 """
                 Classroom Creation Failed.
                 Student List should contain 2 columns namely : university_roll & email
+                """,
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if not df.shape[0] > 0:
+            # try:
+            #     College.objects.filter(id=instance.id).delete()
+            # except:
+            #     pass
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                """
+                Classroom Creation Failed.
+                Student List Cannot be empty
                 """,
                 code=status.HTTP_400_BAD_REQUEST,
             )
@@ -202,6 +222,15 @@ def create_allowed_teacher_for_classroom_level(
             raise ValidationError(
                 f"""
                 Allowed Teacher List Should contain only one column named : email
+                Classroom Creation Failed
+                """,
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if not df.shape[0] > 0:
+            delete_classroom_on_some_failure(instance.id)
+            raise ValidationError(
+                f"""
+                Allowed Teacher List Can not be Empty
                 Classroom Creation Failed
                 """,
                 code=status.HTTP_400_BAD_REQUEST,
