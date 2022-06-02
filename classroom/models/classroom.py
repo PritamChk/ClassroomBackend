@@ -56,10 +56,9 @@ class Classroom(models.Model):
     )
     section = models.CharField(
         _("Section(optional)"),
-        max_length=10,
+        max_length=5,
         null=True,
         blank=True,
-        choices=SECTION_CHOICES.choices,
         default=SECTION_CHOICES.A,
     )
     no_of_semesters = models.PositiveSmallIntegerField(
