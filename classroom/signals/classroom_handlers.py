@@ -67,7 +67,18 @@ def create_allowed_students(sender, instance: Classroom, created, **kwargs):
             AllowedStudents(classroom=instance, **args)
             for args in df.to_dict("records")
         ]
-        AllowedStudents.objects.bulk_create(list_of_students)
+        try:
+            AllowedStudents.objects.bulk_create(list_of_students)
+        except:
+            from rest_framework.exceptions import NotAcceptable
+
+            raise NotAcceptable(
+                """Bulk Student Creation Failed, 
+                                May be you are trying to add 
+                                same student to another class
+                                """,
+                code=status.HTTP_400_BAD_REQUEST,
+            )
         email_list = df["email"].to_list()
         subject = "Create Your Student Account"
         prompt = "please use your following mail id to sign up in the Classroom[LMS]"
@@ -173,7 +184,13 @@ def create_allowed_teacher_for_classroom_level(
                 ["dba@admin.com"],
                 "",
             )
-        AllowedTeacherClassroomLevel.objects.bulk_create(list_of_teachers)
+        try:
+            AllowedTeacherClassroomLevel.objects.bulk_create(list_of_teachers)
+        except:
+            ValidationError(
+                "Bulk Allowed Teacher Add for Classroom Failed",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
         email_list = df["email"].to_list()
         subject = "Teacher Account Associated With Classroom"
         prompt = (
@@ -208,3 +225,4 @@ def create_allowed_teacher_for_classroom_level_with_check(
             /log in in the Classroom[LMS]
                 - {instance.email} 
             """
+        send_mail(subject, prompt, settings.EMAIL_HOST_USER, [instance.email])
