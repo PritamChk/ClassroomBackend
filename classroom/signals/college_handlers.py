@@ -2,10 +2,6 @@ from classroom.models.college import Stream
 from .common_imports import *
 
 
-def delete_college_on_any_failure(id):
-    pass
-
-
 # @shared_task
 @receiver(post_save, sender=College)
 def create_allowed_teacher(sender, instance: College, created, **kwargs):
@@ -14,13 +10,13 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
     """
     if created:
         if instance.allowed_teacher_list == None:
-            send_mail(
-                "Allowed Teacher List Does Not Exists",
-                "You Have To Create Allowed Teachers Manually",
-                settings.EMAIL_HOST_USER,
-                [instance.owner_email_id],
+            delete_college_on_any_failure(instance.id)
+            ValidationError(
+                """
+            Allowed Teacher List Does Not Exists. College Creation Failed
+            """,
+                code=status.HTTP_400_BAD_REQUEST,
             )
-            return None
         file_abs_path = None
         teacher_file_path = os.path.join(
             settings.BASE_DIR,
@@ -30,13 +26,13 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
         if os.path.exists(teacher_file_path):
             file_abs_path = os.path.abspath(teacher_file_path)
         else:
-            send_mail(
-                "Allowed Teacher List Does Not Exists",
-                "You Have To Create Allowed Teachers Manually",
-                settings.EMAIL_HOST_USER,
-                [instance.owner_email_id],
+            delete_college_on_any_failure(instance.id)
+            ValidationError(
+                """
+            Allowed Teacher List Does Not Exists. College Creation Failed
+            """,
+                code=status.HTTP_400_BAD_REQUEST,
             )
-            return None
 
         df = None
         if str(file_abs_path).split(".")[-1] == "csv":
@@ -45,20 +41,33 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
             df = pd.read_excel(file_abs_path)
         else:
             # FIXME: delete college instance & add proper message
+            delete_college_on_any_failure(instance.id)
             raise ValidationError(
-                f"{instance.stream_list.name} is not of type xlsx or csv",
-                code=status.HTTP_412_PRECONDITION_FAILED,
+                f"{instance.allowed_teacher_list.name} is not of type xlsx or csv",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if df.shape[1] != 1:
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                f"{instance.allowed_teacher_list.name} file should contain ONE Column namely email",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if not df.shape[0] > 0:
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                f"{instance.allowed_teacher_list.name} file can not be empty",
+                code=status.HTTP_400_BAD_REQUEST,
             )
 
         if not "email" in df.columns:
-            send_mail(
-                "Wrong File Structure",
-                """column name should be => 'email',allowed teacher creation skipped.
-                   You have to create teachers manually. """,
-                settings.EMAIL_HOST_USER,
-                [instance.owner_email_id],
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                """
+                Wrong File Structure
+                column name should be => 'email',allowed teacher creation skipped.
+                College Creation Failed""",
+                code=status.HTTP_400_BAD_REQUEST,
             )
-            return None
         try:
             list_of_allowed_teacher = [
                 AllowedTeacher(college=instance, **args)
@@ -142,15 +151,10 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
     """Reads stream titles from the given stream file and streams in a bulk"""
     if created:
         if instance.stream_list == None:
-            send_mail(
-                "Allowed Stream List Does Not Exists",
-                "You Have To Create Streams Manually",
-                settings.EMAIL_HOST_USER,
-                [instance.owner_email_id],  # FIXME: Send mail to session dba
-            )
+            delete_college_on_any_failure(instance.id)
             raise ValidationError(
-                detail="Stream List Not Found,Stream have to added manually",
-                code=status.HTTP_206_PARTIAL_CONTENT,
+                detail="Stream List Not Found,College Creation Failed",
+                code=status.HTTP_400_BAD_REQUEST,
             )
         file_abs_path = None
         stream_file_path = os.path.join(
@@ -161,15 +165,10 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
         if os.path.exists(stream_file_path):
             file_abs_path = os.path.abspath(stream_file_path)
         else:
-            send_mail(
-                "Allowed Stream List Does Not Exists",
-                "You Have To Create Streams Manually",
-                settings.EMAIL_HOST_USER,
-                [instance.owner_email_id],  # FIXME: Send mail to session dba
-            )
+            delete_college_on_any_failure(instance.id)
             raise ValidationError(
-                detail="Stream List Not Found,Stream have to added manually",
-                code=status.HTTP_206_PARTIAL_CONTENT,
+                detail="Stream List Not Found,College Creation Failed",
+                code=status.HTTP_400_BAD_REQUEST,
             )
 
         df = None
@@ -178,25 +177,28 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
         elif str(file_abs_path).split(".")[-1] == "xlsx":
             df = pd.read_excel(file_abs_path)
         else:
+            delete_college_on_any_failure(instance.id)
             raise ValidationError(
                 f"{instance.stream_list.name} is not of type xlsx or csv,Stream have to added manually",
-                code=status.HTTP_206_PARTIAL_CONTENT,
+                code=status.HTTP_400_BAD_REQUEST,
             )
-
-        if not "title" in df.columns:
-            send_mail(
-                "Wrong File Structure",
-                "column name should be => 'streams' ",
-                settings.EMAIL_HOST_USER,
-                [instance.owner_email_id],  # FIXME: Send mail to session dba
-            )
+        if df.shape[1] != 1:
+            delete_college_on_any_failure(instance.id)
             raise ValidationError(
-                """
-                column name should be => 'streams' without quotation,
-                Auto Stream Creation Failed, 
-                Streams have to added manually
-                """,
-                code=status.HTTP_206_PARTIAL_CONTENT,
+                f"{instance.stream_list.name} file should contain ONE Column namely title",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if not df.shape[0] > 0:
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                f"{instance.stream_list.name} file can not be empty",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if not "title" in df.columns:
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                f"{instance.stream_list.name} file should contain ONE Column namely title",
+                code=status.HTTP_400_BAD_REQUEST,
             )
         list_of_streams = [
             Stream(college=instance, **args) for args in df.to_dict("records")
@@ -205,9 +207,10 @@ def create_streams_from_file(sender, instance: College, created, **kwargs):
             with atomic():
                 Stream.objects.bulk_create(list_of_streams)
         except:
+            delete_college_on_any_failure(instance.id)
             raise ValidationError(
-                detail="Bulk Stream Create Failed Due to unknown reason,Stream have to added manually",
-                code=status.HTTP_206_PARTIAL_CONTENT,
+                detail="Bulk Stream Create Failed Due to unknown reason, College Creation Failed",
+                code=status.HTTP_400_BAD_REQUEST,
             )
         os.remove(file_abs_path)
         College.objects.update(stream_list="")

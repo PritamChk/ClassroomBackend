@@ -1,4 +1,5 @@
 from .common_imports import *
+from rest_framework import status
 
 
 @shared_task
@@ -9,8 +10,7 @@ def create_allowed_dba(sender, instance: College, created, **kwargs):
             email=instance.owner_email_id
         ).exists()
         if is_owner_of_college_exists:
-            from rest_framework import status
-
+            delete_college_on_any_failure(instance.id)
             raise ValidationError(
                 detail=f"""
                 college owner {instance.owner_email_id} already associated with 
@@ -32,16 +32,11 @@ def create_allowed_dba(sender, instance: College, created, **kwargs):
                 subject, body, settings.EMAIL_HOST_USER, [instance.owner_email_id]
             )
         if instance.allowed_dba_list == None:
-            College.objects.filter(
-                pk=instance.id
-            ).delete()  # FIXME: Delete this line if not works
-            send_mail(
-                "Allowed DBA List Does Not Exists",
-                "You Have To Create Allowed DBAs Manually",
-                settings.EMAIL_HOST_USER,
-                ["dba@admin.com"],  # FIXME: Send mail to session dba
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                detail="Allowed Admin List Not Found,College Creation Failed",
+                code=status.HTTP_404_NOT_FOUND,
             )
-            return None
         file_abs_path = None
         dba_file_path = os.path.join(
             settings.BASE_DIR,
@@ -51,41 +46,64 @@ def create_allowed_dba(sender, instance: College, created, **kwargs):
         if os.path.exists(dba_file_path):
             file_abs_path = os.path.abspath(dba_file_path)
         else:
-            send_mail(
-                "Allowed Teacher List Does Not Exists",
-                "You Have To Create Allowed Teachers Manually",
-                settings.EMAIL_HOST_USER,
-                [instance.owner_email_id],
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                detail="Stream List Not Found,College Creation Failed",
+                code=status.HTTP_404_NOT_FOUND,
             )
-            return None
 
         df = None
         if str(file_abs_path).split(".")[-1] == "csv":
             df: pd.DataFrame = pd.read_csv(file_abs_path)
         elif str(file_abs_path).split(".")[-1] == "xlsx":
             df = pd.read_excel(file_abs_path)
+        else:
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                detail="Allowed Admin List Not of Type [Xl/CSV] ,College Creation Failed",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if df.shape[1] != 1:
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                f"{instance.allowed_dba_list.name} file should contain ONE Column namely email",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if not df.shape[0] > 0:
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                f"{instance.allowed_dba_list.name} file can not be empty",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
 
         if not "email" in df.columns:
-            send_mail(
-                "Wrong File Structure",
-                "column name should be => 'email' ",
-                settings.EMAIL_HOST_USER,
-                [instance.owner_email_id],  # FIXME: Send mail to session dba
-            )
-            return None
-        df_dict = df.to_dict("records")
-        if len(df_dict) < 1:
-
+            delete_college_on_any_failure(instance.id)
             raise ValidationError(
-                detail="Please give at least one mail-id in the fail "
+                f"{instance.stream_list.name} file should contain ONE Column namely email",
+                code=status.HTTP_400_BAD_REQUEST,
             )
+        # df_dict = df.to_dict("records")
+        # if len(df_dict) < 1:
+
+        #     raise ValidationError(
+        #         detail="Please give at least one mail-id in the fail "
+        #     )
 
         # print(df_dict)
-        list_of_teachers = [
-            AllowedCollegeDBA(college=instance, **args)
-            for args in df.to_dict("records")
-        ]
-        AllowedCollegeDBA.objects.bulk_create(list_of_teachers)
+        try:
+            list_of_teachers = [
+                AllowedCollegeDBA(college=instance, **args)
+                for args in df.to_dict("records")
+            ]
+            with atomic():
+                AllowedCollegeDBA.objects.bulk_create(list_of_teachers)
+        except:
+            delete_college_on_any_failure(instance.id)
+            raise ValidationError(
+                f"Bulk Allowed College DBA creation failed, College Creation Failed",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
         email_list = df["email"].to_list()
         subject = "Open Your DBA Account"
         prompt = "please use your following mail id to sign up in the Classroom[LMS]"
@@ -94,8 +112,7 @@ def create_allowed_dba(sender, instance: College, created, **kwargs):
         except BadHeaderError:
             print("Could not able to send emails to DBAs")
         os.remove(file_abs_path)
-        instance.allowed_teacher_list = ""
-        instance.allowed_dba_list = ""
+        College.objects.update(allowed_dba_list="")
 
 
 @receiver(post_delete, sender=AllowedCollegeDBA)

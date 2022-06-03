@@ -27,3 +27,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from termcolor import cprint
 from django.db.transaction import atomic
+
+
+def delete_college_on_any_failure(id):
+    try:
+        College.objects.filter(pk=id).delete()
+        cprint(f"College Deleted with ID:[{id}]")
+    except:
+        cprint(f"No College Found with ID:[{id}]")
