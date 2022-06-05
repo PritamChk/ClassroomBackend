@@ -368,8 +368,8 @@ class SubmittedAssignmentAdmin(admin.ModelAdmin):
         "score",
         "has_scored",
         "remarks",
-        "submission_date",
-        "submission_time",
+        # "submission_date",
+        # "submission_time",
     ]
     list_select_related = ["submitted_by"]
     list_display_links = ["id", "assignment", "submission_date"]
