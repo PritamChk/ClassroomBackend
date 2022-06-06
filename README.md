@@ -41,21 +41,33 @@
 ---
 
 <p float="left">
+<a href="https://www.python.org/">
 <img src="./readme/python.png" width="40" style="margin: 4px"/>
-
+</a>
+<a href="https://www.djangoproject.com/start/">
 <img src="./readme/djangoIcon.png" width="40" style="margin: 4px 5px"/>
+</a>
 
+<a href="https://www.django-rest-framework.org/">
 <img src="./readme/drf.png" width="100" style="margin: 4px 5px"/>
+</a>
 
+<a href="https://www.fullstackpython.com/celery.html">
 <img src="./readme/celery.png" width="80" style="margin: 4px 5px"/>
+</a>
 
+<a href="https://redis.io/">
 <img src="./readme/redis_icon.png" width="60" style="margin: 4px 5px"/>
+</a>
 
+<a href="https://www.docker.com/">
 <img src="./readme/Docker.png" width="60" style="margin: 4px 5px"/>
+</a>
 
+<a href="https://github.com/rnwood/smtp4dev">
 <img src="./readme/smtp.png" width="100" style="margin: 4px 3px"/>
-
-## </p>
+</a>
+</p>
 
 > `OS` - `Windows 10`
 
