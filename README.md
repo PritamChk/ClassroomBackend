@@ -73,3 +73,51 @@
 
 ---
 
+# Recommended Setup
+
+---
+
+> **Install** :
+
+1. [VS Code](https://code.visualstudio.com/)
+   2.Install [Docker](https://www.docker.com/get-started/) & Run It
+2. Save `docker-entrypoint.sh` & `wait-for-it.sh` with `LF` line feed.
+3. use the following command for first time build:
+
+```powershell
+docker-compose up --build
+```
+
+5. create super user for django admin area
+   (one time)
+
+```bash
+docker-compose run web python manage.py createsuperuser
+```
+
+6. for other commands check out the `Pipfile`
+
+---
+
+## Some Glimpse of Frontend :
+
+---
+
+<p float="left">
+<img src="./readme/HomePage.jpeg">
+</p>
+
+<p float="left">
+<img src="./readme/SignUpPage.jpeg" style="width: 49%;height: 50%">
+<img src="./readme/LogInPage.jpeg" style="width: 49%;height: 50%">
+</p>
+
+<p float="left">
+<img src="./readme/CreateCollegePage.jpeg" style="width: 49%;height: 50%">
+<img src="./readme/SubjectAddByStudent.jpeg" style="width: 49%;height: 50%">
+</p>
+---
+## To Know More About Frontend :
+> #### [Click Here [↗]](https://github.com/TathagataDas99/Classroom-Frontend)
+
+---
