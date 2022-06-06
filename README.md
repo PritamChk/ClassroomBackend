@@ -40,9 +40,10 @@
 
 ---
 
+<p float="left">
 <img src="./readme/python.png" width="40" style="margin: 4px"/>
 
-<img align="right" src="./readme/djangoIcon.png" width="40" style="margin: 4px 5px"/>
+<img src="./readme/djangoIcon.png" width="40" style="margin: 4px 5px"/>
 
 <img src="./readme/drf.png" width="100" style="margin: 4px 5px"/>
 
@@ -54,7 +55,7 @@
 
 <img src="./readme/smtp.png" width="100" style="margin: 4px 3px"/>
 
----
+## </p>
 
 > `OS` - `Windows 10`
 
