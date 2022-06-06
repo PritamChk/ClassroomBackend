@@ -1,8 +1,22 @@
-# 4 th Sem Major `Project`
+# Classroom LMS API (Backend)
 
 ---
 
-## Classroom [LMS]
+> #### 4 th Sem Major `Project`
+>
+> - In this Project I have developed this whole API
+> - This API has 5 Modules :
+>   - Authentication
+>   - Owner Admin
+>   - Admin with less privileges
+>   - Teacher
+>   - Student
+
+---
+
+> **API Doc**
+>
+> <img src="./readme/BackendAPI_Doc.jpeg" width="100%" height="100%" style="border-radius:10px;float: right;box-shadow:2px 3px rgba(0,0,0,.2);">
 
 ---
 
@@ -10,9 +24,11 @@
 
 ---
 
-> - [Pritam Chakraborty](https://github.com/PritamChk)
-> - [Tathagata Das](https://github.com/TathagataDas99/)
-> - [Rimi Mondal](https://github.com/RimiDeb13)
+> - [Pritam Chakraborty (Backend Dev & Frontend Designer)](https://github.com/PritamChk)
+> - [Tathagata Das (Frontend Developer)](https://github.com/TathagataDas99/)
+> - [Rimi Mondal (Tester)](https://github.com/RimiDeb13)
+
+---
 
 > #### Project Start Date : 5-Feb-2022
 >
@@ -20,19 +36,23 @@
 
 ---
 
-### Technology Used
+## Technology Stack
 
 ---
 
-- [**`python`** (>= 3.10.2)](https://www.python.org/)
-- [**`django`** (>= 4.0)](https://docs.djangoproject.com/en/4.0/intro/install/)
-- [**`django-rest-framework`** (>= 3.13.1)](https://www.django-rest-framework.org/)
-- [`djoser` (>= 2.0)](https://djoser.readthedocs.io/en/latest/getting_started.html)
-- [`simple-jwt` (NA)](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html)
-- [`drf-yasg` (NA)](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/drf_yasg_integration.html)
-- [`django-debug-toolbar` (>= 3.2.4)](https://django-debug-toolbar.readthedocs.io/en/latest/installation.html)
+<img src="./readme/python.png" width="40" style="margin: 4px"/>
 
-- [`Django Templated Mail`](https://django-templated-mail.readthedocs.io/en/latest/)
+<img src="./readme/djangoIcon.png" width="40" style="margin: 4px 5px"/>
+
+<img src="./readme/drf.png" width="100" style="margin: 4px 5px"/>
+
+<img src="./readme/celery.png" width="80" style="margin: 4px 5px"/>
+
+<img src="./readme/redis_icon.png" width="60" style="margin: 4px 5px"/>
+
+<img src="./readme/Docker.png" width="60" style="margin: 4px 5px"/>
+
+<img src="./readme/smtp.png" width="100" style="margin: 4px 3px"/>
 
 ---
 
