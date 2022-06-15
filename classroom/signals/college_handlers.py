@@ -76,6 +76,7 @@ def create_allowed_teacher(sender, instance: College, created, **kwargs):
             with atomic():
                 AllowedTeacher.objects.bulk_create(list_of_allowed_teacher)
         except:
+            delete_college_on_any_failure(instance.id)
             raise ValidationError(
                 detail="Bulk Allowed Teacher Insertion Failed Due to unknown reason",
                 code=status.HTTP_304_NOT_MODIFIED,
