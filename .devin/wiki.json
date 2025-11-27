@@ -1,0 +1,243 @@
+{
+  "repo_notes": [
+    {
+      "content": ""
+    }
+  ],
+  "pages": [
+    {
+      "title": "Overview",
+      "purpose": "High-level introduction to the Classroom LMS Backend, explaining its purpose as a multi-role educational platform with RESTful APIs for teachers, students, and administrators",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Getting Started",
+      "purpose": "Guide for setting up and running the application locally, including prerequisites and first steps",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Installation & Docker Setup",
+      "purpose": "Detailed instructions for Docker Compose environment setup, service orchestration, and initial configuration",
+      "parent": "Getting Started",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Configuration",
+      "purpose": "Explanation of environment-specific settings, secrets management, and configuration options for development vs production",
+      "parent": "Getting Started",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Architecture",
+      "purpose": "Comprehensive overview of system architecture, including layers, components, and design patterns",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "System Architecture",
+      "purpose": "Overview of the multi-container architecture, technology stack, and how components interact (Django, DRF, Celery, Redis, PostgreSQL)",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Data Models",
+      "purpose": "Complete documentation of the domain model, entity relationships, and database schema",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "College & Institution Models",
+      "purpose": "Detailed documentation of College, Stream, AllowedTeacher, and AllowedCollegeDBA models with their relationships and business rules",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Classroom & Semester Models",
+      "purpose": "Documentation of Classroom, Semester, AllowedStudents, and AllowedTeacherClassroomLevel models, including validation and uniqueness constraints",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Assignment & Submission Models",
+      "purpose": "Documentation of Assignment and AssignmentSubmission models, including file upload validation, grading workflow, and lifecycle",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "API Architecture",
+      "purpose": "Overview of the RESTful API structure, role-based modules, URL routing patterns, and serialization strategies",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Signal-Driven Automation",
+      "purpose": "Comprehensive guide to Django signals usage for automated workflows, including file processing, user provisioning, and email notifications",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "College Provisioning Signals",
+      "purpose": "Detailed documentation of college creation signals, bulk user provisioning from CSV/XLSX files, and email notification workflows",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Classroom & User Profile Signals",
+      "purpose": "Documentation of classroom component creation, semester generation, and automatic user profile creation based on authorization lists",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "API Reference",
+      "purpose": "Complete API endpoint documentation organized by user role, including request/response formats and authentication requirements",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Authentication & Authorization",
+      "purpose": "Documentation of authentication flow, JWT token management, user type identification, and whitelist-based registration system",
+      "parent": "API Reference",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Teacher API",
+      "purpose": "Complete documentation of teacher endpoints including classroom management, subject creation, assignment posting, notes upload, and grading",
+      "parent": "API Reference",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Student API",
+      "purpose": "Complete documentation of student endpoints including classroom access, course content viewing, assignment submission, and grade retrieval",
+      "parent": "API Reference",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "College DBA API",
+      "purpose": "Complete documentation of administrative endpoints for college creation, stream management, classroom administration, and user management",
+      "parent": "API Reference",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Admin Interface",
+      "purpose": "Guide to using Django's admin interface for CRUD operations, including ModelAdmin configurations, inlines, and bulk operations",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Development Guide",
+      "purpose": "Developer-focused documentation covering local setup, testing, code organization, and contribution guidelines",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Local Development Environment",
+      "purpose": "Detailed guide for Docker Compose workflow, service dependencies, debugging, and common development tasks",
+      "parent": "Development Guide",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Dependencies & Tech Stack",
+      "purpose": "Comprehensive listing of Python dependencies, their purposes, and version constraints defined in Pipfile",
+      "parent": "Development Guide",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Asynchronous Tasks",
+      "purpose": "Guide to Celery integration, task definitions, email notification system, and async workflow patterns ",
+      "parent": "Development Guide",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    }
+  ]
+}The content has been copied to your clipboard. Please paste it here to complete the file creation.
